@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi Flight Formatter - Windows 95 UI</title>
+  
+  <style>
+    /* ---------------------------------------------------
+       Windows 95–Style Variables & Global Settings
+    ----------------------------------------------------- */
+    :root {
+      --body-bg: #C0C0C0;           /* Classic Windows 95 gray */
+      --text-color: #000000;
+      --nav-bg: #000080;            /* Dark blue title bar */
+      --nav-text-color: #FFFFFF;
+      --container-bg: #FFFFFF;
+      --border-color: #000000;
+      --button-bg: #C0C0C0;
+      --input-bg: #FFFFFF;
+      --progress-bg: #000080;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--body-bg);
+      font-family: "MS Sans Serif", "Tahoma", sans-serif;
+      color: var(--text-color);
+      font-size: 14px;
+      line-height: 1.4;
+      padding: 10px;
+    }
+
+    /* ---------------------------------------------------
+       Navigation Bar (Windows 95–Style Title Bar)
+    ----------------------------------------------------- */
+    nav {
+      background: var(--nav-bg);
+      color: var(--nav-text-color);
+      padding: 4px;
+      border-bottom: 2px outset var(--nav-bg);
+      margin-bottom: 10px;
+    }
+    nav ul {
+      list-style: none;
+      display: inline;
+    }
+    nav li {
+      display: inline;
+      margin-right: 10px;
+      padding: 2px 4px;
+      border: 2px outset var(--nav-bg);
+    }
+    nav a {
+      color: var(--nav-text-color);
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---------------------------------------------------
+       Main Container (Window)
+    ----------------------------------------------------- */
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 10px;
+      background: var(--container-bg);
+      border: 2px solid var(--border-color);
+    }
+    .container h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    /* ---------------------------------------------------
+       Form Elements (Inputs, Textareas, Selects, Buttons)
+    ----------------------------------------------------- */
+    label {
+      display: block;
+      margin: 5px 0;
+      font-weight: bold;
+    }
+    textarea, input, select {
+      width: 100%;
+      padding: 4px;
+      margin-bottom: 10px;
+      background: var(--input-bg);
+      border: 2px inset #FFFFFF; /* Simulate Windows 95 inset text fields */
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+    }
+    button {
+      padding: 4px 8px;
+      margin: 5px 5px 5px 0;
+      background: var(--button-bg);
+      border: 2px outset #FFFFFF; /* Classic 3D button look */
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      font-family: "MS Sans Serif", "Tahoma", sans-serif;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+    select {
+      cursor: pointer;
+    }
+
+    /* ---------------------------------------------------
+       Output Container & SCR Group
+    ----------------------------------------------------- */
+    .output-container {
+      margin-top: 10px;
+      padding: 4px;
+      background: var(--container-bg);
+      border: 2px inset #FFFFFF;
+      font-family: "Courier New", monospace;
+      white-space: pre-wrap;
+      overflow-y: auto;
+      height: 200px;
+    }
+    .heading {
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .scr-group {
+      border: 2px solid var(--border-color);
+      padding: 4px;
+      margin-bottom: 10px;
+      background: var(--container-bg);
+    }
+    .send-button-container {
+      text-align: right;
+      margin-top: 5px;
+    }
+
+    /* ---------------------------------------------------
+       Error & Success Messages
+    ----------------------------------------------------- */
+    .error, .success {
+      text-align: center;
+      margin: 5px 0;
+      padding: 4px;
+      border: 2px solid var(--border-color);
+      background: var(--container-bg);
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+    }
+    .success {
+      color: green;
+    }
+
+    /* ---------------------------------------------------
+       Windows 95–Style Loading/Progress Bar
+    ----------------------------------------------------- */
+    #loadingBarContainer {
+      display: none;
+      width: 100%;
+      border: 2px solid var(--border-color);
+      background: #FFFFFF;
+      margin: 10px 0;
+      height: 20px;
+    }
+    #loadingBar {
+      height: 100%;
+      width: 0%;
+      background: var(--progress-bg);
+      animation: progress 5s linear forwards;
+    }
+    @keyframes progress {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAVIGATION BAR -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="manualscr.html">Manual SCR [BACKUP]</a></li>
+      <li><a href="historic-log.html">Historic Log</a></li>
+      <li><a href="airport-search.html">Airport Search</a></li>
+      <li><a href="quicklinks.html">Quick Links</a></li>
+      <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">Log Issues</a></li>
+    </ul>
+  </nav>
+  
+  <!-- MAIN CONTAINER -->
+  <div class="container">
+    <h1>Multi Flight Formatter</h1>
+
+    <!-- Error and Success Messages -->
+    <div id="errorMessage" class="error" style="display: none;"></div>
+    <div id="successMessage" class="success" style="display: none;"></div>
+
+    <!-- Windows 95–Style Loading/Progress Bar -->
+    <div id="loadingBarContainer">
+      <div id="loadingBar"></div>
+    </div>
+
+    <!-- User Inputs -->
+    <label for="userInput">Flight Information (One per line):</label>
+    <textarea id="userInput" placeholder="Format: PASTE FLIGHT LEG INFO HERE (one per line)"></textarea>
+
+    <label for="regInput">Learjet Registration:</label>
+    <input id="regInput" placeholder="ENTER LEARJET REG HERE [E.G. MABJA]" />
+
+    <!-- Action Buttons and Dropdowns -->
+    <div>
+      <button id="formatBtn">Format SCR Messages</button>
+
+      <select id="dropdownMenu" title="Select Flight Type">
+        <option value="P" title="Non-revenue flight">P</option>
+        <option value="D" title="General Aviation">D</option>
+        <option value="K" title="Training flight">K</option>
+        <option value="T" title="Training flight">T</option>
+        <option value="J" title="Revenue (passenger)">J</option>
+        <option value="X" title="Technical flight">X</option>
+      </select>
+
+      <select id="slotType" title="Select Slot Type">
+        <option value="NEW">NEW SLOT</option>
+        <option value="CANCEL">CANCEL SLOT</option>
+      </select>
+
+      <button id="sendAllBtn">Send All Emails</button>
+    </div>
+
+    <!-- Output List -->
+    <div id="outputList"></div>
+  </div>
+
+  <script>
+    /******************************************
+     * FETCH emails.json FROM GITHUB PAGES
+     ******************************************/
+    let airportData = {};
+    window.addEventListener("DOMContentLoaded", () => {
+      fetch("assets/emails.json")
+        .then(response => response.json())
+        .then(data => {
+          airportData = data;
+          console.log("Loaded airport data:", airportData);
+        })
+        .catch(error => {
+          console.error("Error loading emails.json:", error);
+        });
+    });
+    function getAirportEmail(airportCode) {
+      return airportData[airportCode]?.email || "slotdesk@ryanair.com";
+    }
+
+    /******************************************
+     * LOGGING (Historic Log)
+     ******************************************/
+    const STORAGE_KEY = "historicLog";
+    function getHistoricLog() {
+      const logData = localStorage.getItem(STORAGE_KEY);
+      return logData ? JSON.parse(logData) : [];
+    }
+    function setHistoricLog(logEntries) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(logEntries));
+    }
+    function addLogEntry(entry) {
+      const logEntries = getHistoricLog();
+      logEntries.push(entry);
+      setHistoricLog(logEntries);
+      console.log("Log entry added:", entry);
+    }
+
+    /******************************************
+     * HELPER FUNCTIONS & PARSING LOGIC
+     ******************************************/
+    let currentSlotType = "";
+    function getDayOfOperation(dayOfWeek) {
+      const dayMapping = {
+        "Sunday":    "0000007",
+        "Monday":    "1000000",
+        "Tuesday":   "0200000",
+        "Wednesday": "0030000",
+        "Thursday":  "0004000",
+        "Friday":    "0000500",
+        "Saturday":  "0000060"
+      };
+      return dayMapping[dayOfWeek] || "1000000"; 
+    }
+    function parseInput(input) {
+      const lines = input.trim().split("\n");
+      const parsedEntries = [];
+      for (let line of lines) {
+        const parts = line.trim().split(" ");
+        if (parts.length !== 7 && parts.length !== 8) {
+          console.warn("Invalid input format for line:", line);
+          continue;
+        }
+        const flightRaw = parts[0];
+        const from = parts[1];
+        const to = parts[2];
+        const date = parts[3].slice(0, 5);
+        const fullDate = parts[3];
+        const departureTime = parts[4];
+        const arrivalTime = parts[5];
+        const code = parts[6];
+        let aircraftType = (parts.length === 8) ? parts[7] : null;
+        const parsedDate = new Date(fullDate);
+        if (isNaN(parsedDate)) {
+          console.warn("Invalid date for line:", line);
+          continue;
+        }
+        const dayOfWeek = parsedDate.toLocaleDateString("en-US", { weekday: "long" });
+        const dayOfOperation = getDayOfOperation(dayOfWeek);
+        const flightPrefix = flightRaw.slice(0, 2);
+        let flightNumber = flightRaw.slice(2);
+        const flightDigits = flightNumber.match(/\d+/)?.[0] || "";
+        let flightLetters = flightNumber.replace(/\d+/g, "");
+        if (flightLetters.endsWith("P")) {
+          flightLetters = flightLetters.slice(0, -1);
+        }
+        const paddedFlightDigits = flightDigits.padStart(3, "0");
+        const flight = `${flightPrefix}${paddedFlightDigits}${flightLetters}`;
+        parsedEntries.push({
+          flight,
+          from,
+          to,
+          date,
+          fullDate,
+          departureTime,
+          arrivalTime,
+          code,
+          dayOfOperation,
+          aircraftType
+        });
+      }
+      return parsedEntries;
+    }
+    function getSelectedOption() {
+      return document.getElementById("dropdownMenu").value;
+    }
+    function getSlotType() {
+      const val = document.getElementById("slotType").value;
+      return val === "NEW" ? "NEW SLOT" : "CANCEL SLOT";
+    }
+    function getAircraftReg() {
+      const regInput = document.getElementById("regInput").value.trim();
+      return regInput || "[UNKNOWN REG]";
+    }
+    function getCodePrefix(option) {
+      switch (option) {
+        case "P":
+        case "T":
+        case "K":
+          return "000";
+        case "J":
+          return "189";
+        case "D":
+          return "008";
+        default:
+          return "000";
+      }
+    }
+    function getOperationCode(option) {
+      return (option === "D") ? "LJ4" : "73H";
+    }
+    function getCurrentDate() {
+      const dateObj = new Date();
+      const day = String(dateObj.getDate()).padStart(2, '0');
+      const month = dateObj.toLocaleString('default', { month: 'short' }).toUpperCase();
+      return `${day}${month}`;
+    }
+
+    /******************************************
+     * UI FEEDBACK (ERROR / SUCCESS)
+     ******************************************/
+    function showError(message) {
+      const errorDiv = document.getElementById("errorMessage");
+      errorDiv.textContent = message;
+      errorDiv.style.display = "block";
+      setTimeout(() => {
+        errorDiv.style.display = "none";
+      }, 5000);
+    }
+    function showSuccess(message) {
+      const successDiv = document.getElementById("successMessage");
+      successDiv.textContent = message;
+      successDiv.style.display = "block";
+      setTimeout(() => {
+        successDiv.style.display = "none";
+      }, 5000);
+    }
+
+    /******************************************
+     * CORE: Format, Display, and Send
+     * (With a 5-second Windows 95 Loading Bar)
+     ******************************************/
+    function actualFormatSCRMessages() {
+      let inputText = document.getElementById("userInput").value;
+      let lines = inputText.trim().split("\n");
+      if (lines.length > 500) {
+        showError("Maximum of 500 flight entries allowed. Only the first 500 entries will be processed.");
+        lines = lines.slice(0, 500);
+        inputText = lines.join("\n");
+      }
+      const parsedEntries = parseInput(inputText);
+      if (parsedEntries.length === 0) {
+        showError("No valid flight entries found. Please check your input.");
+        return;
+      }
+      currentSlotType = getSlotType();
+      const option = getSelectedOption();
+      const codePrefix = getCodePrefix(option);
+      const reg = getAircraftReg();
+      const outputList = document.getElementById("outputList");
+      outputList.innerHTML = "";
+      const airportGroups = {};
+      parsedEntries.forEach((data) => {
+        const { from, to } = data;
+        if (!airportGroups[from]) {
+          airportGroups[from] = { airportCode: from, flights: [] };
+        }
+        airportGroups[from].flights.push({ type: 'departure', data });
+        if (!airportGroups[to]) {
+          airportGroups[to] = { airportCode: to, flights: [] };
+        }
+        airportGroups[to].flights.push({ type: 'arrival', data });
+      });
+      Object.keys(airportGroups).forEach(airportCode => {
+        const seen = new Set();
+        airportGroups[airportCode].flights = airportGroups[airportCode].flights.filter(flightEntry => {
+          const uniqueKey = flightEntry.type + flightEntry.data.flight;
+          if (seen.has(uniqueKey)) {
+            return false;
+          } else {
+            seen.add(uniqueKey);
+            return true;
+          }
+        });
+      });
+      Object.values(airportGroups).forEach((group, groupIndex) => {
+        const { airportCode, flights } = group;
+        const scrLines = [];
+        scrLines.push("SCR");
+        scrLines.push("W24");
+        scrLines.push(getCurrentDate());
+        scrLines.push(airportCode);
+        flights.forEach(flightEntry => {
+          const { type, data } = flightEntry;
+          const { flight, date, dayOfOperation, departureTime, arrivalTime, from, to, aircraftType } = data;
+          const flightType = currentSlotType === "CANCEL SLOT" ? "D" : "N";
+          let opCode;
+          if (aircraftType) {
+            if (option === "J") {
+              if (aircraftType === "7M8") {
+                opCode = "1977M8";
+              } else if (aircraftType === "738" || aircraftType === "73H") {
+                opCode = "18973H";
+              } else {
+                opCode = aircraftType;
+              }
+            } else {
+              opCode = (aircraftType === "738" ? "73H" : (aircraftType === "197" ? "7M8" : aircraftType));
+            }
+          } else {
+            opCode = getOperationCode(option);
+          }
+          if (type === 'departure') {
+            scrLines.push(option === "J"
+              ? `${flightType} ${flight} ${date}${date} ${dayOfOperation} ${opCode} ${departureTime}${to} ${option}`
+              : `${flightType} ${flight} ${date}${date} ${dayOfOperation} ${codePrefix}${opCode} ${departureTime}${to} ${option}`);
+          } else if (type === 'arrival') {
+            scrLines.push(option === "J"
+              ? `${flightType}${flight} ${date}${date} ${dayOfOperation} ${opCode} ${from}${arrivalTime} ${option}`
+              : `${flightType}${flight} ${date}${date} ${dayOfOperation} ${codePrefix}${opCode} ${from}${arrivalTime} ${option}`);
+          }
+        });
+        const siLine = (option === "D")
+          ? `SI ${currentSlotType} REQ ${airportCode} // LEARJET REG: ${reg}`
+          : `SI ${currentSlotType} REQ ${airportCode}`;
+        scrLines.push(siLine);
+        const scrOutput = scrLines.join("\n");
+        const scrGroup = document.createElement("div");
+        scrGroup.classList.add("scr-group");
+        const headingDiv = document.createElement("div");
+        headingDiv.classList.add("heading");
+        headingDiv.textContent = `SCR [${airportCode}]`;
+        const outputDiv = document.createElement("div");
+        outputDiv.classList.add("output-container");
+        outputDiv.innerHTML = `<pre>${scrOutput}</pre>`;
+        const sendButtonContainer = document.createElement("div");
+        sendButtonContainer.classList.add("send-button-container");
+        const sendBtn = document.createElement("button");
+        sendBtn.textContent = "Send Email";
+        sendBtn.dataset.airportCode = airportCode;
+        sendBtn.dataset.groupIndex = groupIndex;
+        sendButtonContainer.appendChild(sendBtn);
+        scrGroup.appendChild(headingDiv);
+        scrGroup.appendChild(outputDiv);
+        scrGroup.appendChild(sendButtonContainer);
+        scrGroup.dataset.scrOutput = scrOutput;
+        scrGroup.dataset.airportCode = airportCode;
+        outputList.appendChild(scrGroup);
+        const combinedFlightNumbers = flights.map(e => e.data.flight).join(", ");
+        const combinedDirections = flights.map(e => e.type).join("/");
+        const timestamp = new Date().toISOString().replace("T", " ").split(".")[0];
+        addLogEntry({
+          flightNumber: combinedFlightNumbers,
+          airport: airportCode,
+          direction: combinedDirections,
+          timestamp: timestamp,
+          scrMessage: scrOutput
+        });
+      });
+      showSuccess(`Formatted ${parsedEntries.length} flight(s) successfully.`);
+      attachSendButtonsListeners();
+    }
+    function formatSCRMessages() {
+      const loadingContainer = document.getElementById("loadingBarContainer");
+      loadingContainer.style.display = "block";
+      document.getElementById("formatBtn").disabled = true;
+      setTimeout(() => {
+        loadingContainer.style.display = "none";
+        document.getElementById("formatBtn").disabled = false;
+        actualFormatSCRMessages();
+      }, 5000);
+    }
+    function attachSendButtonsListeners() {
+      const sendButtons = document.querySelectorAll(".scr-group .send-button-container button");
+      sendButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const airportCode = button.dataset.airportCode;
+          const scrOutput = button.parentElement.parentElement.dataset.scrOutput;
+          sendEmail(airportCode, scrOutput);
+        });
+      });
+    }
+    function sendEmail(airportCode, scrOutput) {
+      const subject = `${currentSlotType} REQ ${airportCode}`;
+      const recipientEmail = getAirportEmail(airportCode);
+      const ccEmail = "slotdesk@ryanair.com";
+      const emailSubject = encodeURIComponent(subject);
+      const emailBody = encodeURIComponent(scrOutput);
+      const mailtoLink = `mailto:${recipientEmail}?cc=${encodeURIComponent(ccEmail)}&subject=${emailSubject}&body=${emailBody}`;
+      const link = document.createElement('a');
+      link.href = mailtoLink;
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showSuccess(`Email for ${airportCode} has been triggered.`);
+    }
+    function sendAllEmails() {
+      const outputList = document.getElementById("outputList");
+      const scrGroups = outputList.getElementsByClassName("scr-group");
+      if (scrGroups.length === 0) {
+        showError("No SCR messages to send. Please format first.");
+        return;
+      }
+      let emailsSent = 0;
+      const totalEmails = scrGroups.length;
+      Array.from(scrGroups).forEach((scrGroup, index) => {
+        const airportCode = scrGroup.dataset.airportCode;
+        const scrOutput = scrGroup.dataset.scrOutput;
+        const subject = `${currentSlotType} REQ ${airportCode}`;
+        const recipientEmail = getAirportEmail(airportCode);
+        const ccEmail = "slotdesk@ryanair.com";
+        const emailSubject = encodeURIComponent(subject);
+        const emailBody = encodeURIComponent(scrOutput);
+        const mailtoLink = `mailto:${recipientEmail}?cc=${encodeURIComponent(ccEmail)}&subject=${emailSubject}&body=${emailBody}`;
+        setTimeout(() => {
+          const link = document.createElement('a');
+          link.href = mailtoLink;
+          link.target = '_blank';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          emailsSent += 1;
+          if (emailsSent === totalEmails) {
+            showSuccess("All SCR emails have been triggered.");
+          }
+        }, index * 1000);
+      });
+    }
+    document.getElementById("formatBtn").addEventListener("click", formatSCRMessages);
+    document.getElementById("sendAllBtn").addEventListener("click", sendAllEmails);
+  </script>
+</body>
+</html>
