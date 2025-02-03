@@ -1,1 +1,2032 @@
-
+{
+    "ABZ": {
+        "airportName": "ABZ",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "+44 161 493 1851",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ACE": {
+        "airportName": "ACE",
+        "country": "Spain",
+        "email": "ace.gtr@aena.es; aceops@azulhandling.com; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ADB": {
+        "airportName": "ADB",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr",
+        "contactNumber": "+90 212 891 74 74",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "AEY": {
+        "airportName": "AEY",
+        "country": "Iceland",
+        "email": "scr@airportcoordination.com\u00a0",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "AGA": {
+        "airportName": "AGA",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "AGP": {
+        "airportName": "AGP",
+        "country": "Spain",
+        "email": "agp.gtr@aena.es; agpops@azulhandling.com; r4occ@ryanair.com ; r4gops@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "AJA": {
+        "airportName": "AJA",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ALC": {
+        "airportName": "ALC",
+        "country": "Spain",
+        "email": "alcops@azulhandling.com; alc.gtr@aena.es; r4occ@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "AMS": {
+        "airportName": "AMS",
+        "country": "Netherlands",
+        "email": "scr@slotcoordination.nl",
+        "contactNumber": "+31686806597",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "AOK": {
+        "airportName": "AOK",
+        "country": "Greece",
+        "email": "slots@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ARN": {
+        "airportName": "ARN",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ATH": {
+        "airportName": "ATH",
+        "country": "Greece",
+        "email": "busavops@skyserv.aero; busav@skyserv.aero",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "AYT": {
+        "airportName": "AYT",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr",
+        "contactNumber": "+902128917474",
+        "summerLevel": "3",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BCN": {
+        "airportName": "BCN",
+        "country": "Spain",
+        "email": "bcnops@azulhandling.com; bcn.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "0034 9329 71116",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BDS": {
+        "airportName": "BDS",
+        "country": "Italy",
+        "email": "slot@assoclearance.it;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BER": {
+        "airportName": "BER",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "0049 30 609158472\u00a0, 0049 30 609158470, 0049 30 6091 84112",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "BFS": {
+        "airportName": "BFS",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BGY": {
+        "airportName": "BGY",
+        "country": "Italy",
+        "email": "slot@assoclearance.it; rit.ops@bgyis.it; programmazione@sacbo.it; cos@sacbo.it; sromeo@sacbo.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BHX": {
+        "airportName": "BHX",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BIO": {
+        "airportName": "BIO",
+        "country": "Spain",
+        "email": "bio.gtr@aena.es; bioops@azulhandling.com; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BJV": {
+        "airportName": "BJV",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr",
+        "contactNumber": "+90 212 891 74 74",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "BLL": {
+        "airportName": "BLL",
+        "country": "Denmark",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "BLQ": {
+        "airportName": "BLQ",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BMA": {
+        "airportName": "BMA",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "BOH": {
+        "airportName": "BOH",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BRE": {
+        "airportName": "BRE",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100\u00a0",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BRI": {
+        "airportName": "BRI",
+        "country": "Italy",
+        "email": "slot@assoclearance.it;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BRS": {
+        "airportName": "BRS",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "BRU": {
+        "airportName": "BRU",
+        "country": "Belgium",
+        "email": "bruacxh@brucoord.org",
+        "contactNumber": "0032 2 753 57 91",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "BSL": {
+        "airportName": "BSL",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "BTS": {
+        "airportName": "BTS",
+        "country": "Slovakia",
+        "email": "slots@bts.aero",
+        "contactNumber": "00421 2 33 03 33 60 / 00421 2 33 03 33 12",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "BUD": {
+        "airportName": "BUD",
+        "country": "Hungary",
+        "email": "airport.ops@bud.hu; budcoord@budcoord.hu",
+        "contactNumber": "00361 293 4050.",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "BVA": {
+        "airportName": "BVA",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "CAG": {
+        "airportName": "CAG",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "CDG": {
+        "airportName": "CDG",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "CEQ": {
+        "airportName": "CEQ",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "CFU": {
+        "airportName": "CFU",
+        "country": "Greece",
+        "email": "slot@hsca.gr cfuops@skyserv.aero",
+        "contactNumber": "(+30) 26614 40147, (+30) 693 2277985",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "CGN": {
+        "airportName": "CGN",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 120.",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "CHQ": {
+        "airportName": "CHQ",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "CIA": {
+        "airportName": "CIA",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "CMF": {
+        "airportName": "CMF",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "CMN": {
+        "airportName": "CMN",
+        "country": "Morocco",
+        "email": "morslotscor@moroccanslots.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "CPH": {
+        "airportName": "CPH",
+        "country": "Denmark",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "\u00a0004532312477",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "CRL": {
+        "airportName": "CRL",
+        "country": "Belgium",
+        "email": "bruacxh@brucoord.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "CTA": {
+        "airportName": "CTA",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "DBV": {
+        "airportName": "DBV",
+        "country": "Croatia",
+        "email": "operations@airport-dubrovnik.hr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "DLM": {
+        "airportName": "DLM",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr",
+        "contactNumber": "+90 212 891 74 74",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "DRS": {
+        "airportName": "DRS",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "\u00a0+49 69 257 585 100\u00a0",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "DUB": {
+        "airportName": "DUB",
+        "country": "Ireland",
+        "email": "slots@acl-international.com",
+        "contactNumber": "+353 1 8145228",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "DUS": {
+        "airportName": "DUS",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100\u00a0",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "EAS": {
+        "airportName": "EAS",
+        "country": "Spain",
+        "email": "eas.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "EDI": {
+        "airportName": "EDI",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "EFL": {
+        "airportName": "EFL",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "EGS": {
+        "airportName": "EGS",
+        "country": "Iceland",
+        "email": "scr@airportcoordination.com\u00a0",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "EIN": {
+        "airportName": "EIN",
+        "country": "Netherlands",
+        "email": "operations@eindhovenairport.nl; scr@slotcoordination.nl",
+        "contactNumber": "0031 20 4059730, 0031686806597, +31402919823",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "EMA": {
+        "airportName": "EMA",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ERF": {
+        "airportName": "ERF",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ERH": {
+        "airportName": "ERH",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "ESB": {
+        "airportName": "ESB",
+        "country": "Turkey",
+        "email": "occ@flyserviceturkey.net; ferda@flyserviceturkey.com.tr; kerem@flyserviceturkey.net; gs@flyserviceturkey.com.tr; alexd@flyserviceturkey.com.tr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "ESU": {
+        "airportName": "ESU",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "ETM": {
+        "airportName": "ETM",
+        "country": "Israel",
+        "email": "Etmacxh@iaa.gov.il",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FAE": {
+        "airportName": "FAE",
+        "country": "Faroe Islands",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FAO": {
+        "airportName": "FAO",
+        "country": "Portugal",
+        "email": "slotcoordination@nav.pt; FAOKAXH@ana.pt",
+        "contactNumber": "+351 21 855 38 06/07",
+        "summerLevel": "3",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FCO": {
+        "airportName": "FCO",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FEZ": {
+        "airportName": "FEZ",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "FLR": {
+        "airportName": "FLR",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FMM": {
+        "airportName": "FMM",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FMO": {
+        "airportName": "FMO",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FNC": {
+        "airportName": "FNC",
+        "country": "Portugal",
+        "email": "slotcoordination@nav.pt; FNCKAXH@ANA.PT",
+        "contactNumber": "\u00a0+351 21 855 38 06/07",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "FRA": {
+        "airportName": "FRA",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "FSC": {
+        "airportName": "FSC",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "FUE": {
+        "airportName": "FUE",
+        "country": "Spain",
+        "email": "fue.gtr@aena.es; fueops@azulhandling.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GLA": {
+        "airportName": "GLA",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org ; GLADutyManagerTeam@glasgowairport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GOA": {
+        "airportName": "GOA",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GOH": {
+        "airportName": "GOH",
+        "country": "Greenland",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GOT": {
+        "airportName": "GOT",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GRO": {
+        "airportName": "GRO",
+        "country": "Spain",
+        "email": "groops@azulhandling.com; gro.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GRX": {
+        "airportName": "GRX",
+        "country": "Spain",
+        "email": "grx.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GRZ": {
+        "airportName": "GRZ",
+        "country": "Austria",
+        "email": "viecpxh@slots-austria.com; schedules@flughafen-graz.at",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "GVA": {
+        "airportName": "GVA",
+        "country": "Switzerland",
+        "email": "slot@slotcoordination.ch",
+        "contactNumber": "\u00a0+41 43 816 7766; +41 22 306 12 60",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "HAJ": {
+        "airportName": "HAJ",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100\u00a0",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "HAM": {
+        "airportName": "HAM",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "HEL": {
+        "airportName": "HEL",
+        "country": "Finland",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "HER": {
+        "airportName": "HER",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "0030 281 0301 908",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "IBZ": {
+        "airportName": "IBZ",
+        "country": "Spain",
+        "email": "ibzops@azulhandling.com; IBZ.GTR@AENA.ES; r4occ@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "INN": {
+        "airportName": "INN",
+        "country": "Austria",
+        "email": "viecpxh@slots-austria.com; slots@innsbruck-airport.com",
+        "contactNumber": "43-512-22525-303",
+        "summerLevel": "2",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "ISL": {
+        "airportName": "ISL",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr",
+        "contactNumber": "+90 212 891 74 74",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "IST": {
+        "airportName": "IST",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr",
+        "contactNumber": "+90 212 891 74 74",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "JAV": {
+        "airportName": "JAV",
+        "country": "Greenland",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "JKH": {
+        "airportName": "JKH",
+        "country": "Greece",
+        "email": "slots@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "JSI": {
+        "airportName": "JSI",
+        "country": "Greece",
+        "email": "slots@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "JTR": {
+        "airportName": "JTR",
+        "country": "Greece",
+        "email": "slot@hsca.gr\n",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "KEF": {
+        "airportName": "KEF",
+        "country": "Iceland",
+        "email": "scr@airportcoordination.com\u00a0",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "KGS": {
+        "airportName": "KGS",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "KIT": {
+        "airportName": "KIT",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "KLU": {
+        "airportName": "KLU",
+        "country": "Austria",
+        "email": "viecpxh@slots-austria.com; slot@airport-klagenfurt.at",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "KLX": {
+        "airportName": "KLX",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "KRK": {
+        "airportName": "KRK",
+        "country": "Poland",
+        "email": "ooh@pansa.pl; ops@krakowairport.pl; planning@krakowairport.pl; scr@pansa-coord.org",
+        "contactNumber": "+48 603 413 092",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "KRN": {
+        "airportName": "KRN",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "KUN": {
+        "airportName": "KUN",
+        "country": "Lithuania",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "LBA": {
+        "airportName": "LBA",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LBG": {
+        "airportName": "LBG",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LCA": {
+        "airportName": "LCA",
+        "country": "Cyprus",
+        "email": "cyprus-slots@dca.mcw.gov.cy",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LCG": {
+        "airportName": "LCG",
+        "country": "Spain",
+        "email": "lcg.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LCY": {
+        "airportName": "LCY",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org rampcontrol@lcy.co.uk",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LEI": {
+        "airportName": "LEI",
+        "country": "Spain",
+        "email": "lei@azulhandling.com; lei.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LEJ": {
+        "airportName": "LEJ",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "\u00a0+49 69 257 585 100\u00a0",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LGW": {
+        "airportName": "LGW",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LIL": {
+        "airportName": "LIL",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LIN": {
+        "airportName": "LIN",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LIS": {
+        "airportName": "LIS",
+        "country": "Portugal",
+        "email": "LISANXH@ana.pt; LISCSXH@ANA.PT; slotcoordination@nav.pt",
+        "contactNumber": "351218553806/7; +351218553100",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LMP": {
+        "airportName": "LMP",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LNZ": {
+        "airportName": "LNZ",
+        "country": "Austria",
+        "email": "viecpxh@slots-austria.com; slot@linz-airport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LPA": {
+        "airportName": "LPA",
+        "country": "Spain",
+        "email": "lpa.gtr@aena.es; lpaops@azulhandling.com; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LPL": {
+        "airportName": "LPL",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LTN": {
+        "airportName": "LTN",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LUX": {
+        "airportName": "LUX",
+        "country": "Luxembourg",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LXS": {
+        "airportName": "LXS",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "LYS": {
+        "airportName": "LYS",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "MAD": {
+        "airportName": "MAD",
+        "country": "Spain",
+        "email": "mad.gtr@aena.es; madops@azulhandling.com; r4occ@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "MAH": {
+        "airportName": "MAH",
+        "country": "Spain",
+        "email": "mahops@azulhandling.com; mah.gtr@aena.es; r4occ@ryanair.com;; mahcepo@aena.es",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "MAN": {
+        "airportName": "MAN",
+        "country": "United Kingdom",
+        "email": "Man.T25_occ@Swissport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "MLA": {
+        "airportName": "MLA",
+        "country": "Malta",
+        "email": "scm@maltairport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "MRS": {
+        "airportName": "MRS",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "MUC": {
+        "airportName": "MUC",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "+49 69 257 585 100",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "MXP": {
+        "airportName": "MXP",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "NAP": {
+        "airportName": "NAP",
+        "country": "Italy",
+        "email": "slot@assoclearance.it; opsnap@as-airport.it; adm@gesac.it; Apron_management@gesac.it; cds@gesac.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "NCE": {
+        "airportName": "NCE",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "NUE": {
+        "airportName": "NUE",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "NCL": {
+        "airportName": "NCL",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "NCY": {
+        "airportName": "NCY",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "NDR": {
+        "airportName": "NDR",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "NTE": {
+        "airportName": "NTE",
+        "country": "France",
+        "email": "scheduling@nantes.aeroport.fr; slots@cohor.org; CoordosExploit@nantes.aeroport.fr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "OLB": {
+        "airportName": "OLB",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "OPO": {
+        "airportName": "OPO",
+        "country": "Portugal",
+        "email": "OPOKAXH@ana.pt; slotcoordination@nav.pt",
+        "contactNumber": "\u00a0+351 21 855 38 06/07",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ORY": {
+        "airportName": "ORY",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "OSD": {
+        "airportName": "OSD",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "OSI": {
+        "airportName": "OSI",
+        "country": "Croatia",
+        "email": "NA@gmail.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "OSL": {
+        "airportName": "OSL",
+        "country": "Norway",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "OUD": {
+        "airportName": "OUD",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "OVD": {
+        "airportName": "OVD",
+        "country": "Spain",
+        "email": "ovd.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "OZZ": {
+        "airportName": "OZZ",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "PDL": {
+        "airportName": "PDL",
+        "country": "Portugal",
+        "email": "slotcoordination@nav.pt; PDLKAXH@ana.pt",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PFO": {
+        "airportName": "PFO",
+        "country": "Cyprus",
+        "email": "cyprus-slots@dca.mcw.gov.cy; PFO.Operations@swissport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PMI": {
+        "airportName": "PMI",
+        "country": "Spain",
+        "email": "pmiops@azulhandling.com; PMI.GTR@AENA.ES; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PMO": {
+        "airportName": "PMO",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PNA": {
+        "airportName": "PNA",
+        "country": "Spain",
+        "email": "pna.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PNL": {
+        "airportName": "PNL",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "POZ": {
+        "airportName": "POZ",
+        "country": "Poland",
+        "email": "slot@airport-poznan.com.pl; poland@acl-international.com; ops@airport-poznan.com.pl; slots@acl-international.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PRG": {
+        "airportName": "PRG",
+        "country": "Czech Republic",
+        "email": "PRGSP7X@prg.aero",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PRN": {
+        "airportName": "PRN",
+        "country": "Kosovo",
+        "email": "scheduleprn@limakkosovo.aero",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PSA": {
+        "airportName": "PSA",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "PUY": {
+        "airportName": "PUY",
+        "country": "Croatia",
+        "email": "operations@airport-pula.hr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "PVK": {
+        "airportName": "PVK",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "RAK": {
+        "airportName": "RAK",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "RBA": {
+        "airportName": "RBA",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "REU": {
+        "airportName": "REU",
+        "country": "Spain",
+        "email": "reuops@azulhandling.com; REU.gtr@aena.es; REUCecoa@aena.es",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "RHO": {
+        "airportName": "RHO",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "RIX": {
+        "airportName": "RIX",
+        "country": "Latvia",
+        "email": "slots@acl-international.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "RMI": {
+        "airportName": "RMI",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "RMU": {
+        "airportName": "RMU",
+        "country": "Spain",
+        "email": "RMU.GTR@AENA.ES; rmuops@azulhandling.com; ceopsmurcia@aena.es; r4occ@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "RNB": {
+        "airportName": "RNB",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "RTM": {
+        "airportName": "RTM",
+        "country": "Netherlands",
+        "email": "scr@slotcoordination.nl",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SAW": {
+        "airportName": "SAW",
+        "country": "Turkey",
+        "email": "tr.slot@dhmi.gov.tr; rampkule@sgairport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "SCN": {
+        "airportName": "SCN",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SDR": {
+        "airportName": "SDR",
+        "country": "Spain",
+        "email": "sdrops@azulhandling.com; sdr.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SFJ": {
+        "airportName": "SFJ",
+        "country": "Greenland",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SKG": {
+        "airportName": "SKG",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "SKP": {
+        "airportName": "SKP",
+        "country": "North Macedonia",
+        "email": "sc@airports.com.mk",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SOF": {
+        "airportName": "SOF",
+        "country": "Bulgaria\n",
+        "email": "slot.coordination@sofia-airport.bg; slot.coordination@sof-connect.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "SOU": {
+        "airportName": "SOU",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SPC": {
+        "airportName": "SPC",
+        "country": "Spain",
+        "email": "slots@aecfa.es; spc.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SPU": {
+        "airportName": "SPU",
+        "country": "Croatia",
+        "email": "schedules@split-airport.hr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "STN": {
+        "airportName": "STN",
+        "country": "United Kingdom",
+        "email": "lonacxh@acl-uk.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "STR": {
+        "airportName": "STR",
+        "country": "Germany",
+        "email": "fraztxh@fluko.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "SUF": {
+        "airportName": "SUF",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SVG": {
+        "airportName": "SVG",
+        "country": "Norway",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SVQ": {
+        "airportName": "SVQ",
+        "country": "Spain",
+        "email": "svqops@azulhandling.com; svq.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "SZG": {
+        "airportName": "SZG",
+        "country": "Austria",
+        "email": "viecpxh@slots-austria.com; szgzzxh@salzburg-airport.at",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TFN": {
+        "airportName": "TFN",
+        "country": "Spain",
+        "email": "tfn.gtr@aena.es; tfnops@azulhandling.com r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TFS": {
+        "airportName": "TFS",
+        "country": "Spain",
+        "email": "tfs.gtr@aena.es; tfsops@azulhandling.com; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TIA": {
+        "airportName": "TIA",
+        "country": "Albania",
+        "email": "info-trafficrights@acaa.gov.al",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "TLS": {
+        "airportName": "TLS",
+        "country": "France",
+        "email": "slots@cohor.org",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TLV": {
+        "airportName": "TLV",
+        "country": "Israel",
+        "email": "tlvacxh@iaa.gov.il; slotops@iaa.gov.il",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TNG": {
+        "airportName": "TNG",
+        "country": "Morocco",
+        "email": "Taoufiq Tounsi 00212661914245 tounsit@ryanair.com s.laabid@aviationcivile.gov.ma t.talibi@aviationcivile.gov.ma o.aitmadani@aviationcivile.gov.ma dta@aviationcivile.gov.ma w.amara@aviationcivile.gov.ma chaimaet@ryanair.com lawrensond@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "TOS": {
+        "airportName": "TOS",
+        "country": "Norway",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TRD": {
+        "airportName": "TRD",
+        "country": "Norway",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TRF": {
+        "airportName": "TRF",
+        "country": "Norway",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "TRN": {
+        "airportName": "TRN",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TSF": {
+        "airportName": "TSF",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "TTU": {
+        "airportName": "TTU",
+        "country": "Morocco",
+        "email": "tounsit@ryanair.com; s.laabid@aviationcivile.gov.ma; t.talibi@aviationcivile.gov.ma; o.aitmadani@aviationcivile.gov.ma; dta@aviationcivile.gov.ma; w.amara@aviationcivile.gov.ma; chaimaet@ryanair.com; lawrensond@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "0",
+        "winterLevel": "0",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "VBY": {
+        "airportName": "VBY",
+        "country": "Sweden",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "VCE": {
+        "airportName": "VCE",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "VIE": {
+        "airportName": "VIE",
+        "country": "Austria",
+        "email": "viecpxh@slots-austria.com; airoc@viennaairport.com; opscoo@viennaairport.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "YES",
+        "ppr": "YES"
+    },
+    "VLC": {
+        "airportName": "VLC",
+        "country": "Spain",
+        "email": "vlc.gtr@aena.es; vlcops@azulhandling.com; r4occ@ryanair.com;",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "VNO": {
+        "airportName": "VNO",
+        "country": "Lithuania",
+        "email": "scr@airportcoordination.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "YES"
+    },
+    "VRN": {
+        "airportName": "VRN",
+        "country": "Italy",
+        "email": "slot@assoclearance.it",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "WAW": {
+        "airportName": "WAW",
+        "country": "Poland",
+        "email": "slots@acl-international.com; waw-schedule@polish.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "XRY": {
+        "airportName": "XRY",
+        "country": "Spain",
+        "email": "xryops@azulhandling.com; xry.gtr@aena.es; r4occ@ryanair.com",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ZAD": {
+        "airportName": "ZAD",
+        "country": "Croatia",
+        "email": "schedules@zadar-airport.hr; groundops@zadar-airport.hr",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "ZAG": {
+        "airportName": "ZAG",
+        "country": "Croatia",
+        "email": "operations@mzlz-zagreb-airport.hr; scheduling@mzlz-zagreb-airport.hr; Operations@zag.aero; scheduling@zag.aero; koordinatori@zag.aero",
+        "contactNumber": "Not Available",
+        "summerLevel": "2",
+        "winterLevel": "2",
+        "gcr": "YES",
+        "ppr": "NO"
+    },
+    "ZRH": {
+        "airportName": "ZRH",
+        "country": "Switzerland",
+        "email": "slot@slotcoordination.ch",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "3",
+        "gcr": "NO",
+        "ppr": "NO"
+    },
+    "ZTH": {
+        "airportName": "ZTH",
+        "country": "Greece",
+        "email": "slot@hsca.gr",
+        "contactNumber": "Not Available",
+        "summerLevel": "3",
+        "winterLevel": "0",
+        "gcr": "YES",
+        "ppr": "NO"
+    }
+}
