@@ -2,36 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GCR Formatter - Windows 95 Style</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Realtime Airport Database</title>
   <style>
-    /* ===============================================
-       WINDOWS 95 BASE STYLES
-    =============================================== */
-    /* Use classic system fonts (MS Sans Serif, Tahoma) */
+    /* Base Windows 95 styling */
     body {
+      background-color: #008080; /* Classic teal desktop background */
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      color: black;
       margin: 0;
       padding: 0;
-      background-color: #008080;  /* Retro teal desktop */
-      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
-      color: black;
-      text-align: center;
     }
-    a {
-      color: black;
-      text-decoration: none;
-    }
-    a:hover {
-      color: #0000cd;
-    }
-
-    /* ===============================================
-       NAVIGATION BAR
-    =============================================== */
+    
+    /* Navigation Bar – styled like a menu bar */
     nav {
       background-color: #c0c0c0;
-      border-bottom: 2px solid #7d7d7d;
-      padding: 4px 8px;
+      border: 2px outset #fff;
+      padding: 4px 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -41,417 +29,499 @@
       margin: 0;
       padding: 0;
       display: flex;
-      gap: 4px;
     }
     nav li {
-      margin: 0;
+      margin-right: 10px;
     }
     nav a {
-      padding: 2px 6px;
-      border: 2px outset #fff;
-      font-size: 12px;
-      text-transform: uppercase;
       color: black;
+      text-decoration: none;
     }
     nav a:hover {
-      border: 2px inset #7d7d7d;
+      text-decoration: underline;
     }
-    .theme-switch {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 12px;
-    }
-    /* Using a button for toggling dark mode */
-    .theme-switch button {
-      background-color: #c0c0c0;
-      border: 2px outset #fff;
-      padding: 2px 6px;
-      cursor: pointer;
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-    .theme-switch button:hover {
-      border: 2px inset #7d7d7d;
-    }
-
-    /* ===============================================
-       MAIN CONTAINER (Windows 95 Window)
-    =============================================== */
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background-color: #ffffff;
-      border: 2px solid #7d7d7d;
-      box-shadow: 2px 2px 0 #fff;
-    }
-    /* Title bar to mimic classic Windows 95 windows */
-    .title-bar {
-      background: linear-gradient(to right, #000080, #0000cd);
-      color: white;
-      padding: 2px 6px;
-      font-size: 14px;
-      font-weight: bold;
-      border-bottom: 2px solid #7d7d7d;
-      text-align: left;
-    }
-    .window-content {
-      padding: 8px;
-      text-align: left;
-    }
-    /* Hide the default H1 (using the title bar instead) */
-    h1 {
-      display: none;
-    }
-
-    /* ===============================================
-       INPUTS, TEXTAREAS, & BUTTONS (Retro Look)
-    =============================================== */
-    textarea, input, select {
-      width: 100%;
-      padding: 4px;
-      margin: 4px 0 8px;
-      border: 2px inset #7d7d7d;
-      font-size: 12px;
-      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
-    }
-    textarea:focus, input:focus, select:focus {
-      outline: none;
-      border-color: #007BFF;
-      box-shadow: 0 0 4px #007BFF;
-    }
+    
+    /* Windows 95–style buttons */
     button {
-      padding: 4px 8px;
-      margin: 4px 4px 4px 0;
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
       background-color: #c0c0c0;
       border: 2px outset #fff;
-      font-size: 12px;
-      font-weight: bold;
-      text-transform: uppercase;
+      padding: 2px 8px;
+      margin: 2px;
       cursor: pointer;
     }
-    button:hover {
-      border: 2px inset #7d7d7d;
+    button:active {
+      border: 2px inset #fff;
     }
-
-    /* ===============================================
-       OUTPUT CONTAINER
-    =============================================== */
-    .output-container {
-      margin-top: 12px;
-      padding: 8px;
-      background-color: #ffffff;
-      border: 2px dashed #7d7d7d;
-      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
-      font-size: 12px;
-      color: #000080;
-      white-space: pre-wrap;
-      display: none;
-      position: relative;
-    }
-    .output-container .heading {
-      font-weight: bold;
-      margin-bottom: 4px;
-      font-size: 12px;
-    }
-    .copy-button, .download-button {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      padding: 2px 4px;
-      background-color: #0000cd;
+    
+    /* Main container (simulating a window) */
+    .container {
+      background-color: #d4d0c8;
       border: 2px outset #fff;
-      color: white;
+      padding: 10px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 600px;
+    }
+    
+    /* Input fields styled with an inset (sunken) look */
+    input, textarea {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      background-color: #fff;
+      border: 2px inset;
+      padding: 2px;
+      margin: 4px 0;
+      width: 95%;
+    }
+    textarea {
+      resize: vertical;
+    }
+    
+    /* Headings */
+    h1 {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 16px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    h2 {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 14px;
+      margin: 8px 0;
+    }
+    
+    /* Form labels for proper spacing */
+    #airportForm label {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    
+    /* Action buttons container */
+    .action-buttons {
+      text-align: center;
+      margin: 10px 0;
+    }
+    
+    /* Result display styling */
+    .result-header {
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    /* Level boxes container */
+    .levels {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .level-box {
+      text-align: center;
+      margin: 0 10px;
+    }
+    .level-title {
+      font-weight: bold;
+      margin-bottom: 2px;
       font-size: 10px;
-      cursor: pointer;
     }
-    .copy-button:hover, .download-button:hover {
-      border: 2px inset #7d7d7d;
+    .level-value span {
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      font-size: 12px;
+      border: 1px solid black;
     }
-
-    /* ===============================================
-       ERROR MESSAGES & TOAST
-    =============================================== */
-    .error-message {
-      color: #ff0000;
-      font-size: 10px;
-      display: none;
-      margin-bottom: 8px;
+    
+    /* Additional Information container */
+    .airport-additional-info {
+      margin-top: 15px;
+      text-align: left;
     }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #333;
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 4px;
-      opacity: 0.9;
-      transition: opacity 0.5s ease;
-      z-index: 1000;
-      font-size: 10px;
+    .airport-info-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 12px;
     }
-
-    /* ===============================================
-       FOOTER
-    =============================================== */
+    .airport-info-content {
+      margin: 0;
+    }
+    
+    /* Footer */
     footer {
-      margin-top: 40px;
-      font-size: 10px;
-      color: #666;
-      padding-bottom: 20px;
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      color: black;
+      text-align: center;
+      margin-top: 20px;
     }
-
-    /* ===============================================
-       RESPONSIVE ADJUSTMENTS
-    =============================================== */
-    @media (max-width: 600px) {
-      .container {
-        width: 90%;
-      }
-      button {
-        width: 100%;
-        margin-bottom: 10px;
-      }
+    
+    /* Optional Dark Mode */
+    body.dark-mode {
+      background-color: #000080; /* Dark navy background */
+      color: white;
+    }
+    body.dark-mode nav {
+      background-color: #808080;
+      border: 2px outset #aaa;
+    }
+    body.dark-mode nav a {
+      color: white;
+    }
+    body.dark-mode .container {
+      background-color: #505050;
+      border: 2px outset #aaa;
+    }
+    body.dark-mode input, 
+    body.dark-mode textarea {
+      background-color: #fff;
+      border: 2px inset #aaa;
+      color: black;
+    }
+    body.dark-mode button {
+      background-color: #808080;
+      border: 2px outset #aaa;
+      color: white;
     }
   </style>
 </head>
-<body>
-  <!-- NAVIGATION BAR -->
+<body class="light-mode">
   <nav>
     <div class="nav-left">
       <ul>
-        <li><a href="index.html">Single Flight</a></li>
-        <li><a href="multiflight.html">Multi Flight</a></li>
-        <li><a href="scrchangerequest.html">SCR Change</a></li>
-        <li><a href="historic-log.html">Historic Log</a></li>
-        <li><a href="airport-search.html">Airport DB</a></li>
-        <li><a href="gcrformat.html">GCR Formatter</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">LOG ISSUES</a></li>
       </ul>
     </div>
-    <div class="nav-right theme-switch">
+    <div class="nav-right">
       <button id="themeToggleBtn">Dark Mode</button>
     </div>
   </nav>
 
-  <!-- MAIN CONTAINER (Windows 95 Styled Window) -->
+  <h1>Airport Database</h1>
+
   <div class="container">
-    <div class="title-bar">GCR Formatter</div>
-    <div class="window-content">
-      <!-- Hidden H1 (for accessibility) -->
-      <h1>GCR Formatter</h1>
+    <!-- Search Section -->
+    <h2>Search for an Airport</h2>
+    <!-- The input is limited to 3 characters and forced to uppercase -->
+    <input type="text" id="airportCode" placeholder="Enter Airport Code (e.g., ABZ)" maxlength="3" style="text-transform: uppercase;" />
+    <button id="fetchAirportBtn">Fetch Airport Data</button>
 
-      <!-- User Input Section -->
-      <textarea 
-        id="userInput" 
-        aria-label="Flight Input" 
-        placeholder="Enter input in the format: FLIGHT_NUM DEPARTURE_IATA ARRIVAL_IATA DATE DEPARTURE_TIME ARRIVAL_TIME REG"
-      ></textarea>
-      <span id="userInputError" class="error-message"></span>
+    <h2>Result:</h2>
+    <div id="responseOutput">No data yet...</div>
 
-      <!-- Slot Code Input -->
-      <input 
-        type="text" 
-        id="slotCode" 
-        aria-label="Slot Code" 
-        placeholder="Enter Slot Code (e.g., 008L45)"
-      >
-      <span id="slotCodeError" class="error-message"></span>
-      
-      <!-- Slot Type Selection -->
-      <label for="slotType">Slot Type:</label>
-      <select id="slotType">
-        <option value="NEW">New Slot</option>
-        <option value="CHG">Modified Slot</option>
-        <option value="CNL">Cancelled Slot</option>
-      </select>
+    <!-- Action Buttons for Add/Edit -->
+    <h2>Add or Edit Airport</h2>
+    <div class="action-buttons">
+      <button id="addAirportBtn">Add New Airport</button>
+      <button id="editAirportBtn">Edit Existing Airport</button>
+    </div>
 
-      <!-- Disclaimer -->
-      <div class="disclaimer" style="color: #ff0000; font-weight: bold; text-align: center; margin-bottom: 15px; font-size: 12px;">
-        DISCLAIMER: PLEASE CHECK DETAILS ARE CORRECT BEFORE SENDING
-      </div>
-      
-      <!-- Action Buttons -->
-      <div>
-        <button onclick="formatGcr()">Format GCR</button>
-        <button onclick="downloadGcr('gcrOutput')">Download GCR</button>
-      </div>
+    <div id="airportForm" style="display: none;">
+      <h2 id="formTitle">Add/Edit Airport</h2>
+      <label for="editAirportCode">Airport Code:</label>
+      <input type="text" id="editAirportCode" placeholder="e.g., ABZ" />
 
-      <!-- GCR Output Container -->
-      <div id="gcrContainer" class="output-container">
-        <button class="copy-button" onclick="copyToClipboard('gcrOutput')">Copy</button>
-        <div class="heading">GCR:</div>
-        <pre id="gcrOutput"></pre>
-      </div>
+      <label for="country">Country:</label>
+      <input type="text" id="country" placeholder="e.g., United Kingdom" />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="e.g., info@airport.com" />
+
+      <label for="contactNumber">Contact Number:</label>
+      <input type="text" id="contactNumber" placeholder="e.g., +44 123 456 789" />
+
+      <label for="gcr">GCR:</label>
+      <input type="text" id="gcr" placeholder="e.g., YES or NO" />
+
+      <label for="ppr">PPR:</label>
+      <input type="text" id="ppr" placeholder="e.g., YES or NO" />
+
+      <label for="summerLevel">Summer Level:</label>
+      <input type="text" id="summerLevel" placeholder="e.g., 2" />
+
+      <label for="winterLevel">Winter Level:</label>
+      <input type="text" id="winterLevel" placeholder="e.g., 2" />
+
+      <label for="additionalInformation">Additional Information:</label>
+      <textarea id="additionalInformation" placeholder="Enter any additional information"></textarea>
+
+      <button id="saveAirportBtn">Save Airport Data</button>
     </div>
   </div>
 
   <footer>© 2024 Realtime Airport Database - K.B</footer>
 
-  <script>
-    /************************************************
-     THEME TOGGLE
-    ************************************************/
+  <!-- Firebase & JS Logic -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+    import { getDatabase, ref, get, set, child } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-database.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIefgXMj...",
+      authDomain: "airportsearch-d151a.firebaseapp.com",
+      databaseURL: "https://airportsearch-d151a-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "airportsearch-d151a",
+      storageBucket: "airportsearch-d151a.appspot.com",
+      messagingSenderId: "686237913756",
+      appId: "1:686237913756:web:adb3b64de1dbc0fef39359"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // DOM Elements
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const body = document.body;
+    const airportCodeInput = document.getElementById('airportCode');
+    const fetchAirportBtn = document.getElementById('fetchAirportBtn');
+    const responseOutput = document.getElementById('responseOutput');
+    const addAirportBtn = document.getElementById('addAirportBtn');
+    const editAirportBtn = document.getElementById('editAirportBtn');
+    const airportForm = document.getElementById('airportForm');
+    const formTitle = document.getElementById('formTitle');
+    const editAirportCode = document.getElementById('editAirportCode');
+    const country = document.getElementById('country');
+    const email = document.getElementById('email');
+    const contactNumber = document.getElementById('contactNumber');
+    const gcr = document.getElementById('gcr');
+    const ppr = document.getElementById('ppr');
+    const summerLevel = document.getElementById('summerLevel');
+    const winterLevel = document.getElementById('winterLevel');
+    const additionalInformation = document.getElementById('additionalInformation');
+    const saveAirportBtn = document.getElementById('saveAirportBtn');
+
+    let isEditing = false;
+    let currentAirportData = null;
+
+    // Helper functions to return box HTML based on value.
+    function getNumericBox(value) {
+      let bg = "";
+      if (value === "3") {
+        bg = "red";
+      } else if (value === "2") {
+        bg = "orange";
+      }
+      // For "1" or any other value, no background color.
+      return `<span style="width:40px; height:20px; line-height:20px; display:inline-block; text-align:center; border:1px solid black; ${bg ? 'background-color:' + bg + ';' : ''}">${value}</span>`;
+    }
+
+    function getYesNoBox(value) {
+      let bg = "";
+      if (value.toUpperCase() === "YES") {
+        bg = "green";
+      }
+      // For "NO" or any other value, no background color.
+      return `<span style="width:40px; height:20px; line-height:20px; display:inline-block; text-align:center; border:1px solid black; ${bg ? 'background-color:' + bg + ';' : ''}">${value}</span>`;
+    }
+
+    /****************************************
+     THEME LOGIC
+    ****************************************/
     const savedTheme = localStorage.getItem('theme') || 'light';
-    function applyTheme(theme) {
-      if (theme === 'dark') {
-        body.classList.add('dark-mode');
-        themeToggleBtn.textContent = 'Light Mode';
-      } else {
+    if (savedTheme === 'dark') {
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+      themeToggleBtn.textContent = 'Light Mode';
+    } else {
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
+      themeToggleBtn.textContent = 'Dark Mode';
+    }
+
+    function toggleTheme() {
+      if (body.classList.contains('dark-mode')) {
         body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        localStorage.setItem('theme', 'light');
         themeToggleBtn.textContent = 'Dark Mode';
+      } else {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.textContent = 'Light Mode';
       }
     }
-    applyTheme(savedTheme);
-    themeToggleBtn.addEventListener('click', () => {
-      if (body.classList.contains('dark-mode')) {
-        localStorage.setItem('theme', 'light');
-        applyTheme('light');
-      } else {
-        localStorage.setItem('theme', 'dark');
-        applyTheme('dark');
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
+    /****************************************
+     FORCE UPPERCASE & LIMIT INPUT
+    ****************************************/
+    // Convert user input to uppercase as they type.
+    airportCodeInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+
+    // Trigger fetch on pressing the Enter key.
+    airportCodeInput.addEventListener('keyup', function(event) {
+      if (event.key === "Enter") {
+        fetchAirportData();
       }
     });
 
-    /************************************************
-     CORE LOGIC
-    ************************************************/
-    const iataToIcao = {
-      STN: "EGSS",
-      PMI: "LEPA",
-      VIE: "LOWW",
-      CPH: "EKCH",
-      BGY: "LIME",
-      BER: "EDDB",
-      SKG: "LGTS",
-      TIA: "LATI",
-      FRA: "EDDF",
-      HHN: "EDDF",
-      HAM: "EDDH",
-      CGN: "EDDK",
-      CIA: "LIRA",
-      AMS: "EHAM",
-      EIN: "EHEH",
-      AYT: "LTAI",
-      RHO: "LGRP",
-      KGS: "LGKO",
-      JTR: "LGSR",
-      ESB: "LTAC",
-      ATH: "LGAV",
-      JSI: "LGSK",
-      ZTH: "LGZA",
-      CFU: "LGKR",
-      KSO: "LGKA",
-      BRU: "EBBR",
-      // add more if needed
-    };
-    function getIcaoCode(iataCode) {
-      return iataToIcao[iataCode.toUpperCase()] || iataCode.toUpperCase();
+    /****************************************
+     FETCH AIRPORT DATA
+    ****************************************/
+    async function fetchAirportData() {
+      const code = airportCodeInput.value.trim().toUpperCase();
+      if (!code) {
+        responseOutput.textContent = "Please enter a valid airport code.";
+        return;
+      }
+      try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, code));
+        if (!snapshot.exists()) {
+          responseOutput.textContent = `No matching airport found for code: ${code}`;
+          currentAirportData = null;
+          return;
+        }
+        const airport = snapshot.val();
+        currentAirportData = { ...airport, code };
+        responseOutput.innerHTML = `
+          <div class="result-header">
+            <strong>${airport.airportName}</strong> – ${airport.country}
+          </div>
+          <div class="levels">
+            <div class="level-box">
+              <div class="level-title">Summer</div>
+              <div class="level-value">${getNumericBox(airport.summerLevel || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">Winter</div>
+              <div class="level-value">${getNumericBox(airport.winterLevel || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">GCR</div>
+              <div class="level-value">${getYesNoBox(airport.gcr || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">PPR</div>
+              <div class="level-value">${getYesNoBox(airport.ppr || '-')}</div>
+            </div>
+          </div>
+          <div class="airport-additional-info">
+            <div class="airport-info-title">Additional Information</div>
+            <p class="airport-info-content">
+              ${airport.additionalInformation || 'No additional information available.'}
+            </p>
+          </div>
+        `;
+      } catch (error) {
+        responseOutput.textContent = "Error: " + error.message;
+        currentAirportData = null;
+      }
     }
-    function parseInput(input) {
-      const parts = input.trim().split(/\s+/);
-      const userInputError = document.getElementById("userInputError");
-      const slotCodeError = document.getElementById("slotCodeError");
-      userInputError.textContent = "";
-      userInputError.style.display = "none";
-      slotCodeError.textContent = "";
-      slotCodeError.style.display = "none";
-      if (parts.length !== 7) {
-        userInputError.textContent = "Input must have exactly 7 parts.";
-        userInputError.style.display = "block";
-        return null;
+    fetchAirportBtn.addEventListener('click', fetchAirportData);
+
+    /****************************************
+     ADD / EDIT AIRPORT
+    ****************************************/
+    addAirportBtn.addEventListener('click', () => {
+      isEditing = false;
+      formTitle.textContent = "Add New Airport";
+      clearForm();
+      airportForm.style.display = 'block';
+    });
+    editAirportBtn.addEventListener('click', () => {
+      if (!currentAirportData) {
+        alert("Please search and fetch an airport first before editing.");
+        return;
       }
-      const [flight, from, to, fullDate, departureTime, arrivalTime, reg] = parts;
-      const iataRegex = /^[A-Z]{3}$/;
-      if (!iataRegex.test(from.toUpperCase()) || !iataRegex.test(to.toUpperCase())) {
-        userInputError.textContent = "Departure/Arrival IATA codes must be three uppercase letters.";
-        userInputError.style.display = "block";
-        return null;
+      isEditing = true;
+      formTitle.textContent = "Edit Existing Airport";
+      populateForm(currentAirportData);
+      airportForm.style.display = 'block';
+    });
+
+    function clearForm() {
+      editAirportCode.value = '';
+      country.value = '';
+      email.value = '';
+      contactNumber.value = '';
+      gcr.value = '';
+      ppr.value = '';
+      summerLevel.value = '';
+      winterLevel.value = '';
+      additionalInformation.value = '';
+    }
+    function populateForm(airport) {
+      editAirportCode.value = airport.airportName || '';
+      country.value = airport.country || '';
+      email.value = airport.email || '';
+      contactNumber.value = airport.contactNumber || '';
+      gcr.value = airport.gcr || '';
+      ppr.value = airport.ppr || '';
+      summerLevel.value = airport.summerLevel || '';
+      winterLevel.value = airport.winterLevel || '';
+      additionalInformation.value = airport.additionalInformation || '';
+    }
+
+    async function saveAirportData() {
+      const code = editAirportCode.value.trim().toUpperCase();
+      if (!code) {
+        alert("Please enter an airport code.");
+        return;
       }
-      const dateRegex = /^\d{2}[A-Z]{3}\d{4}$/;
-      if (!dateRegex.test(fullDate.toUpperCase())) {
-        userInputError.textContent = "Date must be DDMMMYYYY (e.g., 29DEC2025).";
-        userInputError.style.display = "block";
-        return null;
-      }
-      const timeRegex = /^\d{4}$/;
-      if (!timeRegex.test(departureTime) || !timeRegex.test(arrivalTime)) {
-        userInputError.textContent = "Times must be HHMM (e.g., 1230).";
-        userInputError.style.display = "block";
-        return null;
-      }
-      const slotCodeInput = document.getElementById("slotCode").value.trim();
-      const slotCodeRegex = /^[A-Z0-9]{6}$/;
-      if (!slotCodeRegex.test(slotCodeInput.toUpperCase())) {
-        slotCodeError.textContent = "Slot Code must be 6 alphanumeric chars (e.g., 008L45).";
-        slotCodeError.style.display = "block";
-        return null;
-      }
-      return {
-        flight: flight.toUpperCase(),
-        from: from.toUpperCase(),
-        to: to.toUpperCase(),
-        date: fullDate.slice(0, 5).toUpperCase(),
-        fullDate: fullDate.toUpperCase(),
-        departureTime,
-        arrivalTime,
-        reg: reg.toUpperCase(),
-        slotCode: slotCodeInput.toUpperCase(),
+      const airportData = {
+        airportName: code,
+        country: country.value.trim(),
+        email: email.value.trim(),
+        contactNumber: contactNumber.value.trim(),
+        gcr: gcr.value.trim(),
+        ppr: ppr.value.trim(),
+        summerLevel: summerLevel.value.trim(),
+        winterLevel: winterLevel.value.trim(),
+        additionalInformation: additionalInformation.value.trim()
       };
+      try {
+        const dbRef = ref(db, code);
+        await set(dbRef, airportData);
+        alert(`Airport data for ${code} has been saved successfully.`);
+        airportForm.style.display = 'none';
+        if (!isEditing) {
+          currentAirportData = null;
+        } else {
+          currentAirportData = { ...airportData, code };
+          responseOutput.innerHTML = `
+            <div class="result-header">
+              <strong>${airportData.airportName}</strong> – ${airportData.country}
+            </div>
+            <div class="levels">
+              <div class="level-box">
+                <div class="level-title">Summer</div>
+                <div class="level-value">${getNumericBox(airportData.summerLevel || '-')}</div>
+              </div>
+              <div class="level-box">
+                <div class="level-title">Winter</div>
+                <div class="level-value">${getNumericBox(airportData.winterLevel || '-')}</div>
+              </div>
+              <div class="level-box">
+                <div class="level-title">GCR</div>
+                <div class="level-value">${getYesNoBox(airportData.gcr || '-')}</div>
+              </div>
+              <div class="level-box">
+                <div class="level-title">PPR</div>
+                <div class="level-value">${getYesNoBox(airportData.ppr || '-')}</div>
+              </div>
+            </div>
+            <div class="airport-additional-info">
+              <div class="airport-info-title">Additional Information</div>
+              <p class="airport-info-content">
+                ${airportData.additionalInformation || 'No additional information available.'}
+              </p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        alert("Error saving data: " + error.message);
+      }
     }
-    function getSlotType() {
-      const slotTypeSelect = document.getElementById("slotType");
-      return slotTypeSelect ? slotTypeSelect.value : "NEW";
-    }
-    function buildGcr(data) {
-      const { reg, date, slotCode, departureTime, arrivalTime, from, to } = data;
-      const departureIcao = getIcaoCode(from);
-      const arrivalIcao = getIcaoCode(to);
-      const slotType = getSlotType();
-      // Constructing a sample GCR format (adjust as needed)
-      const flightLine2 = `N ${reg} ${date} ${slotCode} ${departureTime}${arrivalIcao} D`;
-      const flightLine1 = `N${reg} ${date} ${slotCode} ${arrivalIcao}${arrivalTime} D`;
-      return `GCR
-/REG
-${departureIcao}
-${flightLine2}
-${flightLine1}
-GI ${slotType} REQ ${departureIcao} PPR / SLOT ID NUMBERS PLS`;
-    }
-    function formatGcr() {
-      const data = parseInput(document.getElementById("userInput").value);
-      if (!data) return;
-      const gcrOutputStr = buildGcr(data);
-      document.getElementById("gcrOutput").textContent = gcrOutputStr;
-      document.getElementById("gcrContainer").style.display = "block";
-    }
-    function copyToClipboard(elementId) {
-      const text = document.getElementById(elementId).textContent;
-      navigator.clipboard.writeText(text)
-        .then(() => showToast('Copied to clipboard!'))
-        .catch(err => showToast('Failed to copy.'));
-    }
-    function downloadGcr(elementId) {
-      const text = document.getElementById(elementId).textContent;
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `GCR_${new Date().toISOString().slice(0,10)}.txt`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-    function showToast(message) {
-      const toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
+    saveAirportBtn.addEventListener('click', saveAirportData);
   </script>
 </body>
 </html>
