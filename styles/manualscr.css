@@ -1,1 +1,319 @@
-
+ /* ===============================================
+       WINDOWS 95 BASE STYLES
+    =============================================== */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #008080; /* Classic Windows 95 teal desktop */
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+      color: black;
+    }
+    a {
+      color: black;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #0000cd;
+    }
+    
+    /* ===============================================
+       NAVIGATION BAR
+    =============================================== */
+    nav {
+      background-color: #c0c0c0;
+      padding: 4px 8px;
+      border-bottom: 2px solid #7d7d7d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 4px;
+    }
+    nav li {
+      margin: 0;
+      padding: 0;
+    }
+    nav a {
+      padding: 2px 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      border: 2px outset #fff;
+    }
+    nav a:hover {
+      border: 2px inset #7d7d7d;
+    }
+    .theme-switch {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .theme-switch input {
+      width: 16px;
+      height: 16px;
+      /* Using default checkbox style for a retro feel */
+    }
+    
+    /* ===============================================
+       MAIN CONTAINER (Windows 95 Window)
+    =============================================== */
+    .container {
+      width: 800px;
+      margin: 40px auto;
+      background-color: #fff;
+      border: 2px solid #7d7d7d;
+      box-shadow: 2px 2px 0 #fff;
+    }
+    /* Create a title bar as seen in classic dialogs */
+    .title-bar {
+      background: linear-gradient(to right, #000080, #0000cd);
+      color: white;
+      padding: 2px 6px;
+      font-size: 14px;
+      font-weight: bold;
+      border-bottom: 2px solid #7d7d7d;
+    }
+    .window-content {
+      padding: 8px;
+    }
+    /* Hide the original h1 – we use the title bar instead */
+    .container h1 {
+      display: none;
+    }
+    
+    /* ===============================================
+       BUTTON GROUP & Back to Top
+    =============================================== */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+    .btn-group button {
+      padding: 2px 8px;
+      background-color: #c0c0c0;
+      border: 2px outset #fff;
+      font-size: 12px;
+      text-transform: uppercase;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn-group button:hover {
+      border: 2px inset #7d7d7d;
+    }
+    #backToTop {
+      display: none;
+      padding: 2px 8px;
+      background-color: #c0c0c0;
+      border: 2px outset #fff;
+      font-size: 12px;
+      font-weight: bold;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      cursor: pointer;
+    }
+    #backToTop:hover {
+      border: 2px inset #7d7d7d;
+    }
+    
+    /* ===============================================
+       FORM & TEMPLATE STYLES (NEW/CANCEL/CHANGE)
+    =============================================== */
+    .scr-form,
+    .change-scr-container {
+      margin-top: 20px;
+      padding: 4px;
+      border: 2px dashed #7d7d7d;
+      background-color: #fff;
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+      font-size: 12px;
+      position: relative;
+    }
+    .scr-form h3,
+    .change-scr-container h3 {
+      margin: 0;
+      margin-bottom: 4px;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #000080;
+    }
+    .remove-btn,
+    .changeFormRemoveBtn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background-color: #ff5555;
+      border: 2px outset #fff;
+      color: white;
+      font-size: 10px;
+      padding: 2px 4px;
+      cursor: pointer;
+    }
+    .remove-btn:hover,
+    .changeFormRemoveBtn:hover {
+      border: 2px inset #7d7d7d;
+      background-color: #cc0000;
+    }
+    .form-group,
+    .change-form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .form-group label,
+    .change-form-group label {
+      font-size: 10px;
+      font-weight: bold;
+    }
+    .form-group input,
+    .form-group select,
+    .change-form-group input,
+    .change-form-group select {
+      padding: 2px;
+      font-size: 10px;
+      border: 2px inset #7d7d7d;
+      background-color: #fff;
+      color: black;
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .change-form-group input:focus,
+    .change-form-group select:focus {
+      border-color: #7d7d7d;
+    }
+    .scrOutput,
+    .change-scrOutput {
+      margin-top: 4px;
+      padding: 2px;
+      background-color: #fff;
+      border: 2px dashed #7d7d7d;
+      font-size: 10px;
+      color: #000080;
+      white-space: pre-wrap;
+      display: none;
+    }
+    
+    /* ===============================================
+       LOG TABLE STYLES
+    =============================================== */
+    .log-section {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .log-section h3 {
+      font-size: 12px;
+      font-weight: bold;
+      color: #000080;
+      margin-bottom: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 10px;
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+    }
+    table th,
+    table td {
+      padding: 4px;
+      border: 1px solid #7d7d7d;
+    }
+    table th {
+      background-color: #c0c0c0;
+      color: black;
+      text-transform: uppercase;
+    }
+    table tr:nth-child(even) {
+      background-color: #f0f0f0;
+    }
+    
+    /* ===============================================
+       RESPONSIVE ADJUSTMENTS
+    =============================================== */
+    @media (max-width: 600px) {
+      nav ul {
+        flex-direction: column;
+      }
+      .form-group,
+      .change-form-row {
+        flex-direction: column;
+      }
+      .container {
+        width: 90%;
+      }
+    }
+    
+    /* ===============================================
+       DARK MODE OVERRIDES (Retro Dark)
+    =============================================== */
+    body.dark-mode {
+      background-color: #000080;
+      color: white;
+    }
+    body.dark-mode nav {
+      background-color: #000080;
+      border-bottom: 2px solid #fff;
+    }
+    body.dark-mode nav a {
+      color: white;
+      border: 2px outset #000080;
+    }
+    body.dark-mode nav a:hover {
+      border: 2px inset #fff;
+    }
+    body.dark-mode .container {
+      background-color: #000040;
+      border: 2px solid #fff;
+      box-shadow: 2px 2px 0 #000;
+    }
+    body.dark-mode .title-bar {
+      background: linear-gradient(to right, #000040, #000080);
+      border-bottom: 2px solid #fff;
+    }
+    body.dark-mode .btn-group button,
+    body.dark-mode #backToTop {
+      background-color: #000080;
+      color: white;
+      border: 2px outset #000040;
+    }
+    body.dark-mode .btn-group button:hover,
+    body.dark-mode #backToTop:hover {
+      border: 2px inset #fff;
+    }
+    body.dark-mode .scr-form,
+    body.dark-mode .change-scr-container {
+      background-color: #000080;
+      border: 2px dashed #fff;
+      color: white;
+    }
+    body.dark-mode .scrOutput,
+    body.dark-mode .change-scrOutput {
+      background-color: #000080;
+      border: 2px dashed #fff;
+      color: #c0c0ff;
+    }
+    body.dark-mode table th {
+      background-color: #000080;
+      color: white;
+    }
+    body.dark-mode table td,
+    body.dark-mode table th {
+      border-color: #fff;
+    }
+        /* Footer */
+    footer {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      color: black;
+      text-align: center;
+      margin-top: 20px;
+    }
