@@ -42,17 +42,6 @@
     nav a:hover {
       border: 2px inset #7d7d7d;
     }
-    .theme-switch {
-      float: right;
-      padding: 2px;
-    }
-    .theme-switch label {
-      font-size: 12px;
-      margin-right: 4px;
-    }
-    .theme-switch input {
-      vertical-align: middle;
-    }
 
     /* ===============================================
        WINDOW (Container) Styling
@@ -100,6 +89,10 @@
     button:active {
       border: 2px inset #7d7d7d;
     }
+    button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
 
     /* ===============================================
        TABLE STYLES
@@ -128,8 +121,8 @@
       margin-bottom: 8px;
     }
     .scr-message {
+      white-space: pre; /* Preserve line breaks in SCR message */
       display: none;
-      white-space: pre;
       background-color: #c0c0c0;
       border: 1px dashed #000;
       padding: 4px;
@@ -140,7 +133,7 @@
     }
     
     /* ===============================================
-       MODAL (Filter Window) STYLES
+       MODAL (Filter & Change SCR Windows) STYLES
     =============================================== */
     .modal {
       display: none; /* Hidden by default */
@@ -165,7 +158,8 @@
     .modal-content label,
     .modal-content input,
     .modal-content select,
-    .modal-content button {
+    .modal-content button,
+    .modal-content textarea {
       display: block;
       width: 100%;
       margin: 5px 0;
@@ -175,69 +169,6 @@
       font-size: 20px;
       font-weight: bold;
       cursor: pointer;
-    }
-
-    /* ===============================================
-       DARK MODE OVERRIDES
-    =============================================== */
-    body.dark-mode {
-      background-color: #000080;
-      color: white;
-    }
-    body.dark-mode nav {
-      background-color: #000080;
-      border-bottom: 2px solid #fff;
-    }
-    body.dark-mode nav a {
-      color: white;
-      border: 2px outset #000080;
-    }
-    body.dark-mode nav a:hover {
-      border: 2px inset #fff;
-    }
-    body.dark-mode .container {
-      background-color: #000040;
-      border: 2px solid #fff;
-      box-shadow: 2px 2px 0 #000;
-    }
-    body.dark-mode .title-bar {
-      background: linear-gradient(to right, #000040, #000080);
-      border-bottom: 2px solid #fff;
-    }
-    body.dark-mode input, 
-    body.dark-mode select, 
-    body.dark-mode textarea {
-      background-color: #000080;
-      color: white;
-      border: 2px inset #fff;
-    }
-    body.dark-mode button {
-      background-color: #000080;
-      color: white;
-      border: 2px outset #000040;
-    }
-    body.dark-mode th, 
-    body.dark-mode td {
-      background-color: #000080;
-      color: white;
-      border: 1px solid #fff;
-    }
-    body.dark-mode .scr-message {
-      background-color: #000080;
-      color: white;
-      border: 1px dashed #fff;
-    }
-    body.dark-mode .modal-content {
-      background-color: #000080;
-      border: 2px solid #fff;
-      color: white;
-    }
-    body.dark-mode .modal-content input,
-    body.dark-mode .modal-content select,
-    body.dark-mode .modal-content button {
-      background-color: #000080;
-      color: white;
-      border: 2px inset #fff;
     }
 
     /* ===============================================
@@ -261,10 +192,6 @@
       <li><a href="airport-search.html">Airport DB</a></li>
       <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">Log Issues</a></li>
     </ul>
-    <div class="theme-switch">
-      <label for="themeToggle">Dark Mode</label>
-      <input type="checkbox" id="themeToggle" aria-label="Toggle Dark Mode">
-    </div>
   </nav>
 
   <!-- MAIN CONTAINER -->
@@ -285,7 +212,7 @@
       </div>
 
       <!-- Filter Options Button -->
-      <button id="openFilterModal">Filter</button>
+      <button id="openFilterModal">Filter Options</button>
 
       <!-- CSV Download Button -->
       <button class="download-btn" id="downloadCSV">Download as CSV</button>
@@ -328,39 +255,38 @@
         <option value="L">L</option>
         <option value="M">M</option>
       </select>
+      <label for="flightType">Flight Type:</label>
+      <select id="flightType">
+        <option value="all">All</option>
+        <option value="Departure">Departure</option>
+        <option value="Arrival">Arrival</option>
+      </select>
       <button id="applyFilters">Apply Filters</button>
       <button id="clearFilters">Clear Filters</button>
     </div>
   </div>
 
+  <!-- MODAL: Change SCR Window -->
+  <div id="changeScrModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="changeScrClose">&times;</span>
+      <label for="changeScrTextarea">Edit SCR:</label>
+      <textarea id="changeScrTextarea" rows="8" style="width:100%;"></textarea>
+      <button id="saveScrChanges">Send Email</button>
+      <button id="cancelScrChanges">Cancel</button>
+    </div>
+  </div>
+
   <script>
     /********************************************
-     THEME TOGGLE
+     HELPER: Format Date as ddMMM (e.g. "08FEB")
     ********************************************/
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-    const savedTheme = localStorage.getItem('theme') || 'light';
-
-    function applyTheme(theme) {
-      if (theme === 'dark') {
-        body.classList.add('dark-mode');
-        themeToggle.checked = true;
-      } else {
-        body.classList.remove('dark-mode');
-        themeToggle.checked = false;
-      }
+    function formatDate(date) {
+      const day = String(date.getDate()).padStart(2, '0');
+      const monthNames = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+      const month = monthNames[date.getMonth()];
+      return day + month;
     }
-    applyTheme(savedTheme);
-
-    themeToggle.addEventListener('change', () => {
-      if (themeToggle.checked) {
-        localStorage.setItem('theme', 'dark');
-        applyTheme('dark');
-      } else {
-        localStorage.setItem('theme', 'light');
-        applyTheme('light');
-      }
-    });
 
     /********************************************
      LOGIC FOR HISTORIC LOG
@@ -375,23 +301,36 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(logEntries));
     }
 
-    // Returns log entries based on filter inputs.
-    function getFilteredLogEntries() {
-      let entries = getHistoricLog();
+    // Returns displayed log entries along with their index in the main log array.
+    // It also filters by fromDate, toDate, serviceType, and flightType.
+    function getDisplayedLogEntries() {
+      const allEntries = getHistoricLog();
       const fromDate = document.getElementById('fromDate').value;
       const toDate = document.getElementById('toDate').value;
       const serviceType = document.getElementById('serviceType').value;
-
-      if (fromDate) {
-        entries = entries.filter(entry => entry.timestamp && entry.timestamp.slice(0,10) >= fromDate);
-      }
-      if (toDate) {
-        entries = entries.filter(entry => entry.timestamp && entry.timestamp.slice(0,10) <= toDate);
-      }
-      if (serviceType && serviceType !== "all") {
-        entries = entries.filter(entry => entry.direction && entry.direction.toUpperCase() === serviceType.toUpperCase());
-      }
-      return entries;
+      const flightType = document.getElementById('flightType').value;
+      let displayed = [];
+      allEntries.forEach((entry, idx) => {
+        let include = true;
+        if (fromDate && (!entry.timestamp || entry.timestamp.slice(0,10) < fromDate)) {
+          include = false;
+        }
+        if (toDate && (!entry.timestamp || entry.timestamp.slice(0,10) > toDate)) {
+          include = false;
+        }
+        if (serviceType && serviceType !== "all" && (!entry.direction || entry.direction.toUpperCase() !== serviceType.toUpperCase())) {
+          include = false;
+        }
+        if (flightType && flightType !== "all") {
+          if (!entry.flightType || entry.flightType.toLowerCase() !== flightType.toLowerCase()) {
+            include = false;
+          }
+        }
+        if (include) {
+          displayed.push({ data: entry, index: idx });
+        }
+      });
+      return displayed;
     }
 
     // Use this function on other pages to add entries
@@ -402,23 +341,23 @@
       populateLogTable();
     }
 
-    // Fill the table with log entries.
-    // When no filter is applied, we now show ALL historic log entries.
+    // Global variable to store which log entry is being edited for SCR changes
+    let currentScrIndex = null;
+
+    // Populate the table with displayed log entries.
+    // For each entry, add three buttons:
+    // 1. "Show SCR" / "Hide SCR" toggle button
+    // 2. "Cancel SCR" button (now disabled)
+    // 3. "Change SCR" button to update the SCR message using a modal with a pre-filled template.
     function populateLogTable() {
       const tableBody = document.querySelector("#logTable tbody");
       tableBody.innerHTML = "";
 
-      const fromDate = document.getElementById('fromDate').value;
-      const toDate = document.getElementById('toDate').value;
-      const serviceType = document.getElementById('serviceType').value;
-      let entries;
-      if(fromDate || toDate || (serviceType && serviceType !== "all")){
-        entries = getFilteredLogEntries();
-      } else {
-        entries = getHistoricLog();
-      }
+      const displayedEntries = getDisplayedLogEntries();
+      displayedEntries.forEach((entryObj, displayIndex) => {
+        const entry = entryObj.data;
+        const globalIndex = entryObj.index;
 
-      entries.forEach((entry, index) => {
         // Main row (searchable)
         const tr = document.createElement("tr");
         tr.dataset.searchText = [
@@ -427,10 +366,12 @@
           entry.direction,
           entry.timestamp
         ].join(" ").toLowerCase();
+        // Also store the global index for updating purposes
+        tr.dataset.index = globalIndex;
 
         // # Column
         const numberTd = document.createElement("td");
-        numberTd.textContent = index + 1;
+        numberTd.textContent = displayIndex + 1;
         tr.appendChild(numberTd);
 
         // Flight Number
@@ -453,20 +394,32 @@
         timestampTd.textContent = entry.timestamp;
         tr.appendChild(timestampTd);
 
-        // Action
+        // Action cell: add three buttons
         const actionTd = document.createElement("td");
+        
+        // Toggle SCR button
         const toggleBtn = document.createElement("button");
         toggleBtn.textContent = "Show SCR";
         actionTd.appendChild(toggleBtn);
+        
+        // Cancel SCR button (disabled)
+        const cancelBtn = document.createElement("button");
+        cancelBtn.textContent = "Cancel SCR";
+        cancelBtn.disabled = true;
+        actionTd.appendChild(cancelBtn);
+        
+        // Change SCR button
+        const changeBtn = document.createElement("button");
+        changeBtn.textContent = "Change SCR";
+        actionTd.appendChild(changeBtn);
+        
         tr.appendChild(actionTd);
-
         tableBody.appendChild(tr);
 
-        // Second row: SCR message
+        // Second row: SCR message row
         const scrRow = document.createElement("tr");
         const scrTd = document.createElement("td");
         scrTd.colSpan = 6;
-
         const scrMessageDiv = document.createElement("div");
         scrMessageDiv.className = "scr-message";
         scrMessageDiv.textContent = entry.scrMessage || "[No SCR content found]";
@@ -474,7 +427,7 @@
         scrRow.appendChild(scrTd);
         tableBody.appendChild(scrRow);
 
-        // Toggle the SCR message row
+        // Toggle SCR message visibility when "Show SCR" is clicked.
         toggleBtn.addEventListener("click", function() {
           if (!scrMessageDiv.style.display || scrMessageDiv.style.display === "none") {
             scrMessageDiv.style.display = "block";
@@ -484,6 +437,34 @@
             toggleBtn.textContent = "Show SCR";
           }
         });
+
+        // Change SCR: open the Change SCR modal with a pre-filled template.
+        changeBtn.addEventListener("click", function() {
+          currentScrIndex = globalIndex;
+          const logs = getHistoricLog();
+          const original = logs[globalIndex].scrMessage || "[No original SCR]";
+          // Extract original SCR info from line 5 if available:
+          let originalInfo = "";
+          const originalLines = original.split("\n");
+          if (originalLines.length >= 5) {
+            originalInfo = originalLines[4].trim();
+          } else {
+            originalInfo = original;
+          }
+          // Use current date and log entry's airport for dynamic values:
+          const currentDate = formatDate(new Date());
+          const airportCode = logs[globalIndex].airport || "UNK";
+          // Build the dynamic template:
+          const template = "SCR\n" +
+                           "W24\n" +
+                           currentDate + "\n" +
+                           airportCode + "\n" +
+                           "C " + originalInfo + "\n" +
+                           "R \n\n" +
+                           "SI SLOT CHG REQ " + airportCode;
+          document.getElementById("changeScrTextarea").value = template;
+          document.getElementById("changeScrModal").style.display = "block";
+        });
       });
     }
 
@@ -492,7 +473,6 @@
       const searchTerm = document.getElementById("searchBar").value.trim().toLowerCase();
       const tableBody = document.querySelector("#logTable tbody");
       const rows = tableBody.querySelectorAll("tr[data-search-text]");
-
       rows.forEach(row => {
         if (row.dataset.searchText.includes(searchTerm)) {
           row.style.display = "";
@@ -510,8 +490,7 @@
       });
     }
 
-    // Download the table as CSV (including the SCR message)
-    // Uses the same filter logic as populateLogTable.
+    // Download the table as CSV (including the SCR message).
     function downloadLogAsCSV() {
       const firstName = document.getElementById("firstName").value.trim();
       const lastName  = document.getElementById("lastName").value.trim();
@@ -537,9 +516,10 @@
       const fromDate = document.getElementById('fromDate').value;
       const toDate = document.getElementById('toDate').value;
       const serviceType = document.getElementById('serviceType').value;
+      const flightType = document.getElementById('flightType').value;
       let entries;
-      if(fromDate || toDate || (serviceType && serviceType !== "all")){
-        entries = getFilteredLogEntries();
+      if(fromDate || toDate || (serviceType && serviceType !== "all") || (flightType && flightType !== "all")){
+        entries = getDisplayedLogEntries().map(item => item.data);
       } else {
         entries = getHistoricLog();
       }
@@ -560,7 +540,6 @@
           .replace(/"/g, '""')
           .replace(/\r?\n/g, '\\n')
           .replace(/\r/g, '\\n');
-
         rows.push([
           index + 1,
           entry.flightNumber || "",
@@ -573,7 +552,6 @@
 
       const csvContent = rows.map(row => row.join(",")).join("\n");
 
-      // Create a Blob and trigger download
       const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const downloadLink = document.createElement("a");
@@ -585,37 +563,61 @@
     }
 
     /********************************************
-     EVENT LISTENERS FOR FILTER MODAL
+     EVENT LISTENERS FOR MODALS
     ********************************************/
-    // Open the filter modal when the button is clicked
+    // Filter Modal: Open/Close/Apply/Clear
     document.getElementById('openFilterModal').addEventListener('click', () => {
       document.getElementById('filterModal').style.display = 'block';
     });
-
-    // Close the modal when the close (×) span is clicked
     document.querySelector('#filterModal .close').addEventListener('click', () => {
       document.getElementById('filterModal').style.display = 'none';
     });
-
-    // When applying filters, repopulate the table and close the modal
     document.getElementById('applyFilters').addEventListener('click', () => {
       populateLogTable();
       document.getElementById('filterModal').style.display = 'none';
     });
-
-    // Clear filters, repopulate the table, and close the modal
     document.getElementById('clearFilters').addEventListener('click', () => {
       document.getElementById('fromDate').value = "";
       document.getElementById('toDate').value = "";
       document.getElementById('serviceType').value = "all";
+      document.getElementById('flightType').value = "all";
       populateLogTable();
       document.getElementById('filterModal').style.display = 'none';
+    });
+
+    // Change SCR Modal: "Send Email" (formerly "Save Changes")
+    document.getElementById("saveScrChanges").addEventListener("click", function() {
+      const newScr = document.getElementById("changeScrTextarea").value;
+      if (currentScrIndex !== null) {
+        const logs = getHistoricLog();
+        logs[currentScrIndex].scrMessage = newScr;
+        setHistoricLog(logs);
+        populateLogTable();
+        const flightNumber = logs[currentScrIndex].flightNumber || "";
+        const subject = encodeURIComponent("SCR Change Request for " + flightNumber);
+        const body = encodeURIComponent(newScr);
+        window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+        currentScrIndex = null;
+        document.getElementById("changeScrModal").style.display = "none";
+      }
+    });
+    document.getElementById("cancelScrChanges").addEventListener("click", function() {
+      currentScrIndex = null;
+      document.getElementById("changeScrModal").style.display = "none";
+    });
+    document.getElementById("changeScrClose").addEventListener("click", function() {
+      currentScrIndex = null;
+      document.getElementById("changeScrModal").style.display = "none";
     });
 
     // Wire up search and CSV download events
     document.getElementById("downloadCSV").addEventListener("click", downloadLogAsCSV);
     document.getElementById("searchBar").addEventListener("input", filterTable);
-    window.addEventListener("DOMContentLoaded", populateLogTable);
+
+    // On DOMContentLoaded, simply populate the table with stored logs.
+    window.addEventListener("DOMContentLoaded", () => {
+      populateLogTable();
+    });
   </script>
 </body>
 </html>
