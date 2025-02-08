@@ -8,16 +8,15 @@
     /* ===============================================
        WINDOWS 95 BASE STYLES
     =============================================== */
-    /* Use classic system fonts similar to MS Sans Serif */
     body {
       margin: 0;
       padding: 0;
-      background-color: #008080; /* A retro desktop background color */
+      background-color: #008080; /* Retro desktop background */
       font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
       color: black;
     }
     
-    /* Navigation Bar styled as a classic menu */
+    /* Navigation Bar */
     nav {
       background-color: #c0c0c0;
       padding: 2px 4px;
@@ -65,7 +64,6 @@
       border: 2px solid #7d7d7d;
       box-shadow: 2px 2px 0 #fff;
     }
-    /* Title Bar – a common feature of Windows 95 dialogs */
     .title-bar {
       background: linear-gradient(to right, #000080, #0000cd);
       color: white;
@@ -124,7 +122,7 @@
     }
     
     /* ===============================================
-       MISCELLANEOUS: Operators, Search, SCR Message
+       MISCELLANEOUS
     =============================================== */
     .operator-container, .search-container {
       margin-bottom: 8px;
@@ -142,7 +140,45 @@
     }
     
     /* ===============================================
-       DARK MODE OVERRIDES (Styled to keep a retro feel)
+       MODAL (Filter Window) STYLES
+    =============================================== */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 2px solid #7d7d7d;
+      width: 300px;
+      box-shadow: 2px 2px 0 #fff;
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+    }
+    .modal-content label,
+    .modal-content input,
+    .modal-content select,
+    .modal-content button {
+      display: block;
+      width: 100%;
+      margin: 5px 0;
+    }
+    .modal-content .close {
+      float: right;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* ===============================================
+       DARK MODE OVERRIDES
     =============================================== */
     body.dark-mode {
       background-color: #000080;
@@ -191,7 +227,22 @@
       color: white;
       border: 1px dashed #fff;
     }
-        /* Footer */
+    body.dark-mode .modal-content {
+      background-color: #000080;
+      border: 2px solid #fff;
+      color: white;
+    }
+    body.dark-mode .modal-content input,
+    body.dark-mode .modal-content select,
+    body.dark-mode .modal-content button {
+      background-color: #000080;
+      color: white;
+      border: 2px inset #fff;
+    }
+
+    /* ===============================================
+       FOOTER
+    =============================================== */
     footer {
       font-family: "MS Sans Serif", Tahoma, sans-serif;
       font-size: 12px;
@@ -199,7 +250,6 @@
       text-align: center;
       margin-top: 20px;
     }
-    
   </style>
 </head>
 <body>
@@ -217,24 +267,30 @@
     </div>
   </nav>
 
-  <!-- MAIN CONTAINER (Styled as a retro window) -->
+  <!-- MAIN CONTAINER -->
   <div class="container">
     <div class="title-bar">Historic Log</div>
     <div class="window-content">
       <!-- Operator Name Inputs -->
       <div class="operator-container">
         <label for="firstName">Operator First Name:</label>
-        <input type="text" id="firstName" placeholder="First Name" />
+        <input type="text" id="firstName" placeholder="First Name">
         <label for="lastName">Last Name:</label>
-        <input type="text" id="lastName" placeholder="Last Name" />
+        <input type="text" id="lastName" placeholder="Last Name">
       </div>
 
       <!-- Search Bar -->
       <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Search flights..." />
+        <input type="text" id="searchBar" placeholder="Search flights...">
       </div>
 
+      <!-- Filter Options Button -->
+      <button id="openFilterModal">Filter</button>
+
+      <!-- CSV Download Button -->
       <button class="download-btn" id="downloadCSV">Download as CSV</button>
+
+      <!-- Log Table -->
       <table id="logTable">
         <thead>
           <tr>
@@ -252,7 +308,31 @@
       </table>
     </div>
   </div>
-<footer> Created By: ArtemisByte </footer>
+  <footer>Created By: ArtemisByte</footer>
+
+  <!-- MODAL: Filter Options Window -->
+  <div id="filterModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <label for="fromDate">From Date:</label>
+      <input type="date" id="fromDate">
+      <label for="toDate">To Date:</label>
+      <input type="date" id="toDate">
+      <label for="serviceType">Service Type:</label>
+      <select id="serviceType">
+        <option value="all">All</option>
+        <option value="P">P</option>
+        <option value="D">D</option>
+        <option value="T">T</option>
+        <option value="K">K</option>
+        <option value="L">L</option>
+        <option value="M">M</option>
+      </select>
+      <button id="applyFilters">Apply Filters</button>
+      <button id="clearFilters">Clear Filters</button>
+    </div>
+  </div>
+
   <script>
     /********************************************
      THEME TOGGLE
@@ -295,11 +375,23 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(logEntries));
     }
 
-    // Only entries from "today"
-    function getTodayLogEntries() {
-      const logEntries = getHistoricLog();
-      const todayISO = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-      return logEntries.filter(entry => entry.timestamp?.slice(0,10) === todayISO);
+    // Returns log entries based on filter inputs.
+    function getFilteredLogEntries() {
+      let entries = getHistoricLog();
+      const fromDate = document.getElementById('fromDate').value;
+      const toDate = document.getElementById('toDate').value;
+      const serviceType = document.getElementById('serviceType').value;
+
+      if (fromDate) {
+        entries = entries.filter(entry => entry.timestamp && entry.timestamp.slice(0,10) >= fromDate);
+      }
+      if (toDate) {
+        entries = entries.filter(entry => entry.timestamp && entry.timestamp.slice(0,10) <= toDate);
+      }
+      if (serviceType && serviceType !== "all") {
+        entries = entries.filter(entry => entry.direction && entry.direction.toUpperCase() === serviceType.toUpperCase());
+      }
+      return entries;
     }
 
     // Use this function on other pages to add entries
@@ -310,13 +402,23 @@
       populateLogTable();
     }
 
-    // Fill the table with today's log entries
+    // Fill the table with log entries.
+    // When no filter is applied, we now show ALL historic log entries.
     function populateLogTable() {
       const tableBody = document.querySelector("#logTable tbody");
       tableBody.innerHTML = "";
-      const todayEntries = getTodayLogEntries();
 
-      todayEntries.forEach((entry, index) => {
+      const fromDate = document.getElementById('fromDate').value;
+      const toDate = document.getElementById('toDate').value;
+      const serviceType = document.getElementById('serviceType').value;
+      let entries;
+      if(fromDate || toDate || (serviceType && serviceType !== "all")){
+        entries = getFilteredLogEntries();
+      } else {
+        entries = getHistoricLog();
+      }
+
+      entries.forEach((entry, index) => {
         // Main row (searchable)
         const tr = document.createElement("tr");
         tr.dataset.searchText = [
@@ -341,7 +443,7 @@
         airportTd.textContent = entry.airport;
         tr.appendChild(airportTd);
 
-        // Type (Arrival/Departure)
+        // Type (Arrival/Departure or Service Type)
         const typeTd = document.createElement("td");
         typeTd.textContent = entry.direction;
         tr.appendChild(typeTd);
@@ -385,7 +487,7 @@
       });
     }
 
-    // Filter the table rows based on the search input
+    // Filter the table rows based on the search input.
     function filterTable() {
       const searchTerm = document.getElementById("searchBar").value.trim().toLowerCase();
       const tableBody = document.querySelector("#logTable tbody");
@@ -409,6 +511,7 @@
     }
 
     // Download the table as CSV (including the SCR message)
+    // Uses the same filter logic as populateLogTable.
     function downloadLogAsCSV() {
       const firstName = document.getElementById("firstName").value.trim();
       const lastName  = document.getElementById("lastName").value.trim();
@@ -430,7 +533,16 @@
       const minutes = String(now.getUTCMinutes()).padStart(2, '0');
       const filename = `${year}${month}${day}${hours}${minutes}_${operatorInitials}.csv`;
 
-      const todayEntries = getTodayLogEntries();
+      // Use filtered entries if any filter is set; otherwise, use all historic entries.
+      const fromDate = document.getElementById('fromDate').value;
+      const toDate = document.getElementById('toDate').value;
+      const serviceType = document.getElementById('serviceType').value;
+      let entries;
+      if(fromDate || toDate || (serviceType && serviceType !== "all")){
+        entries = getFilteredLogEntries();
+      } else {
+        entries = getHistoricLog();
+      }
 
       // CSV Header
       const header = ["Number", "Flight Number", "Airport", "Type", "Timestamp", "SCR Message"];
@@ -442,9 +554,8 @@
       rows.push(header);
 
       // Add data rows
-      todayEntries.forEach((entry, index) => {
+      entries.forEach((entry, index) => {
         const scrMsg = entry.scrMessage || "";
-        // Escape double quotes and replace newlines so the CSV cell isn’t broken
         const safeScrMsg = scrMsg
           .replace(/"/g, '""')
           .replace(/\r?\n/g, '\\n')
@@ -473,7 +584,35 @@
       document.body.removeChild(downloadLink);
     }
 
-    // Wire up event handlers
+    /********************************************
+     EVENT LISTENERS FOR FILTER MODAL
+    ********************************************/
+    // Open the filter modal when the button is clicked
+    document.getElementById('openFilterModal').addEventListener('click', () => {
+      document.getElementById('filterModal').style.display = 'block';
+    });
+
+    // Close the modal when the close (×) span is clicked
+    document.querySelector('#filterModal .close').addEventListener('click', () => {
+      document.getElementById('filterModal').style.display = 'none';
+    });
+
+    // When applying filters, repopulate the table and close the modal
+    document.getElementById('applyFilters').addEventListener('click', () => {
+      populateLogTable();
+      document.getElementById('filterModal').style.display = 'none';
+    });
+
+    // Clear filters, repopulate the table, and close the modal
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.getElementById('fromDate').value = "";
+      document.getElementById('toDate').value = "";
+      document.getElementById('serviceType').value = "all";
+      populateLogTable();
+      document.getElementById('filterModal').style.display = 'none';
+    });
+
+    // Wire up search and CSV download events
     document.getElementById("downloadCSV").addEventListener("click", downloadLogAsCSV);
     document.getElementById("searchBar").addEventListener("input", filterTable);
     window.addEventListener("DOMContentLoaded", populateLogTable);
