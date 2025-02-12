@@ -1,6 +1,3 @@
- /************************************************
-     THEME TOGGLE
-    ************************************************/
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     const savedTheme = localStorage.getItem('theme') || 'light';
