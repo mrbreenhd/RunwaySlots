@@ -1,4 +1,4 @@
- /* Base Windows 95 styling */
+/* Base Theme 95 styling */
     body {
       background-color: #008080; /* Classic teal desktop background */
       font-family: "MS Sans Serif", Tahoma, sans-serif;
@@ -7,8 +7,7 @@
       margin: 0;
       padding: 0;
     }
-    
-    /* Navigation Bar – styled like a menu bar */
+    /* Navigation Bar  */
     nav {
       background-color: #c0c0c0;
       border: 2px outset #fff;
@@ -33,7 +32,6 @@
     nav a:hover {
       text-decoration: underline;
     }
-    
     /* Windows 95–style buttons */
     button {
       font-family: "MS Sans Serif", Tahoma, sans-serif;
@@ -47,7 +45,6 @@
     button:active {
       border: 2px inset #fff;
     }
-    
     /* Main container (simulating a window) */
     .container {
       background-color: #d4d0c8;
@@ -57,7 +54,6 @@
       width: 90%;
       max-width: 600px;
     }
-    
     /* Input fields styled with an inset (sunken) look */
     input, textarea {
       font-family: "MS Sans Serif", Tahoma, sans-serif;
@@ -71,7 +67,6 @@
     textarea {
       resize: vertical;
     }
-    
     /* Headings */
     h1 {
       font-family: "MS Sans Serif", Tahoma, sans-serif;
@@ -84,20 +79,17 @@
       font-size: 14px;
       margin: 8px 0;
     }
-    
     /* Form labels for proper spacing */
     #airportForm label {
       display: block;
       margin-top: 8px;
       margin-bottom: 4px;
     }
-    
     /* Action buttons container */
     .action-buttons {
       text-align: center;
       margin: 10px 0;
     }
-    
     /* Result display styling */
     .result-header {
       margin-bottom: 10px;
@@ -127,7 +119,6 @@
       font-size: 12px;
       border: 1px solid black;
     }
-    
     /* Additional Information container */
     .airport-additional-info {
       margin-top: 15px;
@@ -138,10 +129,11 @@
       margin-bottom: 5px;
       font-size: 12px;
     }
+    /* Option 1: Preserve whitespace/newlines */
     .airport-info-content {
       margin: 0;
+      white-space: pre-wrap;
     }
-    
     /* Footer */
     footer {
       font-family: "MS Sans Serif", Tahoma, sans-serif;
@@ -150,10 +142,9 @@
       text-align: center;
       margin-top: 20px;
     }
-    
     /* Optional Dark Mode */
     body.dark-mode {
-      background-color: #000080; /* Dark navy background */
+      background-color: #000080;
       color: white;
     }
     body.dark-mode nav {
