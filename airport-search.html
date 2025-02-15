@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realtime Airport Database</title>
+  <style>
+    /* Base Theme 95 styling */
+    body {
+      background-color: #008080; /* Classic teal desktop background */
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      color: black;
+      margin: 0;
+      padding: 0;
+    }
+    /* Navigation Bar  */
+    nav {
+      background-color: #c0c0c0;
+      border: 2px outset #fff;
+      padding: 4px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+    }
+    nav li {
+      margin-right: 10px;
+    }
+    nav a {
+      color: black;
+      text-decoration: none;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    /* Windows 95–style buttons */
+    button {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      background-color: #c0c0c0;
+      border: 2px outset #fff;
+      padding: 2px 8px;
+      margin: 2px;
+      cursor: pointer;
+    }
+    button:active {
+      border: 2px inset #fff;
+    }
+    /* Main container (simulating a window) */
+    .container {
+      background-color: #d4d0c8;
+      border: 2px outset #fff;
+      padding: 10px;
+      margin: 20px auto;
+      width: 90%;
+      max-width: 600px;
+    }
+    /* Input fields styled with an inset (sunken) look */
+    input, textarea {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      background-color: #fff;
+      border: 2px inset;
+      padding: 2px;
+      margin: 4px 0;
+      width: 95%;
+    }
+    textarea {
+      resize: vertical;
+    }
+    /* Headings */
+    h1 {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 16px;
+      margin: 10px 0;
+      text-align: center;
+    }
+    h2 {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 14px;
+      margin: 8px 0;
+    }
+    /* Form labels for proper spacing */
+    #airportForm label {
+      display: block;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    /* Action buttons container */
+    .action-buttons {
+      text-align: center;
+      margin: 10px 0;
+    }
+    /* Result display styling */
+    .result-header {
+      margin-bottom: 10px;
+      text-align: left;
+    }
+    /* Level boxes container */
+    .levels {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    .level-box {
+      text-align: center;
+      margin: 0 10px;
+    }
+    .level-title {
+      font-weight: bold;
+      margin-bottom: 2px;
+      font-size: 10px;
+    }
+    .level-value span {
+      display: inline-block;
+      width: 40px;
+      height: 20px;
+      line-height: 20px;
+      text-align: center;
+      font-size: 12px;
+      border: 1px solid black;
+    }
+    /* Additional Information container */
+    .airport-additional-info {
+      margin-top: 15px;
+      text-align: left;
+    }
+    .airport-info-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+    /* Preserve whitespace/newlines */
+    .airport-info-content {
+      margin: 0;
+      white-space: pre-wrap;
+    }
+    /* Footer */
+    footer {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      color: black;
+      text-align: center;
+      margin-top: 20px;
+    }
+    /* Optional Dark Mode */
+    body.dark-mode {
+      background-color: #000080;
+      color: white;
+    }
+    body.dark-mode nav {
+      background-color: #808080;
+      border: 2px outset #aaa;
+    }
+    body.dark-mode nav a {
+      color: white;
+    }
+    body.dark-mode .container {
+      background-color: #505050;
+      border: 2px outset #aaa;
+    }
+    body.dark-mode input, 
+    body.dark-mode textarea {
+      background-color: #fff;
+      border: 2px inset #aaa;
+      color: black;
+    }
+    body.dark-mode button {
+      background-color: #808080;
+      border: 2px outset #aaa;
+      color: white;
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <nav>
+    <div class="nav-left">
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">LOG ISSUES</a></li>
+      </ul>
+    </div>
+    <div class="nav-right">
+      <button id="themeToggleBtn">Dark Mode</button>
+    </div>
+  </nav>
+
+  <h1>Airport Database</h1>
+
+  <div class="container">
+    <!-- Search Section -->
+    <h2>Search for an Airport</h2>
+    <input type="text" id="airportCode" placeholder="Enter Airport Code (e.g., ABZ)" maxlength="3" style="text-transform: uppercase;" />
+    <button id="fetchAirportBtn">Fetch Airport Data</button>
+
+    <h2>Result:</h2>
+    <div id="responseOutput">No data yet...</div>
+
+    <!-- Action Buttons for Add/Edit -->
+    <h2>Add or Edit Airport</h2>
+    <div class="action-buttons">
+      <button id="addAirportBtn">Add New Airport</button>
+      <button id="editAirportBtn">Edit Existing Airport</button>
+    </div>
+
+    <div id="airportForm" style="display: none;">
+      <h2 id="formTitle">Add/Edit Airport</h2>
+      
+      <label for="editAirportCode">Airport Code:</label>
+      <input type="text" id="editAirportCode" placeholder="e.g., ABZ" />
+
+      <label for="airportName">Airport Name:</label>
+      <input type="text" id="airportName" placeholder="Enter Airport Name" />
+
+      <label for="country">Country:</label>
+      <input type="text" id="country" placeholder="e.g., United Kingdom" />
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" placeholder="e.g., info@airport.com" />
+
+      <label for="generalEmail">General Aviation Email:</label>
+      <input type="email" id="generalEmail" placeholder="e.g., general@airport.com" />
+
+      <label for="contactNumber">Contact Number:</label>
+      <input type="text" id="contactNumber" placeholder="e.g., +1 234 567 890" />
+
+      <label for="summerLevel">Summer Level:</label>
+      <input type="text" id="summerLevel" placeholder="e.g., 2" />
+
+      <label for="winterLevel">Winter Level:</label>
+      <input type="text" id="winterLevel" placeholder="e.g., 2" />
+
+      <label for="gcr">GCR:</label>
+      <input type="text" id="gcr" placeholder="YES or NO" />
+
+      <label for="ppr">PPR:</label>
+      <input type="text" id="ppr" placeholder="YES or NO" />
+
+      <label for="additionalInformation">Additional Information:</label>
+      <textarea id="additionalInformation" placeholder="Enter any additional information"></textarea>
+
+      <button id="saveAirportBtn">Save Airport Data</button>
+    </div>
+  </div>
+
+  <footer>Created By: ArtemisByte</footer>
+  
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // Firebase configuration (replace with your actual config values)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjJ5scHda4eRM-6A-2AfHdFFncudmxiXA",
+      authDomain: "airportinfo-9e5ba.firebaseapp.com",
+      databaseURL: "https://airportinfo-9e5ba-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "airportinfo-9e5ba",
+      storageBucket: "airportinfo-9e5ba.firebasestorage.app",
+      messagingSenderId: "788689422638",
+      appId: "1:788689422638:web:368b08549b15581e15d2bf",
+    };
+
+    // Initialize Firebase and Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // DOM Elements
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const body = document.body;
+    const airportCodeInput = document.getElementById('airportCode');
+    const fetchAirportBtn = document.getElementById('fetchAirportBtn');
+    const responseOutput = document.getElementById('responseOutput');
+    const addAirportBtn = document.getElementById('addAirportBtn');
+    const editAirportBtn = document.getElementById('editAirportBtn');
+    const airportForm = document.getElementById('airportForm');
+    const formTitle = document.getElementById('formTitle');
+    const editAirportCode = document.getElementById('editAirportCode');
+    const airportName = document.getElementById('airportName');
+    const country = document.getElementById('country');
+    const email = document.getElementById('email');
+    const generalEmail = document.getElementById('generalEmail');
+    const contactNumber = document.getElementById('contactNumber');
+    const summerLevel = document.getElementById('summerLevel');
+    const winterLevel = document.getElementById('winterLevel');
+    const gcr = document.getElementById('gcr');
+    const ppr = document.getElementById('ppr');
+    const additionalInformation = document.getElementById('additionalInformation');
+    const saveAirportBtn = document.getElementById('saveAirportBtn');
+
+    let isEditing = false;
+    let currentAirportData = null;
+
+    // Helper function to return a styled numeric box.
+    function getNumericBox(value) {
+      let bg = "";
+      if (value === "3") {
+        bg = "red";
+      } else if (value === "2") {
+        bg = "orange";
+      }
+      return `<span style="width:40px; height:20px; line-height:20px; display:inline-block; text-align:center; border:1px solid black; ${bg ? 'background-color:' + bg + ';' : ''}">${value}</span>`;
+    }
+
+    // Helper function to return a styled Yes/No box.
+    function getYesNoBox(value) {
+      let bg = "";
+      if (value.toUpperCase() === "YES") {
+        bg = "green";
+      }
+      return `<span style="width:40px; height:20px; line-height:20px; display:inline-block; text-align:center; border:1px solid black; ${bg ? 'background-color:' + bg + ';' : ''}">${value}</span>`;
+    }
+
+    // Theme logic
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+      themeToggleBtn.textContent = 'Light Mode';
+    } else {
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
+      themeToggleBtn.textContent = 'Dark Mode';
+    }
+
+    function toggleTheme() {
+      if (body.classList.contains('dark-mode')) {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+        localStorage.setItem('theme', 'light');
+        themeToggleBtn.textContent = 'Dark Mode';
+      } else {
+        body.classList.remove('light-mode');
+        body.classList.add('dark-mode');
+        localStorage.setItem('theme', 'dark');
+        themeToggleBtn.textContent = 'Light Mode';
+      }
+    }
+    themeToggleBtn.addEventListener('click', toggleTheme);
+
+    // Force uppercase for the airport code input
+    airportCodeInput.addEventListener('input', function() {
+      this.value = this.value.toUpperCase();
+    });
+
+    // Fetch data on pressing the Enter key
+    airportCodeInput.addEventListener('keyup', function(event) {
+      if (event.key === "Enter") {
+        fetchAirportData();
+      }
+    });
+
+    // Fetch airport data from the "airportinfo" collection
+    async function fetchAirportData() {
+      const code = airportCodeInput.value.trim().toUpperCase();
+      if (!code) {
+        responseOutput.textContent = "Please enter a valid airport code.";
+        return;
+      }
+      try {
+        // Get the document with ID equal to the airport code
+        const docRef = doc(db, "airportinfo", code);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+          responseOutput.textContent = `No matching airport found for code: ${code}`;
+          currentAirportData = null;
+          return;
+        }
+        const data = docSnap.data();
+        currentAirportData = data;
+        responseOutput.innerHTML = `
+          <div class="result-header">
+            <div><strong>Airport Code:</strong> ${data.airportCode}</div>
+            <div><strong>Airport Name:</strong> ${data.airportName}</div>
+            <div><strong>Country:</strong> ${data.country}</div>
+            <div><strong>Email:</strong> ${data.email}</div>
+            <div><strong>General Aviation Email:</strong> ${data.generalEmail}</div>
+            <div><strong>Contact Number:</strong> ${data.contactNumber}</div>
+          </div>
+          <div class="levels">
+            <div class="level-box">
+              <div class="level-title">Summer</div>
+              <div class="level-value">${getNumericBox(data.summerLevel || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">Winter</div>
+              <div class="level-value">${getNumericBox(data.winterLevel || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">GCR</div>
+              <div class="level-value">${getYesNoBox(data.gcr ? "YES" : "NO")}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">PPR</div>
+              <div class="level-value">${getYesNoBox(data.ppr ? "YES" : "NO")}</div>
+            </div>
+          </div>
+          <div class="airport-additional-info">
+            <div class="airport-info-title">Additional Information</div>
+            <p class="airport-info-content">
+              ${data.additionalInformation || 'No additional information available.'}
+            </p>
+          </div>
+        `;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        responseOutput.textContent = "Error: " + (error.message || JSON.stringify(error));
+        currentAirportData = null;
+      }
+    }
+    fetchAirportBtn.addEventListener('click', fetchAirportData);
+
+    // Show form for adding a new airport
+    addAirportBtn.addEventListener('click', () => {
+      isEditing = false;
+      formTitle.textContent = "Add New Airport";
+      clearForm();
+      airportForm.style.display = 'block';
+    });
+
+    // Show form for editing an existing airport
+    editAirportBtn.addEventListener('click', () => {
+      if (!currentAirportData) {
+        alert("Please search and fetch an airport first before editing.");
+        return;
+      }
+      isEditing = true;
+      formTitle.textContent = "Edit Existing Airport";
+      populateForm(currentAirportData);
+      airportForm.style.display = 'block';
+    });
+
+    // Clear the form fields
+    function clearForm() {
+      editAirportCode.value = '';
+      airportName.value = '';
+      country.value = '';
+      email.value = '';
+      generalEmail.value = '';
+      contactNumber.value = '';
+      summerLevel.value = '';
+      winterLevel.value = '';
+      gcr.value = '';
+      ppr.value = '';
+      additionalInformation.value = '';
+    }
+
+    // Populate the form fields with data from an existing record
+    function populateForm(airport) {
+      editAirportCode.value = airport.airportCode || '';
+      airportName.value = airport.airportName || '';
+      country.value = airport.country || '';
+      email.value = airport.email || '';
+      generalEmail.value = airport.generalEmail || '';
+      contactNumber.value = airport.contactNumber || '';
+      summerLevel.value = airport.summerLevel || '';
+      winterLevel.value = airport.winterLevel || '';
+      gcr.value = airport.gcr ? "YES" : "NO";
+      ppr.value = airport.ppr ? "YES" : "NO";
+      additionalInformation.value = airport.additionalInformation || '';
+    }
+
+    // Save airport data by setting a document in the "airportinfo" collection
+    async function saveAirportData() {
+      const code = editAirportCode.value.trim().toUpperCase();
+      if (!code) {
+        alert("Please enter an airport code.");
+        return;
+      }
+      const airportData = {
+        airportCode: code,
+        airportName: airportName.value.trim(),
+        country: country.value.trim(),
+        email: email.value.trim(),
+        generalEmail: generalEmail.value.trim(),
+        contactNumber: contactNumber.value.trim(),
+        summerLevel: summerLevel.value.trim(),
+        winterLevel: winterLevel.value.trim(),
+        gcr: (gcr.value.trim().toUpperCase() === "YES"),
+        ppr: (ppr.value.trim().toUpperCase() === "YES"),
+        additionalInformation: additionalInformation.value.trim()
+      };
+      try {
+        // Using setDoc will create or overwrite the document with the airport code as its ID.
+        await setDoc(doc(db, "airportinfo", code), airportData);
+        alert(`Airport data for ${code} has been saved successfully.`);
+        airportForm.style.display = 'none';
+        currentAirportData = airportData;
+        responseOutput.innerHTML = `
+          <div class="result-header">
+            <div><strong>Airport Code:</strong> ${airportData.airportCode}</div>
+            <div><strong>Airport Name:</strong> ${airportData.airportName}</div>
+            <div><strong>Country:</strong> ${airportData.country}</div>
+            <div><strong>Email:</strong> ${airportData.email}</div>
+            <div><strong>General Aviation Email:</strong> ${airportData.generalEmail}</div>
+            <div><strong>Contact Number:</strong> ${airportData.contactNumber}</div>
+          </div>
+          <div class="levels">
+            <div class="level-box">
+              <div class="level-title">Summer</div>
+              <div class="level-value">${getNumericBox(airportData.summerLevel || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">Winter</div>
+              <div class="level-value">${getNumericBox(airportData.winterLevel || '-')}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">GCR</div>
+              <div class="level-value">${getYesNoBox(airportData.gcr ? "YES" : "NO")}</div>
+            </div>
+            <div class="level-box">
+              <div class="level-title">PPR</div>
+              <div class="level-value">${getYesNoBox(airportData.ppr ? "YES" : "NO")}</div>
+            </div>
+          </div>
+          <div class="airport-additional-info">
+            <div class="airport-info-title">Additional Information</div>
+            <p class="airport-info-content">
+              ${airportData.additionalInformation || 'No additional information available.'}
+            </p>
+          </div>
+        `;
+      } catch (error) {
+        console.error("Error saving data:", error);
+        alert("Error saving data: " + (error.message || JSON.stringify(error)));
+      }
+    }
+    saveAirportBtn.addEventListener('click', saveAirportData);
+  </script>
+</body>
+</html>
