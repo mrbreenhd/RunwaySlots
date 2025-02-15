@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Realtime Airport Database</title>
   <style>
     /* Base Theme 95 styling */
@@ -252,9 +252,9 @@
   <footer>Created By: ArtemisByte</footer>
   
   <script type="module">
-    // Import Firebase modules
+    // Import Firebase modules for Realtime Database
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
     // Firebase configuration (replace with your actual config values)
     const firebaseConfig = {
@@ -264,12 +264,12 @@
       projectId: "airportinfo-9e5ba",
       storageBucket: "airportinfo-9e5ba.firebasestorage.app",
       messagingSenderId: "788689422638",
-      appId: "1:788689422638:web:368b08549b15581e15d2bf",
+      appId: "1:788689422638:web:368b08549b15581e15d2bf"
     };
 
-    // Initialize Firebase and Firestore
+    // Initialize Firebase and the Realtime Database
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const db = getDatabase(app);
 
     // DOM Elements
     const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -356,7 +356,7 @@
       }
     });
 
-    // Fetch airport data from the "airportinfo" collection
+    // Fetch airport data from the "airportinfo" node in the Realtime Database
     async function fetchAirportData() {
       const code = airportCodeInput.value.trim().toUpperCase();
       if (!code) {
@@ -364,15 +364,14 @@
         return;
       }
       try {
-        // Get the document with ID equal to the airport code
-        const docRef = doc(db, "airportinfo", code);
-        const docSnap = await getDoc(docRef);
-        if (!docSnap.exists()) {
+        const airportRef = ref(db, "airportinfo/" + code);
+        const snapshot = await get(airportRef);
+        if (!snapshot.exists()) {
           responseOutput.textContent = `No matching airport found for code: ${code}`;
           currentAirportData = null;
           return;
         }
-        const data = docSnap.data();
+        const data = snapshot.val();
         currentAirportData = data;
         responseOutput.innerHTML = `
           <div class="result-header">
@@ -466,7 +465,7 @@
       additionalInformation.value = airport.additionalInformation || '';
     }
 
-    // Save airport data by setting a document in the "airportinfo" collection
+    // Save airport data by setting the value in the "airportinfo" node
     async function saveAirportData() {
       const code = editAirportCode.value.trim().toUpperCase();
       if (!code) {
@@ -487,8 +486,7 @@
         additionalInformation: additionalInformation.value.trim()
       };
       try {
-        // Using setDoc will create or overwrite the document with the airport code as its ID.
-        await setDoc(doc(db, "airportinfo", code), airportData);
+        await set(ref(db, "airportinfo/" + code), airportData);
         alert(`Airport data for ${code} has been saved successfully.`);
         airportForm.style.display = 'none';
         currentAirportData = airportData;
