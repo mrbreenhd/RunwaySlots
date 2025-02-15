@@ -196,7 +196,7 @@
   <div class="container">
     <!-- Search Section -->
     <h2>Search for an Airport</h2>
-    <input type="text" id="airportCode" placeholder="Enter Airport Code (e.g., ABZ)" maxlength="3" style="text-transform: uppercase;" />
+    <input type="text" id="airportCode" placeholder="Enter Airport Code (e.g., DUB)" maxlength="3" style="text-transform: uppercase;" />
     <button id="fetchAirportBtn">Fetch Airport Data</button>
 
     <h2>Result:</h2>
@@ -213,34 +213,34 @@
       <h2 id="formTitle">Add/Edit Airport</h2>
       
       <label for="editAirportCode">Airport Code:</label>
-      <input type="text" id="editAirportCode" placeholder="e.g., ABZ" />
+      <input type="text" id="editAirportCode" placeholder="e.g., DUB" />
 
       <label for="airportName">Airport Name:</label>
       <input type="text" id="airportName" placeholder="Enter Airport Name" />
 
       <label for="country">Country:</label>
-      <input type="text" id="country" placeholder="e.g., United Kingdom" />
+      <input type="text" id="country" placeholder="e.g., Ireland" />
 
       <label for="email">Email:</label>
       <input type="email" id="email" placeholder="e.g., info@airport.com" />
 
       <label for="generalEmail">General Aviation Email:</label>
-      <input type="email" id="generalEmail" placeholder="e.g., general@airport.com" />
+      <input type="email" id="generalEmail" placeholder="e.g., contact@airport.com" />
 
       <label for="contactNumber">Contact Number:</label>
-      <input type="text" id="contactNumber" placeholder="e.g., +1 234 567 890" />
+      <input type="text" id="contactNumber" placeholder="e.g., +353 1 814 1111" />
 
       <label for="summerLevel">Summer Level:</label>
-      <input type="text" id="summerLevel" placeholder="e.g., 2" />
+      <input type="text" id="summerLevel" placeholder="e.g., 3" />
 
       <label for="winterLevel">Winter Level:</label>
-      <input type="text" id="winterLevel" placeholder="e.g., 2" />
+      <input type="text" id="winterLevel" placeholder="e.g., 3" />
 
       <label for="gcr">GCR:</label>
-      <input type="text" id="gcr" placeholder="YES or NO" />
+      <input type="text" id="gcr" placeholder="Yes or No" />
 
       <label for="ppr">PPR:</label>
-      <input type="text" id="ppr" placeholder="YES or NO" />
+      <input type="text" id="ppr" placeholder="Yes or No" />
 
       <label for="additionalInformation">Additional Information:</label>
       <textarea id="additionalInformation" placeholder="Enter any additional information"></textarea>
@@ -356,7 +356,7 @@
       }
     });
 
-    // Fetch airport data from the "airportinfo" node in the Realtime Database
+    // Fetch airport data from the "airports" node in the Realtime Database
     async function fetchAirportData() {
       const code = airportCodeInput.value.trim().toUpperCase();
       if (!code) {
@@ -364,7 +364,7 @@
         return;
       }
       try {
-        const airportRef = ref(db, "airportinfo/" + code);
+        const airportRef = ref(db, "airports/" + code);
         const snapshot = await get(airportRef);
         if (!snapshot.exists()) {
           responseOutput.textContent = `No matching airport found for code: ${code}`;
@@ -393,11 +393,11 @@
             </div>
             <div class="level-box">
               <div class="level-title">GCR</div>
-              <div class="level-value">${getYesNoBox(data.gcr ? "YES" : "NO")}</div>
+              <div class="level-value">${getYesNoBox(data.gcr)}</div>
             </div>
             <div class="level-box">
               <div class="level-title">PPR</div>
-              <div class="level-value">${getYesNoBox(data.ppr ? "YES" : "NO")}</div>
+              <div class="level-value">${getYesNoBox(data.ppr)}</div>
             </div>
           </div>
           <div class="airport-additional-info">
@@ -460,12 +460,12 @@
       contactNumber.value = airport.contactNumber || '';
       summerLevel.value = airport.summerLevel || '';
       winterLevel.value = airport.winterLevel || '';
-      gcr.value = airport.gcr ? "YES" : "NO";
-      ppr.value = airport.ppr ? "YES" : "NO";
+      gcr.value = airport.gcr || '';
+      ppr.value = airport.ppr || '';
       additionalInformation.value = airport.additionalInformation || '';
     }
 
-    // Save airport data by setting the value in the "airportinfo" node
+    // Save airport data by setting the value in the "airports" node
     async function saveAirportData() {
       const code = editAirportCode.value.trim().toUpperCase();
       if (!code) {
@@ -481,12 +481,12 @@
         contactNumber: contactNumber.value.trim(),
         summerLevel: summerLevel.value.trim(),
         winterLevel: winterLevel.value.trim(),
-        gcr: (gcr.value.trim().toUpperCase() === "YES"),
-        ppr: (ppr.value.trim().toUpperCase() === "YES"),
+        gcr: gcr.value.trim(),
+        ppr: ppr.value.trim(),
         additionalInformation: additionalInformation.value.trim()
       };
       try {
-        await set(ref(db, "airportinfo/" + code), airportData);
+        await set(ref(db, "airports/" + code), airportData);
         alert(`Airport data for ${code} has been saved successfully.`);
         airportForm.style.display = 'none';
         currentAirportData = airportData;
@@ -510,11 +510,11 @@
             </div>
             <div class="level-box">
               <div class="level-title">GCR</div>
-              <div class="level-value">${getYesNoBox(airportData.gcr ? "YES" : "NO")}</div>
+              <div class="level-value">${getYesNoBox(airportData.gcr)}</div>
             </div>
             <div class="level-box">
               <div class="level-title">PPR</div>
-              <div class="level-value">${getYesNoBox(airportData.ppr ? "YES" : "NO")}</div>
+              <div class="level-value">${getYesNoBox(airportData.ppr)}</div>
             </div>
           </div>
           <div class="airport-additional-info">
