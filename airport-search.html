@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Realtime Airport Database</title>
+
+  <!-- Quill CSS (CDN) -->
+  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css" />
+
   <style>
     /* Base Theme 95 styling */
     body {
@@ -62,7 +66,7 @@
       max-width: 600px;
     }
     /* Input fields styled with an inset (sunken) look */
-    input, textarea {
+    input {
       font-family: "MS Sans Serif", Tahoma, sans-serif;
       font-size: 12px;
       background-color: #fff;
@@ -70,9 +74,6 @@
       padding: 2px;
       margin: 4px 0;
       width: 95%;
-    }
-    textarea {
-      resize: vertical;
     }
     /* Headings */
     h1 {
@@ -136,10 +137,9 @@
       margin-bottom: 5px;
       font-size: 12px;
     }
-    /* Preserve whitespace/newlines */
     .airport-info-content {
       margin: 0;
-      white-space: pre-wrap;
+      white-space: pre-wrap; /* keep newlines in plain text, but Quill content is HTML */
     }
     /* Footer */
     footer {
@@ -165,8 +165,7 @@
       background-color: #505050;
       border: 2px outset #aaa;
     }
-    body.dark-mode input, 
-    body.dark-mode textarea {
+    body.dark-mode input {
       background-color: #fff;
       border: 2px inset #aaa;
       color: black;
@@ -175,6 +174,15 @@
       background-color: #808080;
       border: 2px outset #aaa;
       color: white;
+    }
+
+    /* Quill editor "Windows 95" look (optional) */
+    .ql-toolbar.ql-snow {
+      border: 2px outset #fff;
+      margin-bottom: 4px;
+    }
+    .ql-container.ql-snow {
+      border: 2px inset #fff;
     }
   </style>
 </head>
@@ -242,8 +250,9 @@
       <label for="ppr">PPR:</label>
       <input type="text" id="ppr" placeholder="Yes or No" />
 
+      <!-- Instead of a textarea, we now have a Quill container: -->
       <label for="additionalInformation">Additional Information:</label>
-      <textarea id="additionalInformation" placeholder="Enter any additional information"></textarea>
+      <div id="additionalInformation" style="height: 150px;"></div>
 
       <button id="saveAirportBtn">Save Airport Data</button>
     </div>
@@ -251,6 +260,9 @@
 
   <footer>Created By: ArtemisByte</footer>
   
+  <!-- Quill JS (CDN) -->
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
   <script type="module">
     // Import Firebase modules for Realtime Database
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
@@ -291,11 +303,28 @@
     const winterLevel = document.getElementById('winterLevel');
     const gcr = document.getElementById('gcr');
     const ppr = document.getElementById('ppr');
-    const additionalInformation = document.getElementById('additionalInformation');
-    const saveAirportBtn = document.getElementById('saveAirportBtn');
+    // We no longer use a <textarea>, so remove that reference:
+    // const additionalInformation = document.getElementById('additionalInformation');
+
+    let quill; // We'll store the Quill instance here
 
     let isEditing = false;
     let currentAirportData = null;
+
+    // Initialize Quill AFTER the DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      quill = new Quill('#additionalInformation', {
+        theme: 'snow',
+        modules: {
+          toolbar: [
+            ['bold', 'italic', 'underline', 'strike'],  // toggled buttons
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }], 
+            [{ 'align': [] }],
+            // add more toolbar options if you like
+          ]
+        }
+      });
+    });
 
     // Helper function to return a styled numeric box.
     function getNumericBox(value) {
@@ -447,7 +476,10 @@
       winterLevel.value = '';
       gcr.value = '';
       ppr.value = '';
-      additionalInformation.value = '';
+      // Clear Quill editor:
+      if (quill) {
+        quill.root.innerHTML = '';
+      }
     }
 
     // Populate the form fields with data from an existing record
@@ -462,7 +494,11 @@
       winterLevel.value = airport.winterLevel || '';
       gcr.value = airport.gcr || '';
       ppr.value = airport.ppr || '';
-      additionalInformation.value = airport.additionalInformation || '';
+
+      // Populate Quill with the existing Additional Info (HTML)
+      if (quill) {
+        quill.clipboard.dangerouslyPasteHTML(airport.additionalInformation || '');
+      }
     }
 
     // Save airport data by setting the value in the "airports" node
@@ -483,7 +519,8 @@
         winterLevel: winterLevel.value.trim(),
         gcr: gcr.value.trim(),
         ppr: ppr.value.trim(),
-        additionalInformation: additionalInformation.value.trim()
+        // Grab Quill's HTML
+        additionalInformation: quill ? quill.root.innerHTML.trim() : ''
       };
       try {
         await set(ref(db, "airports/" + code), airportData);
@@ -529,7 +566,7 @@
         alert("Error saving data: " + (error.message || JSON.stringify(error)));
       }
     }
-    saveAirportBtn.addEventListener('click', saveAirportData);
+    document.getElementById('saveAirportBtn').addEventListener('click', saveAirportData);
   </script>
 </body>
 </html>
