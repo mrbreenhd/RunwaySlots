@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turnaround Format Generator</title>
+  <style>
+    /* ===============================================
+       WINDOWS 95 BASE STYLES
+    =============================================== */
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #008080; /* Classic Windows 95 teal desktop */
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+      color: black;
+    }
+    a {
+      color: black;
+      text-decoration: none;
+    }
+    a:hover {
+      color: #0000cd;
+    }
+    
+    /* ===============================================
+       NAVIGATION BAR
+    =============================================== */
+    nav {
+      background-color: #c0c0c0;
+      padding: 4px 8px;
+      border-bottom: 2px solid #7d7d7d;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      gap: 4px;
+    }
+    nav li {
+      margin: 0;
+      padding: 0;
+    }
+    nav a {
+      padding: 2px 6px;
+      font-size: 12px;
+      text-transform: uppercase;
+      border: 2px outset #fff;
+    }
+    nav a:hover {
+      border: 2px inset #7d7d7d;
+    }
+    .theme-switch {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .theme-switch input {
+      width: 16px;
+      height: 16px;
+    }
+    
+    /* ===============================================
+       MAIN CONTAINER (Windows 95 Window)
+    =============================================== */
+    .container {
+      width: 800px;
+      margin: 40px auto;
+      background-color: #fff;
+      border: 2px solid #7d7d7d;
+      box-shadow: 2px 2px 0 #fff;
+    }
+    /* Title Bar */
+    .title-bar {
+      background: linear-gradient(to right, #000080, #0000cd);
+      color: white;
+      padding: 2px 6px;
+      font-size: 14px;
+      font-weight: bold;
+      border-bottom: 2px solid #7d7d7d;
+    }
+    .window-content {
+      padding: 8px;
+    }
+    .container h1 {
+      display: none;
+    }
+    
+    /* ===============================================
+       FORM STYLES
+    =============================================== */
+    .scr-form {
+      margin-top: 20px;
+      padding: 4px;
+      border: 2px dashed #7d7d7d;
+      background-color: #fff;
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+      font-size: 12px;
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    .form-group label {
+      font-size: 10px;
+      font-weight: bold;
+      display: block;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 2px;
+      font-size: 10px;
+      border: 2px inset #7d7d7d;
+      background-color: #fff;
+      color: black;
+      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
+    }
+    button {
+      padding: 4px 8px;
+      background-color: #c0c0c0;
+      border: 2px outset #fff;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    button:hover {
+      border: 2px inset #7d7d7d;
+    }
+    .scrOutput {
+      margin-top: 8px;
+      padding: 4px;
+      background-color: #fff;
+      border: 2px dashed #7d7d7d;
+      font-size: 10px;
+      color: #000080;
+      white-space: pre-wrap;
+      display: block;
+    }
+    
+    /* ===============================================
+       FOOTER
+    =============================================== */
+    footer {
+      font-family: "MS Sans Serif", Tahoma, sans-serif;
+      font-size: 12px;
+      color: black;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    /* ===============================================
+       DARK MODE OVERRIDES (Retro Dark)
+    =============================================== */
+    body.dark-mode {
+      background-color: #000080;
+      color: white;
+    }
+    body.dark-mode nav {
+      background-color: #000080;
+      border-bottom: 2px solid #fff;
+    }
+    body.dark-mode nav a {
+      color: white;
+      border: 2px outset #000080;
+    }
+    body.dark-mode nav a:hover {
+      border: 2px inset #fff;
+    }
+    body.dark-mode .container {
+      background-color: #000040;
+      border: 2px solid #fff;
+      box-shadow: 2px 2px 0 #000;
+    }
+    body.dark-mode .title-bar {
+      background: linear-gradient(to right, #000040, #000080);
+      border-bottom: 2px solid #fff;
+    }
+    body.dark-mode button {
+      background-color: #000080;
+      color: white;
+      border: 2px outset #000040;
+    }
+    body.dark-mode button:hover {
+      border: 2px inset #fff;
+    }
+    body.dark-mode .scr-form {
+      background-color: #000080;
+      border: 2px dashed #fff;
+      color: white;
+    }
+    body.dark-mode .scrOutput {
+      background-color: #000080;
+      border: 2px dashed #fff;
+      color: #c0c0ff;
+    }
+    body.dark-mode footer {
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Generator</a></li>
+    </ul>
+    <div class="theme-switch">
+      <label for="themeToggle">Dark Mode</label>
+      <input type="checkbox" id="themeToggle" onclick="toggleDarkMode()">
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="title-bar">Turnaround Format Generator</div>
+    <div class="window-content">
+      <div class="scr-form">
+        <!-- Two Flight Data Inputs (each on a new line) -->
+        <div class="form-group">
+          <label for="flightData">Paste Flight Data (two lines):</label>
+          <textarea id="flightData" placeholder="e.g.,
+RK305P EDI PIK 16FEB2025 0045 0130 GRUKL 738
+RK306P PIK EDI 16FEB2025 0200 0245 GRUKB 738"></textarea>
+        </div>
+        <!-- New dropdown for State -->
+        <div class="form-group">
+          <label for="state">State:</label>
+          <select id="state">
+            <option value="NEW">NEW</option>
+            <option value="CANCEL">CANCEL</option>
+          </select>
+        </div>
+        <!-- The turnaround airport is taken from the arrival flight's arrival airport -->
+        <div class="form-group">
+          <label for="arrivalServiceType">Arrival Service Type:</label>
+          <select id="arrivalServiceType" onchange="updateSeatMapping()">
+            <option value="P">P</option>
+            <option value="D">D</option>
+            <option value="J">J</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="departureServiceType">Departure Service Type:</label>
+          <select id="departureServiceType" onchange="updateSeatMapping()">
+            <option value="P">P</option>
+            <option value="D">D</option>
+            <option value="J">J</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <button type="button" onclick="generateTurnaround()">Generate Turnaround Format</button>
+        </div>
+        <div class="scrOutput" id="output"></div>
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+    &copy; 2025 Turnaround Generator
+  </footer>
+  
+  <script>
+    // Toggle dark mode
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+    
+    // Stub for updateSeatMapping if needed later
+    function updateSeatMapping() {
+      // Currently no dynamic update is required.
+    }
+    
+    // Parses a date string in ddMMMyyyy format (e.g., 16FEB2025)
+    function parseFlightDate(dateStr) {
+      let day = parseInt(dateStr.substring(0, 2), 10);
+      let monthStr = dateStr.substring(2, 5).toUpperCase();
+      let year = parseInt(dateStr.substring(5), 10);
+      const monthMap = {
+        JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5,
+        JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11
+      };
+      return new Date(year, monthMap[monthStr], day);
+    }
+    
+    // Formats a Date object as ddMMM (e.g., 15FEB)
+    function formatDate(date) {
+      let day = ("0" + date.getDate()).slice(-2);
+      let monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      return day + monthNames[date.getMonth()];
+    }
+    
+    // Returns the day-of-operation string based on a flight date.
+    // Sunday: "0000007", Monday: "1000000", Tuesday: "0200000", Wednesday: "0003000",
+    // Thursday: "0004000", Friday: "0000500", Saturday: "0000060"
+    function getDayOfOperation(dateString) {
+      const days = {
+        0: "0000007",
+        1: "1000000",
+        2: "0200000",
+        3: "0003000",
+        4: "0004000",
+        5: "0000500",
+        6: "0000060"
+      };
+      let date = parseFlightDate(dateString);
+      return days[date.getDay()] || "";
+    }
+    
+    // Returns the seat number/aircraft type mapping based on the aircraft type and service type.
+    function getSeatNumberAndAircraftType(aircraftType, serviceType) {
+      aircraftType = aircraftType.toUpperCase().trim();
+      const seatAndAircraft = {
+        "7M8": { "P": "0007M8", "D": "0007M8", "J": "1977M8" },
+        "738": { "P": "00073H", "D": "00073H", "J": "18973H" }
+      };
+      return seatAndAircraft[aircraftType] ? seatAndAircraft[aircraftType][serviceType] || "" : "";
+    }
+    
+    function generateTurnaround() {
+      const input = document.getElementById("flightData").value.trim();
+      const arrivalServiceType = document.getElementById("arrivalServiceType").value;
+      const departureServiceType = document.getElementById("departureServiceType").value;
+      const state = document.getElementById("state").value; // "NEW" or "CANCEL"
+      // Determine prefix based on state: "N" for NEW, "D" for CANCEL.
+      let prefix = state === "NEW" ? "N" : "D";
+      
+      // Expect exactly 2 non-empty lines.
+      const lines = input.split("\n").filter(line => line.trim() !== "");
+      if (lines.length !== 2) {
+        document.getElementById("output").innerText = "Please paste exactly two flight data lines.";
+        return;
+      }
+      
+      // Split each flight line into fields.
+      const arrival = lines[0].split(" ");
+      const departure = lines[1].split(" ");
+      if (arrival.length < 8 || departure.length < 8) {
+        document.getElementById("output").innerText = "Each flight data line must have at least 8 fields.";
+        return;
+      }
+      
+      // --- Arrival Flight Data ---
+      // [0]: Flight number (e.g., "RK305P") -> remove trailing "P"
+      let arrivalFlightNumber = arrival[0].replace(/P$/, "");
+      // [1]: Departure Airport (e.g., "EDI")
+      let arrDepAirport = arrival[1];
+      // [2]: Arrival Airport (e.g., "PIK") -> used as turnaround airport
+      let turnaroundAirport = arrival[2];
+      // [3]: Flight Date (e.g., "16FEB2025")
+      let flightDateFullA = arrival[3].toUpperCase();
+      // [5]: Arrival Time (e.g., "0130") – used for origin info.
+      let arrArrivalTime = arrival[5];
+      // [7]: Aircraft Type (e.g., "738")
+      let aircraftTypeA = arrival[7];
+      
+      // --- Departure Flight Data ---
+      // [1]: Departure Airport (e.g., "PIK") – used for departure info.
+      let depDepAirport = departure[1];
+      // [3]: Flight Date (e.g., "16FEB2025")
+      let flightDateFullD = departure[3].toUpperCase();
+      // [4]: Departure Time (e.g., "0200") – used for departure info.
+      let depDepartureTime = departure[4];
+      
+      // Flight Date display: take the first 5 characters.
+      let flightDateDisplayA = flightDateFullA.substring(0, 5); // "16FEB"
+      let flightDateDisplayD = flightDateFullD.substring(0, 5); // "16FEB"
+      
+      // Compute day-of-operation based on the arrival flight's date.
+      let dayOfOperation = getDayOfOperation(flightDateFullA);
+      
+      // Use today's date as the slot date automatically.
+      let today = new Date();
+      let slotDate = formatDate(today);
+      
+      // Get seat number/aircraft type mapping based on arrival flight's aircraft type and service type.
+      let seatAndAircraft = getSeatNumberAndAircraftType(aircraftTypeA, arrivalServiceType);
+      
+      // Build the turnaround flight data line.
+      // - Use the prefix ("N" or "D") + arrival flight's number (without trailing "P") for the first field.
+      // - Then use arrival flight's number (unchanged) for the second field.
+      // - Concatenate the two flight date displays.
+      // - Origin info: arrival flight's departure airport + its arrival time.
+      // - Departure info: departure flight's departure time + its departure airport.
+      let originInfo = arrDepAirport + arrArrivalTime;  // e.g., "EDI0130"
+      let depInfo = depDepartureTime + depDepAirport;     // e.g., "0200PIK"
+      
+      let formattedOutput =
+        `${prefix}${arrivalFlightNumber} ${arrivalFlightNumber} ${flightDateDisplayA}${flightDateDisplayD} ${dayOfOperation} ${seatAndAircraft} ${originInfo} ${depInfo} ${arrivalServiceType}${departureServiceType}`;
+      
+      // Hardcoded week line (as per example)
+      let weekLine = "W23";
+      
+      // Determine final slot request message based on state.
+      let slotRequest = state === "CANCEL" ? `SI SLOT CANX REQ ${turnaroundAirport}` : `SI NEW SLOT REQ ${turnaroundAirport}`;
+      
+      // Construct final turnaround format.
+      let turnaroundFormat =
+        `SCR\n` +
+        `${weekLine}\n` +
+        `${slotDate}\n` +
+        `${turnaroundAirport}\n` +
+        `${formattedOutput}\n\n` +
+        `${slotRequest}\n`;
+      
+      document.getElementById("output").innerText = turnaroundFormat;
+    }
+  </script>
+</body>
+</html>
