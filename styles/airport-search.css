@@ -1,171 +1,189 @@
-/* Base Theme 95 styling */
-    body {
-      background-color: #008080; /* Classic teal desktop background */
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 12px;
-      color: black;
-      margin: 0;
-      padding: 0;
-    }
-    /* Navigation Bar  */
-    nav {
-      background-color: #c0c0c0;
-      border: 2px outset #fff;
-      padding: 4px 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-    }
-    nav li {
-      margin-right: 10px;
-    }
-    nav a {
-      color: black;
-      text-decoration: none;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    /* Windows 95–style buttons */
-    button {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 12px;
-      background-color: #c0c0c0;
-      border: 2px outset #fff;
-      padding: 2px 8px;
-      margin: 2px;
-      cursor: pointer;
-    }
-    button:active {
-      border: 2px inset #fff;
-    }
-    /* Main container (simulating a window) */
-    .container {
-      background-color: #d4d0c8;
-      border: 2px outset #fff;
-      padding: 10px;
-      margin: 20px auto;
-      width: 90%;
-      max-width: 600px;
-    }
-    /* Input fields styled with an inset (sunken) look */
-    input, textarea {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 12px;
-      background-color: #fff;
-      border: 2px inset;
-      padding: 2px;
-      margin: 4px 0;
-      width: 95%;
-    }
-    textarea {
-      resize: vertical;
-    }
-    /* Headings */
-    h1 {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 16px;
-      margin: 10px 0;
-      text-align: center;
-    }
-    h2 {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 14px;
-      margin: 8px 0;
-    }
-    /* Form labels for proper spacing */
-    #airportForm label {
-      display: block;
-      margin-top: 8px;
-      margin-bottom: 4px;
-    }
-    /* Action buttons container */
-    .action-buttons {
-      text-align: center;
-      margin: 10px 0;
-    }
-    /* Result display styling */
-    .result-header {
-      margin-bottom: 10px;
-      text-align: left;
-    }
-    /* Level boxes container */
-    .levels {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-    .level-box {
-      text-align: center;
-      margin: 0 10px;
-    }
-    .level-title {
-      font-weight: bold;
-      margin-bottom: 2px;
-      font-size: 10px;
-    }
-    .level-value span {
-      display: inline-block;
-      width: 40px;
-      height: 20px;
-      line-height: 20px;
-      text-align: center;
-      font-size: 12px;
-      border: 1px solid black;
-    }
-    /* Additional Information container */
-    .airport-additional-info {
-      margin-top: 15px;
-      text-align: left;
-    }
-    .airport-info-title {
-      font-weight: bold;
-      margin-bottom: 5px;
-      font-size: 12px;
-    }
-    /* Option 1: Preserve whitespace/newlines */
-    .airport-info-content {
-      margin: 0;
-      white-space: pre-wrap;
-    }
-    /* Footer */
-    footer {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 12px;
-      color: black;
-      text-align: center;
-      margin-top: 20px;
-    }
-    /* Optional Dark Mode */
-    body.dark-mode {
-      background-color: #000080;
-      color: white;
-    }
-    body.dark-mode nav {
-      background-color: #808080;
-      border: 2px outset #aaa;
-    }
-    body.dark-mode nav a {
-      color: white;
-    }
-    body.dark-mode .container {
-      background-color: #505050;
-      border: 2px outset #aaa;
-    }
-    body.dark-mode input, 
-    body.dark-mode textarea {
-      background-color: #fff;
-      border: 2px inset #aaa;
-      color: black;
-    }
-    body.dark-mode button {
-      background-color: #808080;
-      border: 2px outset #aaa;
-      color: white;
-    }
+body {
+  background-color: #008080;
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 12px;
+  color: black;
+  margin: 0;
+  padding: 0;
+}
+
+nav {
+  background-color: #c0c0c0;
+  border: 2px outset #fff;
+  padding: 4px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav li {
+  margin-right: 10px;
+}
+
+nav a {
+  color: black;
+  text-decoration: none;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 12px;
+  background-color: #c0c0c0;
+  border: 2px outset #fff;
+  padding: 2px 8px;
+  margin: 2px;
+  cursor: pointer;
+}
+
+button:active {
+  border: 2px inset #fff;
+}
+
+.container {
+  background-color: #d4d0c8;
+  border: 2px outset #fff;
+  padding: 10px;
+  margin: 20px auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+input {
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 12px;
+  background-color: #fff;
+  border: 2px inset;
+  padding: 2px;
+  margin: 4px 0;
+  width: 95%;
+}
+
+h1 {
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 16px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+h2 {
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+#airportForm label {
+  display: block;
+  margin: 8px 0 4px;
+}
+
+.action-buttons {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.result-header {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.levels {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.level-box {
+  text-align: center;
+  margin: 0 10px;
+}
+
+.level-title {
+  font-weight: bold;
+  margin-bottom: 2px;
+  font-size: 10px;
+}
+
+.level-value span {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 12px;
+  border: 1px solid black;
+}
+
+.airport-additional-info {
+  margin-top: 15px;
+  text-align: left;
+}
+
+.airport-info-title {
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.airport-info-content {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+footer {
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  font-size: 12px;
+  color: black;
+  text-align: center;
+  margin-top: 20px;
+}
+
+body.dark-mode {
+  background-color: #000080;
+  color: white;
+}
+
+body.dark-mode nav {
+  background-color: #808080;
+  border: 2px outset #aaa;
+}
+
+body.dark-mode nav a {
+  color: white;
+}
+
+body.dark-mode .container {
+  background-color: #505050;
+  border: 2px outset #aaa;
+}
+
+body.dark-mode input {
+  background-color: #fff;
+  border: 2px inset #aaa;
+  color: black;
+}
+
+body.dark-mode button {
+  background-color: #808080;
+  border: 2px outset #aaa;
+  color: white;
+}
+
+.ql-toolbar.ql-snow {
+  border: 2px outset #fff;
+  margin-bottom: 4px;
+}
+
+.ql-container.ql-snow {
+  border: 2px inset #fff;
+}
