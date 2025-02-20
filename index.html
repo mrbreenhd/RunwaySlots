@@ -4,7 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Manual SCR System [BACK-UP]</title>
-   <link rel="stylesheet" href="styles/manualscr.css">
+  <link rel="stylesheet" href="styles/manualscr.css">
+  <!-- Include Firebase libraries and your config (make sure config/firebase.js contains your API keys) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="config/firebase.js"></script>
 </head>
 <body>
   <!-- NAVIGATION BAR -->
@@ -19,7 +23,7 @@
       <li><a href="quicklinks.html">Quick Links</a></li>
       <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">Log Issues</a></li>
     </ul>
-   </nav>
+  </nav>
 
   <!-- MAIN CONTAINER -->
   <div class="container">
@@ -64,7 +68,6 @@
     <div class="scr-form" data-slot-action="NEW">
       <button class="remove-btn" type="button" onclick="removeForm(this)">Remove Form</button>
       <h3>New Slot</h3>
-
       <div class="form-group">
         <label>Slot Type:</label>
         <select class="slotType">
@@ -115,7 +118,6 @@
         <button type="button" onclick="showSCR(this)">Show SCR</button>
         <button type="button" onclick="emailSCR(this)">Email SCR</button>
       </div>
-
       <div class="scrOutput"></div>
     </div>
   </template>
@@ -125,7 +127,6 @@
     <div class="scr-form" data-slot-action="CANCEL">
       <button class="remove-btn" type="button" onclick="removeForm(this)">Remove Form</button>
       <h3>Cancel Slot</h3>
-
       <div class="form-group">
         <label>Slot Type:</label>
         <select class="slotType">
@@ -176,7 +177,6 @@
         <button type="button" onclick="showSCR(this)">Show SCR</button>
         <button type="button" onclick="emailSCR(this)">Email SCR</button>
       </div>
-
       <div class="scrOutput"></div>
     </div>
   </template>
@@ -303,7 +303,6 @@
 
   <footer> Created By: ArtemisByte </footer>
   
- <script src="scripts/manualscr.js"></script>
-  
+  <script src="scripts/manualscr.js"></script>
 </body>
 </html>
