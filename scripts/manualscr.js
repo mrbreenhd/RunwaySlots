@@ -138,7 +138,6 @@ function showSCR(buttonEl) {
   const formDiv = buttonEl.closest('.scr-form');
   if (!formDiv) return;
 
-  // data-slot-action -> 'NEW' or 'CANCEL'
   const action = formDiv.getAttribute('data-slot-action') || 'NEW';
   const slotType = formDiv.querySelector('.slotType').value;
   const airportCode = (formDiv.querySelector('.airportCode').value || '').toUpperCase();
@@ -163,15 +162,13 @@ function showSCR(buttonEl) {
   const formattedDate = formatDateDDMMM(dateVal);
   const dayValue = getDayValue(dateObj);
 
-  // Decide indicator
-  let indicator = 'N'; // default for new
+  let indicator = 'N';
   let actionText = 'NEW SLOT';
   if (action === 'CANCEL') {
     indicator = 'D';
     actionText = 'CANCEL SLOT';
   }
 
-  // Build the SCR lines
   let scrMessage = `SCR  
 W24  
 ${formattedDate}  
@@ -181,17 +178,14 @@ ${airportCode}
     scrMessage += `${indicator}${flightNumber} ${formattedDate}${formattedDate} ${dayValue} 000${acType} ${destOrig}${timeVal} ${serviceType}  
 SI ${actionText} REQ ${airportCode}`;
   } else {
-    // DEPARTURE
     scrMessage += `${indicator} ${flightNumber} ${formattedDate}${formattedDate} ${dayValue} 000${acType} ${timeVal}${destOrig} ${serviceType}  
 SI ${actionText} REQ ${airportCode}`;
   }
 
-  // Show output
   const outEl = formDiv.querySelector('.scrOutput');
   outEl.textContent = scrMessage.trim();
   outEl.style.display = 'block';
 
-  // Add to log
   logData.push({
     slotAction: actionText,
     scrMessage: scrMessage.trim()
@@ -212,11 +206,9 @@ function emailSCR(buttonEl) {
     return;
   }
 
-  // Get airport code and service type from the form
   const airportCode = (formDiv.querySelector('.airportCode').value || '').toUpperCase();
   const serviceType = formDiv.querySelector('.serviceType').value;
 
-  // Determine the correct email based on service type:
   let emailAddress = '';
   if (serviceType === 'D') {
     emailAddress = airportEmails[airportCode]?.emailGeneral;
@@ -245,7 +237,6 @@ function showChangeSCR(buttonEl) {
   const container = buttonEl.closest('.change-scr-container');
   if (!container) return;
 
-  // Gather old request
   const old_slotType = container.querySelector('.old_slotType').value;
   const old_airport  = (container.querySelector('.old_airport').value || '').toUpperCase();
   const old_flightNo = (container.querySelector('.old_flightNo').value || '').trim();
@@ -256,7 +247,6 @@ function showChangeSCR(buttonEl) {
   const old_do       = (container.querySelector('.old_do').value || '').toUpperCase();
   const old_stc      = container.querySelector('.old_stc').value;
 
-  // Gather new request
   const new_slotType = container.querySelector('.new_slotType').value;
   const new_airport  = (container.querySelector('.new_airport').value || '').toUpperCase();
   const new_flightNo = (container.querySelector('.new_flightNo').value || '').trim();
@@ -267,39 +257,23 @@ function showChangeSCR(buttonEl) {
   const new_do       = (container.querySelector('.new_do').value || '').toUpperCase();
   const new_stc      = container.querySelector('.new_stc').value;
 
-  // Validate
   if (!old_airport || !old_flightNo || !old_date || !old_acType || !old_time || !old_do ||
       !new_airport || !new_flightNo || !new_date || !new_acType || !new_time || !new_do) {
     alert('Please fill in all Old Request and New Request fields.');
     return;
   }
 
-  // Build lines
   const old_ddmmm = formatDateDDMMM(old_date);
   const new_ddmmm = formatDateDDMMM(new_date);
   const old_dayVal = getDayValue(new Date(old_date));
   const new_dayVal = getDayValue(new Date(new_date));
 
-  // We'll label them:
-  //  C lines for old, R lines for new 
   const old_indicator = (old_slotType === 'Arrival') ? `C${old_flightNo}` : `C ${old_flightNo}`;
   const new_indicator = (new_slotType === 'Arrival') ? `R${new_flightNo}` : `R ${new_flightNo}`;
 
-  let old_stationTime = '';
-  if (old_slotType === 'Arrival') {
-    old_stationTime = `${old_do}${old_time}`;
-  } else {
-    old_stationTime = `${old_time}${old_do}`;
-  }
+  let old_stationTime = (old_slotType === 'Arrival') ? `${old_do}${old_time}` : `${old_time}${old_do}`;
+  let new_stationTime = (new_slotType === 'Arrival') ? `${new_do}${new_time}` : `${new_time}${new_do}`;
 
-  let new_stationTime = '';
-  if (new_slotType === 'Arrival') {
-    new_stationTime = `${new_do}${new_time}`;
-  } else {
-    new_stationTime = `${new_time}${new_do}`;
-  }
-
-  // Example final message:
   let scrMessage = `SCR
 W24
 ${old_ddmmm}
@@ -309,12 +283,10 @@ ${new_indicator} ${new_ddmmm}${new_ddmmm} ${new_dayVal} 000${new_acType} ${new_s
 
 SI SLOT CHG REQ ${old_airport}`;
 
-  // Show output
   const outEl = container.querySelector('.change-scrOutput');
   outEl.textContent = scrMessage.trim();
   outEl.style.display = 'block';
 
-  // Add to log
   logData.push({
     slotAction: 'SCR CHANGE',
     scrMessage: scrMessage.trim()
@@ -334,7 +306,6 @@ function emailChangeSCR(buttonEl) {
     return;
   }
 
-  // Use old_airport and old_stc for determining email
   const old_airport = (container.querySelector('.old_airport').value || '').toUpperCase();
   const serviceType = container.querySelector('.old_stc').value;
   const airportCode = old_airport || '???';
@@ -396,15 +367,10 @@ function downloadCSV() {
 
   const csvRows = [
     ['Slot Action', 'SCR Message'],
-    ...logData.map((item) => [
-      item.slotAction,
-      item.scrMessage.replace(/\n/g, ' ')
-    ])
+    ...logData.map(item => [item.slotAction, item.scrMessage.replace(/\n/g, ' ')])
   ];
 
-  const csvContent = csvRows
-    .map((row) => row.map((field) => `"${field.replace(/"/g, '""')}"`).join(','))
-    .join('\n');
+  const csvContent = csvRows.map(row => row.map(field => `"${field.replace(/"/g, '""')}"`).join(',')).join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
