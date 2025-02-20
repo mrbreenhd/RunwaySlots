@@ -39,7 +39,7 @@ let airportEmails = {};
  Load emails data from Firebase Realtime Database
 ******************************************/
 function loadEmailData() {
-  // Firebase is available via window.firebase
+  // Firebase is available globally because firebase.js already initialized it
   firebase.database().ref('airports').once('value')
     .then(snapshot => {
       airportEmails = snapshot.val();
@@ -383,19 +383,3 @@ function downloadCSV() {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 }
-
-/******************************************
- Expose Functions to Global Scope
-******************************************/
-window.addNewSlotForm = addNewSlotForm;
-window.addCancelSlotForm = addCancelSlotForm;
-window.addChangeScrForm = addChangeScrForm;
-window.removeForm = removeForm;
-window.showSCR = showSCR;
-window.emailSCR = emailSCR;
-window.showChangeSCR = showChangeSCR;
-window.emailChangeSCR = emailChangeSCR;
-window.downloadCSV = downloadCSV;
-window.scrollToTop = scrollToTop;
-window.validateSeats = validateSeats;
-window.showLog = showLog;
