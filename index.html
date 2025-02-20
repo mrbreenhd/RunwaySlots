@@ -23,23 +23,18 @@
 
   <!-- MAIN CONTAINER -->
   <div class="container">
-    <!-- Title Bar for the window -->
     <div class="title-bar">SCR Management System [BACK-UP]</div>
     <div class="window-content">
       <div class="btn-group">
-        <!-- Buttons to add forms -->
         <button type="button" onclick="addNewSlotForm()">Add NEW Slot Form</button>
         <button type="button" onclick="addCancelSlotForm()">Add CANCEL Slot Form</button>
         <button type="button" onclick="addChangeScrForm()">Add CHANGE SCR Form</button>
-        <!-- Show Log & Back to Top -->
         <button type="button" onclick="showLog()">Log</button>
         <button id="backToTop" type="button" onclick="scrollToTop()">Back to Top</button>
       </div>
 
-      <!-- DIV to hold all dynamically added forms -->
       <div id="formsContainer"></div>
 
-      <!-- LOG SECTION -->
       <div id="logContainer" class="log-section" style="display: none;">
         <h3>Message Log</h3>
         <table id="logTable">
@@ -109,7 +104,6 @@
           <option value="X">X</option>
         </select>
       </div>
-      <!-- Buttons -->
       <div class="btn-group" style="justify-content: flex-start;">
         <button type="button" onclick="showSCR(this)">Show SCR</button>
         <button type="button" onclick="emailSCR(this)">Email SCR</button>
@@ -168,7 +162,6 @@
           <option value="X">X</option>
         </select>
       </div>
-      <!-- Buttons -->
       <div class="btn-group" style="justify-content: flex-start;">
         <button type="button" onclick="showSCR(this)">Show SCR</button>
         <button type="button" onclick="emailSCR(this)">Email SCR</button>
@@ -182,7 +175,6 @@
     <div class="change-scr-container" data-slot-action="CHANGE">
       <button class="changeFormRemoveBtn" type="button" onclick="removeForm(this)">Remove Form</button>
       <h3>Change SCR</h3>
-      
       <div class="requests-container">
         <h4>Old Request</h4>
         <div class="change-form-row old-request">
@@ -234,7 +226,6 @@
           </div>
         </div>
       </div>
-
       <div class="requests-container">
         <h4>New Request</h4>
         <div class="change-form-row new-request">
@@ -286,18 +277,15 @@
           </div>
         </div>
       </div>
-
-      <!-- Buttons -->
       <div class="btn-group" style="justify-content: flex-start;">
         <button type="button" onclick="showChangeSCR(this)">Show SCR</button>
         <button type="button" onclick="emailChangeSCR(this)">Email SCR</button>
       </div>
-
       <div class="change-scrOutput"></div>
     </div>
   </template>
 
-  <footer> Created By: ArtemisByte </footer>
+  <footer>Created By: ArtemisByte</footer>
   
   <!-- Module Script: Import Firebase, initialize it, and load your main script -->
   <script type="module">
@@ -308,10 +296,10 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     
-    // Expose Firebase globally so that scripts/manualscr.js can use it
+    // Expose Firebase globally for manualscr.js
     window.firebase = firebase;
     
-    // Import the main script
+    // Import the main script (which will attach functions to window)
     import './scripts/manualscr.js';
   </script>
 </body>
