@@ -23,32 +23,6 @@ async function getAirportEmail(airportCode, serviceType) {
 }
 
 /******************************************
- 2) THEME TOGGLE (Unchanged)
-******************************************/
-const themeToggle = document.getElementById('themeToggle');
-const body = document.body;
-const savedTheme = localStorage.getItem('theme') || 'light';
-applyTheme(savedTheme);
-function applyTheme(theme) {
-  if (theme === 'dark') {
-    body.classList.add('dark-mode');
-    themeToggle.checked = true;
-  } else {
-    body.classList.remove('dark-mode');
-    themeToggle.checked = false;
-  }
-}
-themeToggle.addEventListener('change', () => {
-  if (themeToggle.checked) {
-    localStorage.setItem('theme', 'dark');
-    applyTheme('dark');
-  } else {
-    localStorage.setItem('theme', 'light');
-    applyTheme('light');
-  }
-});
-
-/******************************************
  3) LOGGING (Historic Log)
 ******************************************/
 const STORAGE_KEY = "historicLog";
@@ -276,7 +250,7 @@ function formatSCRMessages() {
         }
       }
     });
-    // SI line: adjust subject based on slot type
+    // SI line: build subject based on slot type
     let siLine;
     if (currentSlotType === "NEW SLOT") {
       siLine = `SI NEW SLOT REQ ${airportCode}`;
@@ -332,17 +306,14 @@ function attachSendButtonsListeners() {
   });
 }
 async function sendEmail(airportCode, scrOutput) {
-  // Build subject based on slot type
   let subject;
   if (currentSlotType === "NEW SLOT") {
     subject = "NEW SLOT REQ " + airportCode;
   } else {
     subject = "SLOT CANX REQ " + airportCode;
   }
-  // Determine service type for email:
   const arrivalServiceType = document.getElementById("arrivalServiceType").value;
   const departureServiceType = document.getElementById("departureServiceType").value;
-  // If either is "D", use "D"; otherwise, use arrivalServiceType.
   const emailServiceType = (arrivalServiceType === "D" || departureServiceType === "D") ? "D" : arrivalServiceType;
   
   const recipientEmail = await getAirportEmail(airportCode, emailServiceType);
