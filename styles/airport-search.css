@@ -36,6 +36,9 @@ nav a:hover {
   text-decoration: underline;
 }
 
+/* -------------------------------
+   BUTTON STYLES (Windows 95)
+------------------------------- */
 button {
   font-family: "MS Sans Serif", Tahoma, sans-serif;
   font-size: 12px;
@@ -44,10 +47,12 @@ button {
   padding: 2px 8px;
   margin: 2px;
   cursor: pointer;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
-button:active {
-  border: 2px inset #fff;
+button:hover {
+  border: 2px inset #7d7d7d;
 }
 
 .container {
@@ -148,6 +153,9 @@ footer {
   margin-top: 20px;
 }
 
+/* -------------------------------
+         DARK MODE OVERRIDES
+------------------------------- */
 body.dark-mode {
   background-color: #000080;
   color: white;
@@ -171,12 +179,6 @@ body.dark-mode input {
   background-color: #fff;
   border: 2px inset #aaa;
   color: black;
-}
-
-body.dark-mode button {
-  background-color: #808080;
-  border: 2px outset #aaa;
-  color: white;
 }
 
 .ql-toolbar.ql-snow {
