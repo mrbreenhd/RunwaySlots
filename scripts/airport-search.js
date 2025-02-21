@@ -6,8 +6,6 @@ import firebaseConfig from "../config/firebase.js";
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-const body = document.body;
 const airportCodeInput = document.getElementById('airportCode');
 const fetchAirportBtn = document.getElementById('fetchAirportBtn');
 const responseOutput = document.getElementById('responseOutput');
@@ -50,28 +48,6 @@ function getYesNoBox(value) {
   let bg = value.toUpperCase() === "YES" ? "green" : "";
   return `<span style="width:40px;height:20px;line-height:20px;display:inline-block;text-align:center;border:1px solid black;${bg ? 'background-color:' + bg + ';' : ''}">${value}</span>`;
 }
-
-const savedTheme = localStorage.getItem('theme') || 'light';
-if (savedTheme === 'dark') { 
-  body.classList.replace('light-mode', 'dark-mode'); 
-  themeToggleBtn.textContent = 'Light Mode'; 
-} else { 
-  body.classList.replace('dark-mode', 'light-mode'); 
-  themeToggleBtn.textContent = 'Dark Mode'; 
-}
-
-function toggleTheme() {
-  if (body.classList.contains('dark-mode')) {
-    body.classList.replace('dark-mode', 'light-mode');
-    localStorage.setItem('theme', 'light');
-    themeToggleBtn.textContent = 'Dark Mode';
-  } else {
-    body.classList.replace('light-mode', 'dark-mode');
-    localStorage.setItem('theme', 'dark');
-    themeToggleBtn.textContent = 'Light Mode';
-  }
-}
-themeToggleBtn.addEventListener('click', toggleTheme);
 
 airportCodeInput.addEventListener('input', function() {
   this.value = this.value.toUpperCase();
