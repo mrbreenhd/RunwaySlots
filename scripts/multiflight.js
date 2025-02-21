@@ -10,7 +10,7 @@ async function getAirportEmail(airportCode, serviceType) {
         // For service type D, use emailGeneral if available; otherwise, fall back to email.
         return data.emailGeneral || data.email || "slotdesk@ryanair.com";
       } else {
-        // For other service types (P, K, T, J), use the "email" field.
+        // For service types P, K, T, J, use the "email" field.
         return data.email || "slotdesk@ryanair.com";
       }
     } else {
@@ -276,10 +276,13 @@ function formatSCRMessages() {
         }
       }
     });
-    // SI line
-    const siLine = (option === "D")
-      ? `SI ${currentSlotType} REQ ${airportCode} // LEARJET REG: ${reg}`
-      : `SI ${currentSlotType} REQ ${airportCode}`;
+    // SI line: adjust subject based on slot type
+    let siLine;
+    if (currentSlotType === "NEW SLOT") {
+      siLine = `SI NEW SLOT REQ ${airportCode}`;
+    } else {
+      siLine = `SI SLOT CANX REQ ${airportCode}`;
+    }
     scrLines.push(siLine);
     const scrOutput = scrLines.join("\n");
     const scrGroup = document.createElement("div");
@@ -329,12 +332,17 @@ function attachSendButtonsListeners() {
   });
 }
 async function sendEmail(airportCode, scrOutput) {
-  // Build subject based on currentSlotType and airportCode.
-  const subject = `${currentSlotType} REQ ${airportCode}`;
+  // Build subject based on slot type
+  let subject;
+  if (currentSlotType === "NEW SLOT") {
+    subject = "NEW SLOT REQ " + airportCode;
+  } else {
+    subject = "SLOT CANX REQ " + airportCode;
+  }
   // Determine service type for email:
   const arrivalServiceType = document.getElementById("arrivalServiceType").value;
   const departureServiceType = document.getElementById("departureServiceType").value;
-  // If either is "D", use D; otherwise, use arrivalServiceType.
+  // If either is "D", use "D"; otherwise, use arrivalServiceType.
   const emailServiceType = (arrivalServiceType === "D" || departureServiceType === "D") ? "D" : arrivalServiceType;
   
   const recipientEmail = await getAirportEmail(airportCode, emailServiceType);
@@ -357,7 +365,6 @@ function sendAllEmails() {
   Array.from(scrGroups).forEach((scrGroup, index) => {
     const airportCode = scrGroup.dataset.airportCode;
     const scrOutput = scrGroup.dataset.scrOutput;
-    const subject = `${currentSlotType} REQ ${airportCode}`;
     setTimeout(async () => {
       await sendEmail(airportCode, scrOutput);
       emailsSent += 1;
