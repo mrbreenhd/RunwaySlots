@@ -153,23 +153,23 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
           </select>
         </div>
         <div class="form-group">
-          <!-- Added both Generate and Email buttons -->
-          <button type="button" onclick="generateTurnaround()">Generate Turnaround Format</button>
-          <button type="button" onclick="emailTurnaround()">Email Turnaround</button>
+          <!-- Two buttons: one for generating and one for emailing -->
+          <button type="button" onclick="generateTurnaround()">Generate</button>
+          <button type="button" onclick="emailTurnaround()">Email</button>
         </div>
         <div class="scrOutput" id="output"></div>
       </div>
     </div>
   </div>
-  <footer>&copy; 2025 Turnaround Generator</footer>
+  <footer>&copy; CREATED BY: ARTEMISBYTE 2025</footer>
 
-  <!-- Firebase libraries (Approach 1: plain script loading) -->
+  <!-- Load Firebase libraries (Approach 1: plain script loading) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <!-- Your Firebase configuration script (assumed to be in scripts folder) -->
+  <!-- Load your Firebase configuration script (placed in scripts folder) -->
   <script src="scripts/firebase.js"></script>
   <script>
-    // Global variables to store the currently generated turnaround details
+    // Global variables to store the currently generated turnaround details.
     let currentTurnaroundAirport = "";
     let currentTurnaroundFormat = "";
 
@@ -225,7 +225,6 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
       }
       let arrivalFlightNumber = arrival[0].replace(/P$/, "");
       let arrDepAirport = arrival[1];
-      // The turnaround airport is assumed to be provided in the flight data (field 3 of arrival)
       let turnaroundAirport = arrival[2];
       let flightDateFullA = arrival[3].toUpperCase();
       let arrArrivalTime = arrival[5];
@@ -246,29 +245,33 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
       let slotRequest = state === "CANCEL" ? `SI SLOT CANX REQ ${turnaroundAirport}` : `SI NEW SLOT REQ ${turnaroundAirport}`;
       let turnaroundFormat = `SCR\n${weekLine}\n${slotDate}\n${turnaroundAirport}\n${formattedOutput}\n\n${slotRequest}\n`;
 
-      // Store for emailing
       currentTurnaroundAirport = turnaroundAirport;
       currentTurnaroundFormat = turnaroundFormat;
 
       document.getElementById("output").innerText = turnaroundFormat;
     }
 
-    // New function: Email Turnaround using Firebase email functionality
+    // New function: Email Turnaround using Firebase
     function emailTurnaround() {
       if (!currentTurnaroundAirport || !currentTurnaroundFormat) {
         alert("Please generate the turnaround format first.");
         return;
       }
-      // Fetch the email for the turnaround airport from Firebase
+      // Read the current state from the "state" dropdown.
+      const state = document.getElementById("state").value;
+      let subject = state === "CANCEL" 
+                      ? "SLOT CANX REQ " + currentTurnaroundAirport 
+                      : "NEW SLOT REQ " + currentTurnaroundAirport;
+      const ccEmail = "slotdesk@ryanair.com";
+      // Fetch the email for the turnaround airport from Firebase.
       firebase.database().ref("airports/" + currentTurnaroundAirport).once("value")
         .then(snapshot => {
           if (snapshot.exists()) {
             const data = snapshot.val();
-            // Use the email field from Firebase (or default if not present)
             let emailAddress = data.email || "slotdesk@ryanair.com";
-            const subject = "Turnaround Format for " + currentTurnaroundAirport;
-            const mailtoLink = "mailto:" + emailAddress + 
-              "?subject=" + encodeURIComponent(subject) +
+            const mailtoLink = "mailto:" + emailAddress +
+              "?cc=" + encodeURIComponent(ccEmail) +
+              "&subject=" + encodeURIComponent(subject) +
               "&body=" + encodeURIComponent(currentTurnaroundFormat);
             window.location.href = mailtoLink;
           } else {
