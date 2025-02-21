@@ -1,4 +1,25 @@
 /******************************************
+ PERSISTENT LOGGING FUNCTIONS
+******************************************/
+const STORAGE_KEY = "historicLog";
+
+function getHistoricLog() {
+  const logData = localStorage.getItem(STORAGE_KEY);
+  return logData ? JSON.parse(logData) : [];
+}
+
+function setHistoricLog(logEntries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(logEntries));
+}
+
+function addLogEntry(entry) {
+  const logEntries = getHistoricLog();
+  logEntries.push(entry);
+  setHistoricLog(logEntries);
+  console.log("Log entry added:", entry);
+}
+
+/******************************************
  THEME TOGGLE
 ******************************************/
 const themeToggle = document.getElementById('themeToggle');
@@ -32,7 +53,6 @@ if (themeToggle) {
  GLOBAL / LOG / EMAILS
 ******************************************/
 const formsContainer = document.getElementById('formsContainer');
-let logData = [];
 let airportEmails = {};
 
 /******************************************
@@ -121,6 +141,7 @@ function getDayValue(dateObj) {
   const dayName = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(dateObj);
   return dayValues[dayName] || '0000000';
 }
+
 function formatDateDDMMM(isoDate) {
   if (!isoDate) return '';
   const [yyyy, mm, dd] = isoDate.split('-');
@@ -186,7 +207,8 @@ SI ${actionText} REQ ${airportCode}`;
   outEl.textContent = scrMessage.trim();
   outEl.style.display = 'block';
 
-  logData.push({
+  // Save log entry persistently
+  addLogEntry({
     slotAction: actionText,
     scrMessage: scrMessage.trim()
   });
@@ -287,7 +309,8 @@ SI SLOT CHG REQ ${old_airport}`;
   outEl.textContent = scrMessage.trim();
   outEl.style.display = 'block';
 
-  logData.push({
+  // Save log entry persistently
+  addLogEntry({
     slotAction: 'SCR CHANGE',
     scrMessage: scrMessage.trim()
   });
@@ -334,6 +357,7 @@ function emailChangeSCR(buttonEl) {
  SHOW LOG
 ******************************************/
 function showLog() {
+  const logData = getHistoricLog();
   const logContainer = document.getElementById('logContainer');
   const logTableBody = document.querySelector('#logTable tbody');
   logTableBody.innerHTML = '';
@@ -360,6 +384,7 @@ function showLog() {
  DOWNLOAD CSV
 ******************************************/
 function downloadCSV() {
+  const logData = getHistoricLog();
   if (logData.length === 0) {
     alert('No log data available to download.');
     return;
