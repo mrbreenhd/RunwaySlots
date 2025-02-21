@@ -312,9 +312,8 @@ async function sendEmail(airportCode, scrOutput) {
   } else {
     subject = "SLOT CANX REQ " + airportCode;
   }
-  const arrivalServiceType = document.getElementById("arrivalServiceType").value;
-  const departureServiceType = document.getElementById("departureServiceType").value;
-  const emailServiceType = (arrivalServiceType === "D" || departureServiceType === "D") ? "D" : arrivalServiceType;
+  // Use the dropdownMenu value as the service type.
+  const emailServiceType = document.getElementById("dropdownMenu").value;
   
   const recipientEmail = await getAirportEmail(airportCode, emailServiceType);
   const ccEmail = "slotdesk@ryanair.com";
