@@ -37,13 +37,6 @@
       border: 2px outset #fff;
     }
     nav a:hover { border: 2px inset #7d7d7d; }
-    .theme-switch {
-      font-size: 12px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .theme-switch input { width: 16px; height: 16px; }
     .container {
       width: 800px;
       margin: 40px auto;
@@ -112,45 +105,6 @@
       text-align: center;
       margin-top: 20px;
     }
-    body.dark-mode {
-      background-color: #000080;
-      color: white;
-    }
-    body.dark-mode nav {
-      background-color: #000080;
-      border-bottom: 2px solid #fff;
-    }
-    body.dark-mode nav a {
-      color: white;
-      border: 2px outset #000080;
-    }
-    body.dark-mode nav a:hover { border: 2px inset #fff; }
-    body.dark-mode .container {
-      background-color: #000040;
-      border: 2px solid #fff;
-      box-shadow: 2px 2px 0 #000;
-    }
-    body.dark-mode .title-bar {
-      background: linear-gradient(to right, #000040, #000080);
-      border-bottom: 2px solid #fff;
-    }
-    body.dark-mode button {
-      background-color: #000080;
-      color: white;
-      border: 2px outset #000040;
-    }
-    body.dark-mode button:hover { border: 2px inset #fff; }
-    body.dark-mode .scr-form {
-      background-color: #000080;
-      border: 2px dashed #fff;
-      color: white;
-    }
-    body.dark-mode .scrOutput {
-      background-color: #000080;
-      border: 2px dashed #fff;
-      color: #c0c0ff;
-    }
-    body.dark-mode footer { color: white; }
   </style>
 </head>
 <body>
@@ -165,14 +119,14 @@
       <li><a href="quicklinks.html">Quick Links</a></li>
       <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">Log Issues</a></li>
     </ul>
-    </nav>
+  </nav>
   <div class="container">
-    <div class="title-bar">Turnaround Format </div>
+    <div class="title-bar">Turnaround Format</div>
     <div class="window-content">
       <div class="scr-form">
         <div class="form-group">
           <label for="flightData">Only Paste Flight Data:</label>
-          <textarea id="flightData" placeholder="e.g.,
+          <textarea id="flightData" placeholder="e.g., 
 ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
         </div>
         <div class="form-group">
@@ -199,18 +153,30 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
           </select>
         </div>
         <div class="form-group">
+          <!-- Added both Generate and Email buttons -->
           <button type="button" onclick="generateTurnaround()">Generate Turnaround Format</button>
+          <button type="button" onclick="emailTurnaround()">Email Turnaround</button>
         </div>
         <div class="scrOutput" id="output"></div>
       </div>
     </div>
   </div>
   <footer>&copy; 2025 Turnaround Generator</footer>
+
+  <!-- Firebase libraries (Approach 1: plain script loading) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <!-- Your Firebase configuration script (assumed to be in scripts folder) -->
+  <script src="scripts/firebase.js"></script>
   <script>
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
+    // Global variables to store the currently generated turnaround details
+    let currentTurnaroundAirport = "";
+    let currentTurnaroundFormat = "";
+
+    function updateSeatMapping() {
+      // This function can be expanded as needed.
     }
-    function updateSeatMapping() {}
+
     function parseFlightDate(dateStr) {
       let day = parseInt(dateStr.substring(0, 2), 10);
       let monthStr = dateStr.substring(2, 5).toUpperCase();
@@ -218,21 +184,28 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
       const monthMap = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
       return new Date(year, monthMap[monthStr], day);
     }
+
     function formatDate(date) {
       let day = ("0" + date.getDate()).slice(-2);
       let monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
       return day + monthNames[date.getMonth()];
     }
+
     function getDayOfOperation(dateString) {
       const days = { 0: "0000007", 1: "1000000", 2: "0200000", 3: "0003000", 4: "0004000", 5: "0000500", 6: "0000060" };
       let date = parseFlightDate(dateString);
       return days[date.getDay()] || "";
     }
+
     function getSeatNumberAndAircraftType(aircraftType, serviceType) {
       aircraftType = aircraftType.toUpperCase().trim();
-      const seatAndAircraft = { "7M8": { "P": "0007M8", "D": "0007M8", "J": "1977M8" }, "738": { "P": "00073H", "D": "00073H", "J": "18973H" } };
+      const seatAndAircraft = {
+        "7M8": { "P": "0007M8", "D": "0007M8", "J": "1977M8" },
+        "738": { "P": "00073H", "D": "00073H", "J": "18973H" }
+      };
       return seatAndAircraft[aircraftType] ? seatAndAircraft[aircraftType][serviceType] || "" : "";
     }
+
     function generateTurnaround() {
       const input = document.getElementById("flightData").value.trim();
       const arrivalServiceType = document.getElementById("arrivalServiceType").value;
@@ -252,6 +225,7 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
       }
       let arrivalFlightNumber = arrival[0].replace(/P$/, "");
       let arrDepAirport = arrival[1];
+      // The turnaround airport is assumed to be provided in the flight data (field 3 of arrival)
       let turnaroundAirport = arrival[2];
       let flightDateFullA = arrival[3].toUpperCase();
       let arrArrivalTime = arrival[5];
@@ -271,7 +245,40 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
       let weekLine = "W23";
       let slotRequest = state === "CANCEL" ? `SI SLOT CANX REQ ${turnaroundAirport}` : `SI NEW SLOT REQ ${turnaroundAirport}`;
       let turnaroundFormat = `SCR\n${weekLine}\n${slotDate}\n${turnaroundAirport}\n${formattedOutput}\n\n${slotRequest}\n`;
+
+      // Store for emailing
+      currentTurnaroundAirport = turnaroundAirport;
+      currentTurnaroundFormat = turnaroundFormat;
+
       document.getElementById("output").innerText = turnaroundFormat;
+    }
+
+    // New function: Email Turnaround using Firebase email functionality
+    function emailTurnaround() {
+      if (!currentTurnaroundAirport || !currentTurnaroundFormat) {
+        alert("Please generate the turnaround format first.");
+        return;
+      }
+      // Fetch the email for the turnaround airport from Firebase
+      firebase.database().ref("airports/" + currentTurnaroundAirport).once("value")
+        .then(snapshot => {
+          if (snapshot.exists()) {
+            const data = snapshot.val();
+            // Use the email field from Firebase (or default if not present)
+            let emailAddress = data.email || "slotdesk@ryanair.com";
+            const subject = "Turnaround Format for " + currentTurnaroundAirport;
+            const mailtoLink = "mailto:" + emailAddress + 
+              "?subject=" + encodeURIComponent(subject) +
+              "&body=" + encodeURIComponent(currentTurnaroundFormat);
+            window.location.href = mailtoLink;
+          } else {
+            alert("No email data found for airport: " + currentTurnaroundAirport);
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching email:", error);
+          alert("Error fetching email: " + error.message);
+        });
     }
   </script>
 </body>
