@@ -28,7 +28,6 @@ async function getAirportEmail(airportCode, serviceType) {
   }
 }
 
-
 /******************************************
  3) LOGGING (Historic Log)
 ******************************************/
@@ -201,6 +200,7 @@ function formatSCRMessages() {
     }
     airportGroups[to].flights.push({ type: 'arrival', data });
   });
+  
   // Remove duplicate flight entries per airport
   Object.keys(airportGroups).forEach(airportCode => {
     const seen = new Set();
@@ -214,6 +214,7 @@ function formatSCRMessages() {
       }
     });
   });
+  
   // Generate SCR message per group
   Object.values(airportGroups).forEach((group, groupIndex) => {
     const { airportCode, flights } = group;
@@ -222,6 +223,7 @@ function formatSCRMessages() {
     scrLines.push("W24");
     scrLines.push(getCurrentDate());
     scrLines.push(airportCode);
+    
     flights.forEach(flightEntry => {
       const { type, data } = flightEntry;
       const { flight, date, dayOfOperation, departureTime, arrivalTime, from, to, aircraftType } = data;
@@ -242,6 +244,7 @@ function formatSCRMessages() {
       } else {
         opCode = getOperationCode(option);
       }
+      
       if (type === 'departure') {
         if (option === "J") {
           scrLines.push(`${flightType} ${flight} ${date}${date} ${dayOfOperation} ${opCode} ${departureTime}${to} ${option}`);
@@ -257,6 +260,12 @@ function formatSCRMessages() {
         }
       }
     });
+    
+    // For service type D, append the Learjet Registration line
+    if (option.trim().toUpperCase() === "D") {
+      scrLines.push(`Learjet Reg: ${reg}`);
+    }
+    
     // SI line: build subject based on slot type
     let siLine;
     if (currentSlotType === "NEW SLOT") {
@@ -265,6 +274,7 @@ function formatSCRMessages() {
       siLine = `SI SLOT CANX REQ ${airportCode}`;
     }
     scrLines.push(siLine);
+    
     const scrOutput = scrLines.join("\n");
     const scrGroup = document.createElement("div");
     scrGroup.classList.add("scr-group");
@@ -287,6 +297,7 @@ function formatSCRMessages() {
     scrGroup.dataset.scrOutput = scrOutput;
     scrGroup.dataset.airportCode = airportCode;
     outputList.appendChild(scrGroup);
+    
     // Log to Historic Log
     const combinedFlightNumbers = flights.map(e => e.data.flight).join(", ");
     const combinedDirections = flights.map(e => e.type).join("/");
@@ -299,6 +310,7 @@ function formatSCRMessages() {
       scrMessage: scrOutput
     });
   });
+  
   showSuccess(`Formatted ${parsedEntries.length} flight(s) successfully.`);
   attachSendButtonsListeners();
 }
@@ -351,5 +363,7 @@ function sendAllEmails() {
     }, index * 1000);
   });
 }
+
+// Attach event listeners for formatting and sending emails
 document.getElementById("formatBtn").addEventListener("click", formatSCRMessages);
 document.getElementById("sendAllBtn").addEventListener("click", sendAllEmails);
