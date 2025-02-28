@@ -6,12 +6,18 @@ async function getAirportEmail(airportCode, serviceType) {
     const snapshot = await firebase.database().ref("airports/" + airportCode).once("value");
     if (snapshot.exists()) {
       const data = snapshot.val();
-      if (serviceType === "D") {
-        // For service type D, use emailGeneral if available; otherwise, fall back to email.
-        return data.emailGeneral || data.email || "slotdesk@ryanair.com";
+      if (serviceType.trim().toUpperCase() === "D") {
+        // For service type D, use emailGeneral if it exists and is non-empty; otherwise, use email.
+        if (data.emailGeneral && data.emailGeneral.trim() !== "") {
+          return data.emailGeneral;
+        } else if (data.email && data.email.trim() !== "") {
+          return data.email;
+        } else {
+          return "slotdesk@ryanair.com";
+        }
       } else {
-        // For service types P, K, T, J, use the "email" field.
-        return data.email || "slotdesk@ryanair.com";
+        // For service types P, K, T, J, X, always use the email field.
+        return (data.email && data.email.trim() !== "") ? data.email : "slotdesk@ryanair.com";
       }
     } else {
       return "slotdesk@ryanair.com";
@@ -21,6 +27,7 @@ async function getAirportEmail(airportCode, serviceType) {
     return "slotdesk@ryanair.com";
   }
 }
+
 
 /******************************************
  3) LOGGING (Historic Log)
