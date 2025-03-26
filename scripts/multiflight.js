@@ -232,7 +232,7 @@ function formatSCRMessages() {
             opCode = "1977M8";
           } else if (aircraftType === "738" || aircraftType === "73H") {
             opCode = "18973H";
-          } else {
+          }  else {
             opCode = aircraftType;
           }
         } else {
