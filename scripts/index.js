@@ -148,13 +148,16 @@
           return "1977M8";
         } else if (aircraftType === "738" || aircraftType === "73H") {
           return "18973H";
-        } else {
+        } else if (aircraftType === "320" || aircraftType === "320") {
+          return "180320";
+        }  else {
           return aircraftType || defaultOp;
         }
       } else {
         if (aircraftType) {
           if (aircraftType === "738") return "00073H";
           if (aircraftType === "7M8") return "0007M8";
+          if (aircraftType === "320") return "000320";
           return aircraftType; 
         } else {
           return getCodePrefix(option) + defaultOp;
