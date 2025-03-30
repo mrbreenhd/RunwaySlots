@@ -191,7 +191,7 @@ function showSCR(buttonEl) {
   }
 
   let scrMessage = `SCR  
-W24  
+S25  
 ${formattedDate}  
 ${airportCode}  
 `;
@@ -297,7 +297,7 @@ function showChangeSCR(buttonEl) {
   let new_stationTime = (new_slotType === 'Arrival') ? `${new_do}${new_time}` : `${new_time}${new_do}`;
 
   let scrMessage = `SCR
-W24
+S25
 ${old_ddmmm}
 ${old_airport}
 ${old_indicator} ${old_ddmmm}${old_ddmmm} ${old_dayVal} 000${old_acType} ${old_stationTime} ${old_stc}  
