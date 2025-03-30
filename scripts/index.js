@@ -201,7 +201,7 @@
     
       const output = `
 SCR 
-W24 
+S25 
 ${date} 
 ${from} 
 ${flightType} ${flight} ${date}${date} ${dayOfOperation} ${opCode} ${departureTime}${to} ${option} 
@@ -241,7 +241,7 @@ ${siLine}
     
       const output = `
 SCR 
-W24 
+S25 
 ${date} 
 ${to} 
 ${flightType}${flight} ${date}${date} ${dayOfOperation} ${opCode} ${from}${arrivalTime} ${option} 
@@ -282,7 +282,7 @@ ${siLine}
     
       const departureOutputStr = `
 SCR 
-W24 
+S25 
 ${date} 
 ${from} 
 ${flightType} ${flight} ${date}${date} ${dayOfOperation} ${opCode} ${departureTime}${to} ${option} 
@@ -295,7 +295,7 @@ ${departureSiLine}
     
       const arrivalOutputStr = `
 SCR 
-W24 
+S25 
 ${date} 
 ${to} 
 ${flightType}${flight} ${date}${date} ${dayOfOperation} ${opCode} ${from}${arrivalTime} ${option} 
