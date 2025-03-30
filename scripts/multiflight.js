@@ -218,7 +218,7 @@ function formatSCRMessages() {
     const { airportCode, flights } = group;
     const scrLines = [];
     scrLines.push("SCR");
-    scrLines.push("W24");
+    scrLines.push("S25");
     scrLines.push(getCurrentDate());
     scrLines.push(airportCode);
     flights.forEach(flightEntry => {
