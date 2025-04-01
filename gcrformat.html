@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GCR Formatter</title>
- <link rel="stylesheet" href="styles/gcrformat.css">
+  <link rel="stylesheet" href="styles/gcrformat.css">
 </head>
 <body>
   <!-- NAVIGATION BAR -->
@@ -21,22 +21,18 @@
     </ul>
   </nav>
    
-  <!-- MAIN CONTAINER (Windows 95 Styled Window) -->
+  <!-- MAIN CONTAINER -->
   <div class="container">
     <div class="title-bar">GCR Formatter</div>
     <div class="window-content">
-      <!-- Hidden H1 (for accessibility if needed) -->
       <h1>GCR Formatter</h1>
-
-      <!-- User Input -->
       <textarea 
         id="userInput" 
         aria-label="Flight Input" 
-        placeholder="Enter input"
+        placeholder="Enter one flight per line (e.g., FR1C BER STN 15FEB2025 0010 0125 MABRB)"
       ></textarea>
       <span id="userInputError" class="error-message"></span>
 
-      <!-- Slot Code Input -->
       <input 
         type="text" 
         id="slotCode" 
@@ -44,8 +40,7 @@
         placeholder="Enter Slot Code (e.g., 008L45)"
       >
       <span id="slotCodeError" class="error-message"></span>
-      
-      <!-- Slot Type Selection -->
+
       <label for="slotType">Slot Type:</label>
       <select id="slotType">
         <option value="NEW">New Slot</option>
@@ -53,28 +48,34 @@
         <option value="CNL">Cancelled Slot</option>
       </select>
 
-      <!-- Disclaimer -->
       <div class="disclaimer">
         DISCLAIMER: PLEASE CHECK DETAILS ARE CORRECT BEFORE SENDING
       </div>
-      
-      <!-- Action Buttons -->
+
       <div>
         <button onclick="formatGcr()">Format GCR</button>
-        <button onclick="downloadGcr('gcrOutput')">Download GCR</button>
       </div>
 
-      <!-- Combined GCR Output -->
-      <div id="gcrContainer" class="output-container">
-        <button class="copy-button" onclick="copyToClipboard('gcrOutput')">Copy</button>
-        <div class="heading">GCR:</div>
-        <pre id="gcrOutput"></pre>
+      <div id="combinedParentContainer" style="display:none;"></div>
+
+      <div id="departureContainer" class="output-container" style="display:none;">
+        <button class="copy-button" onclick="copyToClipboard('departureOutput')">Copy Departure</button>
+        <button class="email-button" onclick="sendGcrEmail(document.getElementById('departureOutput').textContent)">Send GCR Email</button>
+        <div class="heading">Departure GCR:</div>
+        <pre id="departureOutput"></pre>
+      </div>
+
+      <div id="arrivalContainer" class="output-container" style="display:none;">
+        <button class="copy-button" onclick="copyToClipboard('arrivalOutput')">Copy Arrival</button>
+        <button class="email-button" onclick="sendGcrEmail(document.getElementById('arrivalOutput').textContent)">Send GCR Email</button>
+        <div class="heading">Arrival GCR:</div>
+        <pre id="arrivalOutput"></pre>
       </div>
     </div>
   </div>
-  <footer> Created By: ArtemisByte </footer>
-  
-<script src="scripts/gcrformat.js"></script>
-  
+
+  <footer>Created By: ArtemisByte</footer>
+
+  <script src="scripts/gcrformat.js"></script>
 </body>
 </html>
