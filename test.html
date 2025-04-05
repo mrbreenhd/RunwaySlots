@@ -85,7 +85,7 @@
       font-weight: bold;
     }
     textarea, input {
-      width: 100%;
+      width: 95%;
       padding: 4px;
       margin-bottom: 8px;
       border: 2px inset #7d7d7d;
@@ -756,6 +756,7 @@
           } else {
             opCode = getOperationCode(option);
           }
+          // For service type D, override opCode based on aircraft selection.
           if (option === "D") {
             if (document.getElementById("learjetCheckbox").checked) {
               opCode = "L45";
@@ -763,26 +764,28 @@
               opCode = "CL5";
             }
           }
+          // For service type J, do not prepend the codePrefix.
+          let finalOpcode = (option === "J") ? opCode : codePrefix + opCode;
           if (type === 'departure') {
-            const cLine = `C ${flight} ${date}${date} ${dayOfOperation} ${codePrefix}${opCode} ${departureTime}${to} ${option}`;
+            const cLine = `C ${flight} ${date}${date} ${dayOfOperation} ${ (option==="J") ? opCode : codePrefix+opCode } ${departureTime}${to} ${option}`;
             cLines.push(cLine);
             rRows.push({
               flight: flight,
               date: convertSCRDateToInput(date),
               day: dayOfOperation,
-              opcode: codePrefix + opCode,
+              opcode: finalOpcode,
               time: departureTime.slice(0,2) + ":" + departureTime.slice(2),
               airport: to,
               service: option
             });
           } else if (type === 'arrival') {
-            const cLine = `C${flight} ${date}${date} ${dayOfOperation} ${codePrefix}${opCode} ${from}${arrivalTime} ${option}`;
+            const cLine = `C${flight} ${date}${date} ${dayOfOperation} ${ (option==="J") ? opCode : codePrefix+opCode } ${from}${arrivalTime} ${option}`;
             cLines.push(cLine);
             rRows.push({
               flight: flight,
               date: convertSCRDateToInput(date),
               day: dayOfOperation,
-              opcode: codePrefix + opCode,
+              opcode: finalOpcode,
               time: arrivalTime.slice(0,2) + ":" + arrivalTime.slice(2),
               airport: from,
               service: option
