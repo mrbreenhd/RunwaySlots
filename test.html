@@ -446,9 +446,7 @@
       return `${day}${month}`;
     }
     
-    // Helper functions to convert between SCR date format (e.g. "05APR") and date input value ("YYYY-MM-DD")
     function convertSCRDateToInput(scrDate) {
-      // scrDate like "05APR" assumed for current year
       const day = scrDate.slice(0,2);
       const monthAbbr = scrDate.slice(2).toUpperCase();
       const monthMap = { JAN: "01", FEB: "02", MAR: "03", APR: "04", MAY: "05", JUN: "06", JUL: "07", AUG: "08", SEP: "09", OCT: "10", NOV: "11", DEC: "12" };
@@ -457,7 +455,6 @@
       return `${year}-${month}-${day}`;
     }
     function convertInputDateToSCR(inputDate) {
-      // inputDate is "YYYY-MM-DD"
       const parts = inputDate.split("-");
       if (parts.length < 3) return "";
       const day = parts[2];
@@ -472,22 +469,27 @@
       const errorDiv = document.getElementById("errorMessage");
       errorDiv.textContent = message;
       errorDiv.style.display = "block";
-      setTimeout(() => {
-        errorDiv.style.display = "none";
-      }, 5000);
+      setTimeout(() => { errorDiv.style.display = "none"; }, 5000);
     }
     function showSuccess(message) {
       const successDiv = document.getElementById("successMessage");
       successDiv.textContent = message;
       successDiv.style.display = "block";
-      setTimeout(() => {
-        successDiv.style.display = "none";
-      }, 5000);
+      setTimeout(() => { successDiv.style.display = "none"; }, 5000);
     }
     
     // 6) CORE: Format, Display, Send
-
-    // Original SCR message formatter (unchanged)
+    function attachSendButtonsListeners() {
+      const sendButtons = document.querySelectorAll(".scr-group .send-button-container button[data-airport-code]");
+      sendButtons.forEach(button => {
+        button.addEventListener("click", async () => {
+          const airportCode = button.dataset.airportCode;
+          const scrOutput = button.parentElement.parentElement.dataset.scrOutput;
+          await sendEmail(airportCode, scrOutput);
+        });
+      });
+    }
+    
     function formatSCRMessages() {
       const input = document.getElementById("userInput").value;
       const parsedEntries = parseInput(input);
@@ -609,7 +611,6 @@
         const sendBtn = document.createElement("button");
         sendBtn.textContent = "Send Email";
         sendBtn.dataset.airportCode = airportCode;
-        sendBtn.dataset.groupIndex = groupIndex;
         sendButtonContainer.appendChild(sendBtn);
         scrGroup.appendChild(headingDiv);
         scrGroup.appendChild(outputDiv);
@@ -632,19 +633,6 @@
       attachSendButtonsListeners();
     }
 
-    // Function to attach Send Email button listeners
-    function attachSendButtonsListeners() {
-      const sendButtons = document.querySelectorAll(".scr-group .send-button-container button");
-      sendButtons.forEach(button => {
-        button.addEventListener("click", async () => {
-          const airportCode = button.dataset.airportCode;
-          const scrOutput = button.parentElement.parentElement.dataset.scrOutput;
-          await sendEmail(airportCode, scrOutput);
-        });
-      });
-    }
-
-    // Function to send an email using the current SCR output
     async function sendEmail(airportCode, scrOutput) {
       let subject;
       if (currentSlotType === "NEW SLOT") {
@@ -652,7 +640,6 @@
       } else if(currentSlotType === "CANCEL SLOT"){
         subject = "SLOT CANX REQ " + airportCode;
       } else {
-        // For Change SCR, the email subject is "SLOT CHG REQ [AIRPORTCODE]"
         subject = "SLOT CHG REQ " + airportCode;
       }
       const emailServiceType = document.getElementById("dropdownMenu").value;
@@ -665,7 +652,6 @@
       showSuccess(`Email for ${airportCode} has been triggered.`);
     }
 
-    // Send all SCR emails
     function sendAllEmails() {
       const outputList = document.getElementById("outputList");
       const scrGroups = outputList.getElementsByClassName("scr-group");
@@ -688,7 +674,7 @@
       });
     }
 
-    // NEW FUNCTION: Format Change SCR Messages with editable R lines using multiple input fields
+    // --- CHANGE-SCR WITH EDITABLE R-LINES ---
     function formatChangeSCRMessages() {
       const input = document.getElementById("userInput").value;
       const parsedEntries = parseInput(input);
@@ -726,7 +712,6 @@
         });
       });
       
-      // Build SCR messages for each airport group with editable R lines
       Object.values(airportGroups).forEach((group, groupIndex) => {
         const { airportCode, flights } = group;
         let headerLines = [];
@@ -735,7 +720,6 @@
         headerLines.push(getCurrentDate());
         headerLines.push(airportCode);
         let cLines = [];
-        // Build an array of objects holding default values for the modified (R) lines:
         let rRows = [];
         flights.forEach(flightEntry => {
           const { type, data } = flightEntry;
@@ -746,7 +730,7 @@
               if (aircraftType === "7M8") {
                 opCode = "1977M8";
               } else if (aircraftType === "738" || aircraftType === "73H") {
-                opCode = "18973H";
+                opCode = "18973H"; 
               } else {
                 opCode = aircraftType;
               }
@@ -756,7 +740,6 @@
           } else {
             opCode = getOperationCode(option);
           }
-          // For service type D, override opCode based on aircraft selection.
           if (option === "D") {
             if (document.getElementById("learjetCheckbox").checked) {
               opCode = "L45";
@@ -764,13 +747,12 @@
               opCode = "CL5";
             }
           }
-          // For service type J, do not prepend the codePrefix.
-          let finalOpcode = (option === "J") ? opCode : codePrefix + opCode;
+          const finalOpcode = (option === "J") ? opCode : codePrefix + opCode;
           if (type === 'departure') {
-            const cLine = `C ${flight} ${date}${date} ${dayOfOperation} ${ (option==="J") ? opCode : codePrefix+opCode } ${departureTime}${to} ${option}`;
+            const cLine = `C ${flight} ${date}${date} ${dayOfOperation} ${(option==="J")?opCode:codePrefix+opCode} ${departureTime}${to} ${option}`;
             cLines.push(cLine);
             rRows.push({
-              flight: flight,
+              flight,
               date: convertSCRDateToInput(date),
               day: dayOfOperation,
               opcode: finalOpcode,
@@ -778,11 +760,11 @@
               airport: to,
               service: option
             });
-          } else if (type === 'arrival') {
-            const cLine = `C${flight} ${date}${date} ${dayOfOperation} ${ (option==="J") ? opCode : codePrefix+opCode } ${from}${arrivalTime} ${option}`;
+          } else {
+            const cLine = `C${flight} ${date}${date} ${dayOfOperation} ${(option==="J")?opCode:codePrefix+opCode} ${from}${arrivalTime} ${option}`;
             cLines.push(cLine);
             rRows.push({
-              flight: flight,
+              flight,
               date: convertSCRDateToInput(date),
               day: dayOfOperation,
               opcode: finalOpcode,
@@ -797,23 +779,26 @@
         rRows.forEach(row => {
           const scrDate = convertInputDateToSCR(row.date);
           const timeFormatted = row.time.replace(":", "");
-          initialScrMessage += "\n" + `R ${row.flight} ${scrDate}${scrDate} ${row.day} ${row.opcode} ${timeFormatted}${row.airport} ${row.service}`;
+          initialScrMessage += `\nR ${row.flight} ${scrDate}${scrDate} ${row.day} ${row.opcode} ${timeFormatted}${row.airport} ${row.service}`;
         });
-        initialScrMessage += "\n" + siLine;
+        initialScrMessage += `\n${siLine}`;
         
-        // Create the SCR group container
+        // --- build UI ---
         const scrGroup = document.createElement("div");
         scrGroup.classList.add("scr-group");
         scrGroup.dataset.airportCode = airportCode;
+        scrGroup.dataset.scrOutput = initialScrMessage;
         const headingDiv = document.createElement("div");
         headingDiv.classList.add("heading");
         headingDiv.textContent = `Change SCR [${airportCode}]`;
-        // Non-editable header + C lines
+
+        // non-editable header + C-lines
         const nonEditableDiv = document.createElement("div");
         nonEditableDiv.style.whiteSpace = "pre-wrap";
         nonEditableDiv.style.fontFamily = '"MS Sans Serif", Tahoma, Geneva, sans-serif';
         nonEditableDiv.textContent = headerLines.join("\n") + "\n" + cLines.join("\n");
-        // Editable section for R lines using multiple fields per row
+        
+        // editable R-lines
         const editableDiv = document.createElement("div");
         editableDiv.style.whiteSpace = "pre-wrap";
         editableDiv.style.fontFamily = '"MS Sans Serif", Tahoma, Geneva, sans-serif';
@@ -823,7 +808,7 @@
           rowDiv.style.border = "1px solid #ccc";
           rowDiv.style.padding = "4px";
           rowDiv.style.marginBottom = "4px";
-          // Flight number
+          // Flight #
           const flightLabel = document.createElement("label");
           flightLabel.textContent = "Flight: ";
           const flightInput = document.createElement("input");
@@ -832,7 +817,7 @@
           flightInput.value = row.flight;
           flightLabel.appendChild(flightInput);
           rowDiv.appendChild(flightLabel);
-          // Date input
+          // Date
           const dateLabel = document.createElement("label");
           dateLabel.textContent = " Date: ";
           const dateInput = document.createElement("input");
@@ -841,7 +826,7 @@
           dateInput.value = row.date;
           dateLabel.appendChild(dateInput);
           rowDiv.appendChild(dateLabel);
-          // Day of Operation (read-only)
+          // Day (readonly)
           const dayLabel = document.createElement("label");
           dayLabel.textContent = " Day: ";
           const dayInput = document.createElement("input");
@@ -851,7 +836,7 @@
           dayInput.disabled = true;
           dayLabel.appendChild(dayInput);
           rowDiv.appendChild(dayLabel);
-          // Op Code
+          // OpCode
           const opcodeLabel = document.createElement("label");
           opcodeLabel.textContent = " Op Code: ";
           const opcodeInput = document.createElement("input");
@@ -860,7 +845,7 @@
           opcodeInput.value = row.opcode;
           opcodeLabel.appendChild(opcodeInput);
           rowDiv.appendChild(opcodeLabel);
-          // Time input
+          // Time
           const timeLabel = document.createElement("label");
           timeLabel.textContent = " Time: ";
           const timeInput = document.createElement("input");
@@ -869,7 +854,7 @@
           timeInput.value = row.time;
           timeLabel.appendChild(timeInput);
           rowDiv.appendChild(timeLabel);
-          // Airport as text input (not a drop-down)
+          // Airport
           const airportLabel = document.createElement("label");
           airportLabel.textContent = " Airport: ";
           const airportInput = document.createElement("input");
@@ -878,99 +863,105 @@
           airportInput.value = row.airport;
           airportLabel.appendChild(airportInput);
           rowDiv.appendChild(airportLabel);
-          // Service type drop-down
+          // Service dropdown
           const serviceLabel = document.createElement("label");
           serviceLabel.textContent = " Service: ";
           const serviceSelect = document.createElement("select");
           serviceSelect.classList.add("r-service");
-          const serviceOptions = ["P", "J", "T", "K", "D", "X"];
-          serviceOptions.forEach(opt => {
-            const optElem = document.createElement("option");
-            optElem.value = opt;
-            optElem.textContent = opt;
-            if(opt === row.service) {
-              optElem.selected = true;
-            }
-            serviceSelect.appendChild(optElem);
+          ["P","J","T","K","D","X"].forEach(opt => {
+            const o = document.createElement("option");
+            o.value = opt;
+            o.textContent = opt;
+            if (opt === row.service) o.selected = true;
+            serviceSelect.appendChild(o);
           });
           serviceLabel.appendChild(serviceSelect);
           rowDiv.appendChild(serviceLabel);
-          // When the date changes, update the day of operation field
+
+          // date change updates day
           dateInput.addEventListener("change", () => {
-            const selectedDate = new Date(dateInput.value);
-            const dayOfWeek = selectedDate.toLocaleDateString("en-US", { weekday: "long" });
-            dayInput.value = getDayOfOperation(dayOfWeek);
+            const sel = new Date(dateInput.value);
+            const dow = sel.toLocaleDateString("en-US", { weekday: "long" });
+            dayInput.value = getDayOfOperation(dow);
           });
+
           editableDiv.appendChild(rowDiv);
         });
+
         // SI line
         const siDiv = document.createElement("div");
         siDiv.style.whiteSpace = "pre-wrap";
         siDiv.style.fontFamily = '"MS Sans Serif", Tahoma, Geneva, sans-serif';
         siDiv.textContent = siLine;
-        // Combine editable parts
+
+        // wrap non-editable + editable + SI
         const outputDiv = document.createElement("div");
         outputDiv.classList.add("output-container");
         outputDiv.appendChild(nonEditableDiv);
         outputDiv.appendChild(editableDiv);
         outputDiv.appendChild(siDiv);
-        // Update button to refresh modified SCR lines based on user input
+
+        // --- Update Button now sends email too ---
         const updateBtn = document.createElement("button");
         updateBtn.textContent = "Update Modified SCR";
-        updateBtn.addEventListener("click", () => {
+        updateBtn.dataset.airportCode = airportCode;
+        updateBtn.addEventListener("click", async () => {
           const modifiedRows = editableDiv.querySelectorAll(".modified-scr-row");
           let updatedRLines = [];
           modifiedRows.forEach(rowDiv => {
             const flightVal = rowDiv.querySelector(".r-flight").value;
-            const dateVal = rowDiv.querySelector(".r-date").value;
-            const scrDate = convertInputDateToSCR(dateVal);
-            const dayVal = rowDiv.querySelector(".r-day").value;
+            const dateVal   = rowDiv.querySelector(".r-date").value;
+            const scrDate   = convertInputDateToSCR(dateVal);
+            const dayVal    = rowDiv.querySelector(".r-day").value;
             const opcodeVal = rowDiv.querySelector(".r-opcode").value;
-            const timeVal = rowDiv.querySelector(".r-time").value.replace(":", "");
-            const airportVal = rowDiv.querySelector(".r-airport").value;
-            const serviceVal = rowDiv.querySelector(".r-service").value;
+            const timeVal   = rowDiv.querySelector(".r-time").value.replace(":", "");
+            const airportVal= rowDiv.querySelector(".r-airport").value;
+            const serviceVal= rowDiv.querySelector(".r-service").value;
             updatedRLines.push(`R ${flightVal} ${scrDate}${scrDate} ${dayVal} ${opcodeVal} ${timeVal}${airportVal} ${serviceVal}`);
           });
-          const updatedScrMessage = headerLines.join("\n") + "\n" + cLines.join("\n") + "\n" + updatedRLines.join("\n") + "\n" + siLine;
+          const updatedScrMessage = headerLines.join("\n") + "\n"
+                                  + cLines.join("\n")   + "\n"
+                                  + updatedRLines.join("\n") + "\n"
+                                  + siLine;
           scrGroup.dataset.scrOutput = updatedScrMessage;
           showSuccess(`Modified SCR updated for ${airportCode}.`);
+          // **and now** trigger the email
+          await sendEmail(airportCode, updatedScrMessage);
         });
-        // Button container for Send and Update actions
-        const buttonContainer = document.createElement("div");
-        buttonContainer.classList.add("send-button-container");
+
+        // Send button (for manual send if you still want it)
         const sendBtn = document.createElement("button");
         sendBtn.textContent = "Send Email";
         sendBtn.dataset.airportCode = airportCode;
-        sendBtn.addEventListener("click", async () => {
-          await sendEmail(airportCode, scrGroup.dataset.scrOutput);
-        });
+
+        const buttonContainer = document.createElement("div");
+        buttonContainer.classList.add("send-button-container");
         buttonContainer.appendChild(sendBtn);
         buttonContainer.appendChild(updateBtn);
+
         scrGroup.appendChild(headingDiv);
         scrGroup.appendChild(outputDiv);
         scrGroup.appendChild(buttonContainer);
-        scrGroup.dataset.scrOutput = initialScrMessage;
         outputList.appendChild(scrGroup);
-        const combinedFlightNumbers = flights.map(e => e.data.flight).join(", ");
-        const combinedDirections = flights.map(e => e.type).join("/");
-        const timestamp = new Date().toISOString().replace("T", " ").split(".")[0];
+
+        // log it
         addLogEntry({
-          flightNumber: combinedFlightNumbers,
+          flightNumber: flights.map(e=>e.data.flight).join(", "),
           airport: airportCode,
-          direction: combinedDirections,
-          timestamp: timestamp,
+          direction: flights.map(e=>e.type).join("/"),
+          timestamp: new Date().toISOString().split(".")[0].replace("T"," "),
           scrMessage: initialScrMessage
         });
       });
+
       showSuccess(`Formatted change request SCR messages with editable modifications successfully.`);
       attachSendButtonsListeners();
     }
 
-    // Event Listeners
-    // When "Format SCR Messages" is clicked, check the slot type value and call the appropriate function
+    // Event listeners
     document.getElementById("formatBtn").addEventListener("click", () => {
       const slotTypeValue = document.getElementById("slotType").value;
-      if(slotTypeValue === "CHANGE"){
+      if (slotTypeValue === "CHANGE") {
         formatChangeSCRMessages();
       } else {
         formatSCRMessages();
@@ -978,21 +969,15 @@
     });
     document.getElementById("sendAllBtn").addEventListener("click", sendAllEmails);
     document.getElementById("dropdownMenu").addEventListener("change", function() {
-      if (this.value === "D") {
-        document.getElementById("aircraftSelection").style.display = "block";
-      } else {
-        document.getElementById("aircraftSelection").style.display = "none";
-      }
+      document.getElementById("aircraftSelection").style.display = (this.value === "D") ? "block" : "none";
     });
-    document.getElementById("learjetCheckbox").addEventListener("change", function() {
-      if (this.checked) {
+    document.getElementById("learjetCheckbox").addEventListener("change", () => {
+      if (document.getElementById("learjetCheckbox").checked)
         document.getElementById("bombardierCheckbox").checked = false;
-      }
     });
-    document.getElementById("bombardierCheckbox").addEventListener("change", function() {
-      if (this.checked) {
+    document.getElementById("bombardierCheckbox").addEventListener("change", () => {
+      if (document.getElementById("bombardierCheckbox").checked)
         document.getElementById("learjetCheckbox").checked = false;
-      }
     });
   </script>
 </body>
