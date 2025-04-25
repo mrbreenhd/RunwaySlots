@@ -467,19 +467,28 @@
         }
     }
 
-    /** Gets day of operation code (e.g., "1000000" for Monday) */
-    function getDayOfOperation(dayOfWeek) {
+function getDayOfOperation(dayOfWeek) {
+      // Normalize input day name
       const formattedDay = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).toLowerCase();
-      const dayMapping = {
-        "Sunday":    "0000007", "Monday":    "1000000", "Tuesday":   "0200000",
-        "Wednesday": "0030000", "Thursday":  "0004000", "Friday":    "0000500",
-        "Saturday":  "0000060"
-      };
-      return dayMapping[formattedDay] || "1000000"; // Default to Monday
+      const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+      const digits = [7, 1, 2, 3, 4, 5, 6];
+      const powers = [0, 6, 5, 4, 3, 2, 1];
+
+      // Find the index of the day, default to Monday (index 1) if not found
+      let index = days.indexOf(formattedDay);
+      if (index === -1) {
+        console.warn(`getDayOfOperation: Unknown day "${dayOfWeek}", defaulting to Monday.`);
+        index = 1; // Default to Monday
+      }
+      
+      const digit = digits[index];
+      const power = powers[index];
+      const codeNum = digit * Math.pow(10, power);
+      const codeStr = String(codeNum).padStart(7, '0');
+      return codeStr;
     }
 
-    /** Converts an SCR date (DDMON) to YYYY-MM-DD for date input */
-    function convertSCRDateToInput(scrDate) {
+      function convertSCRDateToInput(scrDate) {
       const parsed = parseDateString(scrDate);
       if (!parsed) return "";
       const day = String(parsed.getUTCDate()).padStart(2, '0');
@@ -488,8 +497,7 @@
       return `${year}-${month}-${day}`;
     }
 
-    /** Converts a YYYY-MM-DD date input to SCR date (DDMON) */
-    function convertInputDateToSCR(inputDate) {
+     function convertInputDateToSCR(inputDate) {
       try {
           const dateObj = new Date(inputDate + 'T00:00:00Z'); // Use UTC
           if (isNaN(dateObj.getTime())) return "01JAN";
@@ -614,6 +622,10 @@
       }
     }
 
+    /**
+     * Determines the final combined code field (Prefix + OpCode) for the SCR line.
+     * Uses the actual SCR line service type (from dropdown) and aircraft type from input.
+     */
     function getFinalCombinedCode(scrLineServiceType, aircraftTypeInput) {
         const serviceType = scrLineServiceType.toUpperCase(); // Use the type for the SCR line
         const acTypeInput = aircraftTypeInput ? aircraftTypeInput.toUpperCase() : null;
@@ -631,9 +643,13 @@
             return '00073H'; // Default for P if no input or other input
         }
         else if (serviceType === 'D') {
+            // For D, determined by checkboxes/reg input, not aircraftTypeInput field usually
+            // Prefix (seat count)
             const prefix = document.getElementById("bombardierCheckbox").checked ? "009" : "008";
             // OpCode (aircraft type)
-            const opCode = document.getElementById("bombardierCheckbox").checked ? "CL5" : "L45"; 
+            const opCode = document.getElementById("bombardierCheckbox").checked ? "CL5" : "L45"; // Assuming CL5 for Bombardier
+             // Check if specific registration was entered that isn't L45/CL5 - logic might need refinement if reg overrides type code
+             // For now, assume checkboxes dictate the combined code for D
              return prefix + opCode;
         }
         else { // For K, T, X, etc. - Prefix is 000
@@ -1104,12 +1120,17 @@
                  dayField.input.value = "ERROR";
             }
         });
-       
+
+        // Add event listener to Service select to potentially update the combinedCode field logic (optional enhancement)
         serviceField.input.addEventListener("change", (e) => {
             const newServiceType = e.target.value;
+            // You could add logic here to *suggest* a new combinedCode based on the newServiceType,
+            // but for now, the user manually edits the combinedCode field.
+            // Example: if newServiceType is 'J', maybe clear the combined code field or set default?
             console.log("Service type changed to:", newServiceType, "Combined code might need manual update.");
         });
-       
+
+
         rowDiv.appendChild(flightField.label);
         rowDiv.appendChild(dateField.label);
         rowDiv.appendChild(dayField.label);
@@ -1120,6 +1141,8 @@
         return rowDiv;
     }
 
+
+    /** Helper to create the standard SCR group UI element for NEW/CANCEL */
     function createScrGroupElement(outputList, airportCode, scrOutput) {
         const scrGroup = document.createElement("div");
         scrGroup.classList.add("scr-group");
@@ -1147,7 +1170,12 @@
         scrGroup.appendChild(sendButtonContainer);
         outputList.appendChild(scrGroup);
     }
-  
+
+
+    /**
+     * Sends an email using mailto: link.
+     * Uses encodeURIComponent() to ensure spaces become %20.
+     */
     async function sendEmail(airportCode, scrOutput) {
       let subjectPrefix;
        if (currentSlotType === "NEW SLOT") subjectPrefix = "NEW SLOT REQ";
@@ -1164,13 +1192,15 @@
       }
       const recipientEmail = await getAirportEmail(airportCode, emailLookupServiceType);
       const ccEmail = "slotdesk@ryanair.com";
+
+      // --- MANUAL URL ENCODING USING encodeURIComponent ---
       let mailtoLink = `mailto:${recipientEmail}`;
       const paramsArray = [];
        if (recipientEmail.toLowerCase() !== ccEmail.toLowerCase()) {
            paramsArray.push(`cc=${encodeURIComponent(ccEmail)}`);
        }
       paramsArray.push(`subject=${encodeURIComponent(subject)}`);
-      paramsArray.push(`body=${encodeURIComponent(scrOutput)}`); 
+      paramsArray.push(`body=${encodeURIComponent(scrOutput)}`); // Encode body with %20 for spaces
 
       if (paramsArray.length > 0) {
           mailtoLink += `?${paramsArray.join('&')}`;
@@ -1185,7 +1215,11 @@
       window.open(mailtoLink, '_blank');
       console.log(`Triggered mailto link for ${airportCode}. Using encodeURIComponent (spaces as %20). Link length: ${mailtoLink.length}`);
     }
-  
+
+    /**
+     * Sends emails for all currently displayed SCR groups.
+     * Uses increased delay and asks user to allow popups.
+     */
     function sendAllEmails() {
       clearFeedback();
       const outputList = document.getElementById("outputList");
@@ -1203,7 +1237,7 @@
 
       scrGroups.forEach((scrGroup, index) => {
         const airportCode = scrGroup.dataset.airportCode;
-        const scrOutput = scrGroup.dataset.scrOutput;
+        const scrOutput = scrGroup.dataset.scrOutput; // Get the final string
 
         if (!airportCode || !scrOutput) {
           console.error("Skipping email: Missing airport code or SCR output on group element.", scrGroup);
@@ -1213,9 +1247,10 @@
 
         setTimeout(async () => {
           try {
+             // Rely on 'currentSlotType' being set correctly when 'format...' was last called for subject.
              await sendEmail(airportCode, scrOutput);
              emailsSentCount++;
-             if (index === totalEmails - 1) { 
+             if (index === totalEmails - 1) { // Last iteration
                  setTimeout(() => {
                     if(emailsSentCount > 0) {
                        showSuccess(`Finished triggering ${emailsSentCount} / ${totalEmails} SCR emails.`);
@@ -1226,10 +1261,12 @@
               console.error(`Error sending email for ${airportCode} via Send All:`, err);
               showError(`Failed to trigger email for ${airportCode}.`);
           }
-        }, index * 1500); 
+        }, index * 1500); // Use the increased delay
       });
     }
 
+
+    // --- Event Listeners Setup ---
     function setupEventListeners() {
         document.getElementById("formatBtn").addEventListener("click", () => {
             const slotTypeValue = document.getElementById("slotType").value;
@@ -1253,7 +1290,7 @@
             if (learjetCheckbox.checked) {
                 bombardierCheckbox.checked = false;
             } else if (!bombardierCheckbox.checked) {
-                 learjetCheckbox.checked = true; 
+                 learjetCheckbox.checked = true; // Prevent unchecking last box
             }
         });
 
@@ -1261,16 +1298,17 @@
             if (bombardierCheckbox.checked) {
                 learjetCheckbox.checked = false;
             } else if (!learjetCheckbox.checked) {
-                bombardierCheckbox.checked = true; 
+                bombardierCheckbox.checked = true; // Prevent unchecking last box
             }
         });
     }
-  
+
+    // --- Initialize ---
     document.addEventListener("DOMContentLoaded", () => {
         setupEventListeners();
         document.getElementById("aircraftSelection").style.display =
             (document.getElementById("dropdownMenu").value === "D") ? "block" : "none";
-         attachSendButtonsListeners(); 
+         attachSendButtonsListeners(); // Set up initial delegation listener
     });
 
 </script>
