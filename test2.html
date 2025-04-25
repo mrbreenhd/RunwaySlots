@@ -359,8 +359,8 @@
   <!-- Load Firebase configuration (ensure firebase.js exists in scripts/ folder) -->
   <script src="scripts/firebase.js"></script>
 
-  <!-- Multiflight Script - MANUAL URL ENCODING -->
-  <script>
+<!-- Multiflight Script - UPDATED PREFIX/OPCODE LOGIC for J & P -->
+<script>
     // Ensure Firebase is initialized
     if (typeof firebase === 'undefined') {
        showError("Firebase configuration failed to load. Airport email lookup will not work.");
@@ -458,10 +458,8 @@
             return null; // Invalid month or day
         }
 
-        // Basic validation (doesn't check days in month strictly, but good enough for Date constructor)
         // Use UTC to prevent timezone offsets from changing the date
         const dateObj = new Date(Date.UTC(year, monthIndex, day));
-        // Check if the constructed date matches the input (handles invalid dates like 31FEB)
         if (dateObj.getUTCFullYear() === year && dateObj.getUTCMonth() === monthIndex && dateObj.getUTCDate() === day) {
            return dateObj;
         } else {
@@ -471,24 +469,21 @@
 
     /** Gets day of operation code (e.g., "1000000" for Monday) */
     function getDayOfOperation(dayOfWeek) {
-      // Ensure dayOfWeek is capitalized correctly
       const formattedDay = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).toLowerCase();
       const dayMapping = {
         "Sunday":    "0000007", "Monday":    "1000000", "Tuesday":   "0200000",
         "Wednesday": "0030000", "Thursday":  "0004000", "Friday":    "0000500",
         "Saturday":  "0000060"
       };
-      return dayMapping[formattedDay] || "1000000"; // Default to Monday if lookup fails
+      return dayMapping[formattedDay] || "1000000"; // Default to Monday
     }
 
     /** Converts an SCR date (DDMON) to YYYY-MM-DD for date input */
     function convertSCRDateToInput(scrDate) {
-      const parsed = parseDateString(scrDate); // Use robust parser
-      if (!parsed) return ""; // Return empty if invalid SCR date
-
-      // Use UTC methods to get the date parts
+      const parsed = parseDateString(scrDate);
+      if (!parsed) return "";
       const day = String(parsed.getUTCDate()).padStart(2, '0');
-      const month = String(parsed.getUTCMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+      const month = String(parsed.getUTCMonth() + 1).padStart(2, '0');
       const year = parsed.getUTCFullYear();
       return `${year}-${month}-${day}`;
     }
@@ -496,16 +491,14 @@
     /** Converts a YYYY-MM-DD date input to SCR date (DDMON) */
     function convertInputDateToSCR(inputDate) {
       try {
-          // Use UTC to avoid timezone issues
-          const dateObj = new Date(inputDate + 'T00:00:00Z');
-          if (isNaN(dateObj.getTime())) return "01JAN"; // Basic fallback
-
+          const dateObj = new Date(inputDate + 'T00:00:00Z'); // Use UTC
+          if (isNaN(dateObj.getTime())) return "01JAN";
           const day = String(dateObj.getUTCDate()).padStart(2, '0');
           const monthAbbr = monthAbbrArr[dateObj.getUTCMonth()];
           return day + monthAbbr;
       } catch (e) {
           console.error("Error converting input date:", e);
-          return "01JAN"; // Fallback
+          return "01JAN";
       }
     }
 
@@ -525,9 +518,9 @@
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        if (!line) continue; // Skip empty lines
+        if (!line) continue;
 
-        const parts = line.split(/\s+/); // Split by whitespace
+        const parts = line.split(/\s+/);
 
         if (parts.length < 7 || parts.length > 8) {
           errors.push(`Line ${i + 1}: Invalid format (expected 7 or 8 parts) - "${line}"`);
@@ -537,51 +530,53 @@
         const flightRaw = parts[0];
         const from = parts[1].toUpperCase();
         const to = parts[2].toUpperCase();
-        const dateStr = parts[3]; // e.g., 01JAN or 01JAN2024
+        const dateStr = parts[3];
         const departureTime = parts[4];
         const arrivalTime = parts[5];
-        const code = parts[6].toUpperCase(); // Service Type like J, D, P etc.
-        let aircraftType = (parts.length === 8) ? parts[7].toUpperCase() : null;
+        const code = parts[6].toUpperCase(); // Service Type (used ONLY for context, not direct SCR field)
+        // Aircraft type from input (optional 8th field)
+        let aircraftTypeInput = (parts.length === 8) ? parts[7].toUpperCase() : null;
 
-        // **Robust Date Parsing**
+        // Normalize common aircraft inputs immediately
+        if (aircraftTypeInput === '738') aircraftTypeInput = '73H'; // Treat 738 as 73H internally early
+        if (aircraftTypeInput === '197') aircraftTypeInput = '7M8'; // Treat 197 as 7M8 internally early
+        if (aircraftTypeInput === '73M') aircraftTypeInput = '7M8'; // Treat 73M as 7M8 internally early
+
+
         const parsedDate = parseDateString(dateStr);
         if (!parsedDate) {
           errors.push(`Line ${i + 1}: Invalid date format "${dateStr}" - "${line}"`);
           continue;
         }
 
-        // Validate Time Format (basic check: 4 digits)
         if (!/^\d{4}$/.test(departureTime) || !/^\d{4}$/.test(arrivalTime)) {
              errors.push(`Line ${i + 1}: Invalid time format (must be 4 digits HHMM) - "${line}"`);
              continue;
         }
 
-        // Extract info from parsed date (use UTC to avoid timezone issues with day of week)
         const dayOfWeek = parsedDate.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
         const dayOfOperation = getDayOfOperation(dayOfWeek);
-        // Get DDMON format back using UTC methods
         const date = convertInputDateToSCR(parsedDate.toISOString().split('T')[0]);
 
-
-        // Flight Number Formatting (keep original logic)
         const flightPrefix = flightRaw.slice(0, 2).toUpperCase();
         let flightNumber = flightRaw.slice(2);
         const flightDigits = flightNumber.match(/\d+/)?.[0] || "";
         let flightLetters = flightNumber.replace(/\d+/g, "").toUpperCase();
-        // Remove trailing 'P' if present (common convention?)
         if (flightLetters.endsWith("P")) {
           flightLetters = flightLetters.slice(0, -1);
         }
-        // Ensure 3 digits, pad with leading zeros if needed
         const paddedFlightDigits = flightDigits.padStart(3, "0");
-        // Reconstruct flight number ensuring prefix is followed by padded digits then letters
         const flight = `${flightPrefix}${paddedFlightDigits}${flightLetters}`;
 
         parsedEntries.push({
-          flight, from, to, date, // DDMON format
-          fullDate: parsedDate, // Actual Date object
-          departureTime, arrivalTime, code, dayOfOperation, aircraftType,
-          originalLine: line // Keep original line for context if needed
+          flight, from, to, date, fullDate: parsedDate,
+          departureTime, arrivalTime,
+          // 'code' here is the *input* service type (J,P,D...), used for logic
+          serviceTypeInput: code,
+          dayOfOperation,
+          // Store the potentially normalized aircraft type from input
+          aircraftTypeInput: aircraftTypeInput,
+          originalLine: line
         });
       }
 
@@ -590,6 +585,7 @@
 
     // --- Getters for Form Values ---
     function getSelectedServiceType() {
+      // This is the service type selected from the dropdown, which dictates the *actual* service type in the SCR line
       return document.getElementById("dropdownMenu").value;
     }
     function getSlotType() {
@@ -597,71 +593,59 @@
       if (val === "NEW") return "NEW SLOT";
       if (val === "CANCEL") return "CANCEL SLOT";
       if (val === "CHANGE") return "CHANGE SCR";
-      return ""; // Should not happen
+      return "";
     }
     /** Gets Aircraft Registration based on Service Type and Input */
     function getAircraftReg() {
-      const serviceType = getSelectedServiceType();
+      const selectedServiceType = getSelectedServiceType(); // From dropdown
       const regInputVal = document.getElementById("regInput").value.trim().toUpperCase();
 
-      if (serviceType === "D") {
-         // For type D, reg input can be specific (EI-XXX) or imply type (L45/CL5)
+      if (selectedServiceType === "D") {
          if (regInputVal && regInputVal !== "L45" && regInputVal !== "CL5") {
-             return regInputVal; // User provided specific registration
-         } else {
-             // If input is empty or L45/CL5, use checkbox state
-             if (document.getElementById("learjetCheckbox").checked) {
-                 return "L45"; // Default or explicit L45
-             } else if (document.getElementById("bombardierCheckbox").checked) {
-                 return "CL5"; // Default or explicit CL5
-             } else {
-                 // Fallback if somehow neither is checked (shouldn't happen with listeners)
-                 document.getElementById("learjetCheckbox").checked = true;
-                 return "L45";
-             }
+             return regInputVal; // Specific reg takes precedence
+         } else { // Use checkboxes if input is empty or default type codes
+             if (document.getElementById("learjetCheckbox").checked) return "L45";
+             if (document.getElementById("bombardierCheckbox").checked) return "CL5";
+             document.getElementById("learjetCheckbox").checked = true; // Fallback
+             return "L45";
          }
       } else {
-         // For other types, use the input value or a placeholder
-        return regInputVal || "[UNKNOWN_REG]"; // Use placeholder if empty
+        return regInputVal || "[UNKNOWN_REG]"; // Use input or placeholder
       }
     }
-    /** Gets seat count prefix based on Service Type and Aircraft */
-    function getCodePrefix(serviceType) {
-        switch (serviceType) {
-            case "J": return "189"; // Default for Revenue Passenger
-            case "D":
-                 if (document.getElementById("bombardierCheckbox").checked) {
-                    return "009"; // Bombardier seats
-                 } else {
-                    if (!document.getElementById("learjetCheckbox").checked) {
-                        document.getElementById("learjetCheckbox").checked = true; // Ensure one is checked
-                    }
-                    return "008"; // Learjet seats
-                 }
-            case "P": case "T": case "K": case "X":
-                return "000"; // Non-revenue types often use 000
-            default:
-                return "000"; // Default fallback
+
+    function getFinalCombinedCode(scrLineServiceType, aircraftTypeInput) {
+        const serviceType = scrLineServiceType.toUpperCase(); // Use the type for the SCR line
+        const acTypeInput = aircraftTypeInput ? aircraftTypeInput.toUpperCase() : null;
+
+        if (serviceType === 'J') {
+            // For J, prefix depends on input aircraft type
+            if (acTypeInput === '73H') return '18973H'; // Treat input 738 as 73H (normalized in parseInput)
+            if (acTypeInput === '7M8') return '1977M8'; // Treat input 197/73M as 7M8
+            return '18973H'; // Default for J if no input or other input
         }
-    }
-    /** Gets operation code (Aircraft Type Code) based on Service Type and potentially parsed aircraft type */
-    function getOperationCode(serviceType, parsedAircraftType) {
-        if (parsedAircraftType) {
-             if (parsedAircraftType === "738") return "73H";
-             if (parsedAircraftType === "197" || parsedAircraftType === "73M") return "7M8";
-             return parsedAircraftType; // Use the provided type directly
+        else if (serviceType === 'P') {
+            // For P, prefix is always 000, OpCode depends on input
+            if (acTypeInput === '73H') return '00073H';
+            if (acTypeInput === '7M8') return '0007M8';
+            return '00073H'; // Default for P if no input or other input
         }
-        if (serviceType === "D") {
-             if (document.getElementById("bombardierCheckbox").checked) {
-                 return "CL5"; // Check IATA code for specific Bombardier (e.g., CL60)
-             } else {
-                 if (!document.getElementById("learjetCheckbox").checked) {
-                    document.getElementById("learjetCheckbox").checked = true;
-                 }
-                 return "L45"; // Learjet 45
-             }
+        else if (serviceType === 'D') {
+            const prefix = document.getElementById("bombardierCheckbox").checked ? "009" : "008";
+            // OpCode (aircraft type)
+            const opCode = document.getElementById("bombardierCheckbox").checked ? "CL5" : "L45"; 
+             return prefix + opCode;
         }
-        return "73H"; // Default aircraft type
+        else { // For K, T, X, etc. - Prefix is 000
+            const prefix = '000';
+            // Determine OpCode based on input or default
+            let opCode = '73H'; // Default aircraft type
+            if (acTypeInput === '73H') opCode = '73H';
+            else if (acTypeInput === '7M8') opCode = '7M8';
+            // Add other specific aircraft type mappings here if needed
+            // else if (acTypeInput === 'SOME_OTHER_CODE') opCode = 'SOME_OTHER_CODE';
+            return prefix + opCode;
+        }
     }
 
 
@@ -675,7 +659,7 @@
       const successDiv = document.getElementById("successMessage");
       successDiv.textContent = message;
       successDiv.style.display = "block";
-      setTimeout(() => { successDiv.style.display = "none"; }, 5000);
+      setTimeout(() => { successDiv.style.display = "none"; }, 5000); // Keep timeout relatively short
     }
     function clearFeedback() {
         document.getElementById("errorMessage").style.display = "none";
@@ -704,6 +688,7 @@
                 const airportCode = scrGroup.dataset.airportCode;
                 const scrOutput = scrGroup.dataset.scrOutput; // Retrieve stored SCR message
                 if (airportCode && scrOutput) {
+                   // Use the global currentSlotType for individual sends too
                    await sendEmail(airportCode, scrOutput);
                 } else {
                    console.error("Could not find airport code or SCR output on group for sending email.");
@@ -722,19 +707,16 @@
       if (errors.length > 0) {
         showError(`Input validation failed:<br>${errors.join('<br>')}`);
       }
-       if (parsedEntries.length === 0 && errors.length === 0) { // Only show if no valid entries AND no other errors
+       if (parsedEntries.length === 0 && errors.length === 0) {
         showError("No valid flight entries found to format.");
         return;
       }
-      if(parsedEntries.length === 0 && errors.length > 0){
-          // Don't show "No valid entries" if errors already shown
-          return;
-      }
+      if(parsedEntries.length === 0 && errors.length > 0){ return; }
 
 
-      currentSlotType = getSlotType();
-      const serviceType = getSelectedServiceType();
-      const globalReg = getAircraftReg();
+      currentSlotType = getSlotType(); // SET GLOBAL SLOT TYPE FOR SUBJECTS
+      const scrLineServiceType = getSelectedServiceType(); // Get the service type selected in the dropdown for the SCR line
+      const globalReg = getAircraftReg(); // Get registration (mainly for SI line comments)
       const outputList = document.getElementById("outputList");
       outputList.innerHTML = "";
 
@@ -757,36 +739,34 @@
 
         flights.forEach(flightEntry => {
           const { type, data } = flightEntry;
-          const { flight, date, dayOfOperation, departureTime, arrivalTime, from, to, aircraftType } = data;
+          const { flight, date, dayOfOperation, departureTime, arrivalTime, from, to, aircraftTypeInput } = data; // Use aircraftTypeInput
 
           const flightStatus = (currentSlotType === "CANCEL SLOT") ? "D" : "N";
-          const codePrefix = getCodePrefix(serviceType);
-          const opCode = getOperationCode(serviceType, aircraftType);
-          const finalOpcode = (serviceType === "J") ? opCode : (codePrefix + opCode);
 
-          // Construct N/D lines using template literals with correct spaces
+          // **NEW LOGIC: Get the final combined code based on SCR line type and input AC type**
+          const finalCombinedCode = getFinalCombinedCode(scrLineServiceType, aircraftTypeInput);
+
+          // Construct N/D lines using template literals with correct spaces and the new combined code
           let line;
           if (type === 'departure') {
-            // Departure format: ACTIONCODE<space>FLIGHT ... TIME+AIRPORT SERVICE
-            line = `${flightStatus} ${flight} ${date}${date} ${dayOfOperation} ${finalOpcode} ${departureTime}${to} ${serviceType}`;
+            line = `${flightStatus} ${flight} ${date}${date} ${dayOfOperation} ${finalCombinedCode} ${departureTime}${to} ${scrLineServiceType}`; // Use scrLineServiceType
           } else { // arrival
-            // Arrival format: ACTIONCODE+FLIGHT ... AIRPORT+TIME SERVICE
-            line = `${flightStatus}${flight} ${date}${date} ${dayOfOperation} ${finalOpcode} ${from}${arrivalTime} ${serviceType}`;
+            line = `${flightStatus}${flight} ${date}${date} ${dayOfOperation} ${finalCombinedCode} ${from}${arrivalTime} ${scrLineServiceType}`; // Use scrLineServiceType
           }
-          scrLines.push(line); // Add the constructed line
+          scrLines.push(line);
         });
 
         // Construct SI line using template literals with spaces
         let siLineAction = (currentSlotType === "NEW SLOT") ? "NEW SLOT REQ" : "SLOT CANX REQ";
-        let siLine = `SI ${siLineAction} ${airportCode}`; // Use space
-         if (serviceType === "D") {
+        let siLine = `SI ${siLineAction} ${airportCode}`;
+         if (scrLineServiceType === "D") { // Check dropdown selection
             let aircraftTypeLabel = document.getElementById("learjetCheckbox").checked ? "LEARJET" : "BOMBARDIER";
-             siLine += ` // ${aircraftTypeLabel} REG: ${globalReg}`;
+             siLine += ` // ${aircraftTypeLabel} REG: ${globalReg}`; // globalReg calculated based on D type logic
         }
-        scrLines.push(siLine); // Add the constructed SI line
+        scrLines.push(siLine);
 
-        const scrOutput = scrLines.join("\n"); // Join lines with newline
-        createScrGroupElement(outputList, airportCode, scrOutput); // Display it
+        const scrOutput = scrLines.join("\n");
+        createScrGroupElement(outputList, airportCode, scrOutput);
 
         // Log the generated message
         const combinedFlightNumbers = flights.map(e => e.data.flight).join(", ");
@@ -795,7 +775,7 @@
           type: currentSlotType,
           flightNumber: combinedFlightNumbers, airport: airportCode,
           direction: combinedDirections, timestamp: new Date().toISOString().split(".")[0].replace("T", " "),
-          scrMessage: scrOutput // Log the final string
+          scrMessage: scrOutput
         });
       });
 
@@ -804,7 +784,7 @@
        } else if (parsedEntries.length > 0 && errors.length > 0) {
            showSuccess(`Formatted ${parsedEntries.length} valid flight leg(s). Some input lines had errors (see above).`);
        }
-      attachSendButtonsListeners(); // Attach listeners after creating buttons
+      attachSendButtonsListeners();
     }
 
      /** Formats SCR messages for CHANGE requests with editable R-lines */
@@ -820,13 +800,11 @@
             showError("No valid flight entries found to format for change request.");
             return;
          }
-          if(parsedEntries.length === 0 && errors.length > 0){
-            return; // Errors already shown
-         }
+          if(parsedEntries.length === 0 && errors.length > 0){ return; }
 
-        currentSlotType = "CHANGE SCR";
-        const serviceType = getSelectedServiceType(); // Store service type used for *this* format run
-        const globalReg = getAircraftReg();
+        currentSlotType = "CHANGE SCR"; // SET GLOBAL SLOT TYPE FOR SUBJECTS
+        const scrLineServiceType = getSelectedServiceType(); // Get service type from dropdown for this format run
+        const globalReg = getAircraftReg(); // Get reg based on dropdown type
         const outputList = document.getElementById("outputList");
         outputList.innerHTML = "";
 
@@ -844,43 +822,39 @@
 
             let headerLines = ["SCR", "S25", getCurrentDate(), airportCode];
             let cLines = [];
-            let initialRLinesData = []; // Data for building editable rows
+            let initialRLinesData = [];
 
             flights.forEach((flightEntry, flightIndex) => {
                 const { type, data } = flightEntry;
-                const { flight, date, dayOfOperation, departureTime, arrivalTime, from, to, aircraftType } = data;
+                const { flight, date, dayOfOperation, departureTime, arrivalTime, from, to, aircraftTypeInput } = data; // Use aircraftTypeInput
 
-                // Use the serviceType captured at the start of this function run
-                const codePrefix = getCodePrefix(serviceType);
-                const opCode = getOperationCode(serviceType, aircraftType);
-                const finalOpcode = (serviceType === "J") ? opCode : (codePrefix + opCode);
+                // **NEW LOGIC: Get final combined code for C-line**
+                const finalCombinedCode = getFinalCombinedCode(scrLineServiceType, aircraftTypeInput);
 
-                // Build C-Line base and add correct formatting with spaces
-                let cLineBase = `${date}${date} ${dayOfOperation} ${finalOpcode}`; // Use spaces
+                let cLineBase = `${date}${date} ${dayOfOperation} ${finalCombinedCode}`; // Use new combined code
                 let cLine;
 
+                // Data for the editable R-line row
                 let rLineData = {
-                    id: `rline-${groupIndex}-${flightIndex}`,
-                    flight,
-                    date: convertSCRDateToInput(date),
-                    day: dayOfOperation,
-                    opcode: finalOpcode,
-                    service: serviceType, // Store the service type used
-                    direction: type // Store 'departure' or 'arrival'
+                    id: `rline-${groupIndex}-${flightIndex}`, flight,
+                    date: convertSCRDateToInput(date), day: dayOfOperation,
+                    // Store the combined code for the input field
+                    combinedCode: finalCombinedCode,
+                    // Store the service type from the dropdown used for this row initially
+                    service: scrLineServiceType,
+                    direction: type
                 };
 
                 if (type === 'departure') {
-                    // Departure Format: C<space>FLIGHT ... TIME+AIRPORT SERVICE
-                    cLine = `C ${flight} ${cLineBase} ${departureTime}${to} ${serviceType}`; // Use space
+                    cLine = `C ${flight} ${cLineBase} ${departureTime}${to} ${scrLineServiceType}`; // Use dropdown service type
                     rLineData.time = departureTime.slice(0, 2) + ":" + departureTime.slice(2);
                     rLineData.airport = to;
                 } else { // arrival
-                    // Arrival Format: C+FLIGHT ... AIRPORT+TIME SERVICE
-                    cLine = `C${flight} ${cLineBase} ${from}${arrivalTime} ${serviceType}`; // No space after C
+                    cLine = `C${flight} ${cLineBase} ${from}${arrivalTime} ${scrLineServiceType}`; // Use dropdown service type
                     rLineData.time = arrivalTime.slice(0, 2) + ":" + arrivalTime.slice(2);
                     rLineData.airport = from;
                 }
-                cLines.push(cLine); // Add constructed C-line
+                cLines.push(cLine);
                 initialRLinesData.push(rLineData);
             });
 
@@ -888,109 +862,93 @@
             const scrGroup = document.createElement("div");
             scrGroup.classList.add("scr-group");
             scrGroup.dataset.airportCode = airportCode;
-            // Store initial parts for reconstruction
             scrGroup.dataset.headerLines = JSON.stringify(headerLines);
             scrGroup.dataset.cLines = JSON.stringify(cLines);
-            // Store SI line template parts (action and airport)
-            scrGroup.dataset.siAction = "SLOT CHG REQ"; // Fixed action for change
+            scrGroup.dataset.siAction = "SLOT CHG REQ";
             scrGroup.dataset.siAirport = airportCode;
-            // Store context needed for SI line details
+            // Store context needed for SI line details and R-line reconstruction
             scrGroup.dataset.globalReg = globalReg;
-            scrGroup.dataset.serviceType = serviceType;
-            // Store initial R-line data
+            scrGroup.dataset.serviceType = scrLineServiceType; // Store dropdown service type used for this group
             scrGroup.dataset.initialRLinesData = JSON.stringify(initialRLinesData);
-
 
             const headingDiv = document.createElement("div");
             headingDiv.classList.add("heading");
             headingDiv.textContent = `Change SCR [${airportCode}]`;
 
-            // Display Header and C-Lines (non-editable)
             const nonEditableDiv = document.createElement("div");
             nonEditableDiv.style.whiteSpace = "pre-wrap";
             nonEditableDiv.style.fontFamily = 'monospace';
             nonEditableDiv.style.marginBottom = '10px';
-            // Display C-lines joined by newline
             nonEditableDiv.innerHTML = `<strong>--- Header &amp; Cancellation (C) Lines ---</strong>\n${headerLines.join("\n")}\n${cLines.join("\n")}`;
 
-            // Create Editable R-Lines Section
             const editableDiv = document.createElement("div");
-             editableDiv.id = `editable-r-lines-${groupIndex}`;
-             editableDiv.innerHTML = `<strong style="display: block; margin-bottom: 4px;">--- New Request (R) Lines (Editable) ---</strong>`; // Style heading
+            editableDiv.id = `editable-r-lines-${groupIndex}`;
+            editableDiv.innerHTML = `<strong style="display: block; margin-bottom: 4px;">--- New Request (R) Lines (Editable) ---</strong>`;
             initialRLinesData.forEach((rowData) => {
+                // Pass combinedCode to the row creation function
                 editableDiv.appendChild(createEditableRLineRow(rowData));
             });
 
-            // Placeholder for SI Line display (will be generated on update)
             const siDiv = document.createElement("div");
-            siDiv.id = `si-line-display-${groupIndex}`; // ID to update later
+            siDiv.id = `si-line-display-${groupIndex}`;
             siDiv.style.whiteSpace = "pre-wrap";
             siDiv.style.fontFamily = 'monospace';
             siDiv.style.marginTop = '10px';
-            // Initial SI Line display based on initial data
-             let initialSiLine = `SI SLOT CHG REQ ${airportCode}`; // Use space
-             if (serviceType === "D") {
+            let initialSiLine = `SI SLOT CHG REQ ${airportCode}`; // Use space
+             if (scrLineServiceType === "D") { // Check dropdown selection
                  let aircraftTypeLabel = document.getElementById("learjetCheckbox").checked ? "LEARJET" : "BOMBARDIER";
-                 initialSiLine += ` // ${aircraftTypeLabel} REG: ${globalReg}`;
+                 initialSiLine += ` // ${aircraftTypeLabel} REG: ${globalReg}`; // Use reg calculated for D
              }
             siDiv.innerHTML = `<strong>--- SI Line ---</strong>\n${initialSiLine}`;
 
-
-            // Container for the message parts
             const outputDiv = document.createElement("div");
             outputDiv.classList.add("output-container");
             outputDiv.appendChild(nonEditableDiv);
             outputDiv.appendChild(editableDiv);
-            outputDiv.appendChild(siDiv); // Add SI line display
+            outputDiv.appendChild(siDiv);
 
-
-            // --- "Update and Send" Button ---
             const updateSendBtn = document.createElement("button");
             updateSendBtn.textContent = "Update & Send Email";
             updateSendBtn.addEventListener("click", async () => {
-                // Reconstruct the SCR message from the potentially modified R-lines
                 const updatedRLines = [];
                 const editableContainer = document.getElementById(`editable-r-lines-${groupIndex}`);
                 const modifiedRows = editableContainer.querySelectorAll(".modified-scr-row");
                 let reconstructionError = false;
 
-                // Retrieve stored initial data for this group
                 const storedInitialRLinesData = JSON.parse(scrGroup.dataset.initialRLinesData || "[]");
-                const groupServiceType = scrGroup.dataset.serviceType; // Get service type used for this group
-                const groupGlobalReg = scrGroup.dataset.globalReg; // Get reg used for this group
-
+                const groupServiceType = scrGroup.dataset.serviceType; // Original dropdown type
+                const groupGlobalReg = scrGroup.dataset.globalReg; // Original reg
 
                 modifiedRows.forEach((rowDiv) => {
                     const rowId = rowDiv.dataset.rowId;
                     const initialData = storedInitialRLinesData.find(d => d.id === rowId);
-                    if (!initialData) {
-                        console.error("Could not find initial data for row:", rowDiv);
-                        reconstructionError = true; return;
-                    }
-                    const direction = initialData.direction; // Get original direction
+                    if (!initialData) { reconstructionError = true; return; }
+                    const direction = initialData.direction;
 
                     try {
                         const flightVal = rowDiv.querySelector(".r-flight").value.toUpperCase();
                         const dateVal = rowDiv.querySelector(".r-date").value;
                         const scrDate = convertInputDateToSCR(dateVal);
                         const dayVal = rowDiv.querySelector(".r-day").value;
-                        const opcodeVal = rowDiv.querySelector(".r-opcode").value.toUpperCase();
+                        // **Read the potentially modified combined code**
+                        const combinedCodeVal = rowDiv.querySelector(".r-combined-code").value.toUpperCase();
                         const timeValRaw = rowDiv.querySelector(".r-time").value;
                         const timeVal = timeValRaw.replace(":", "");
                         const airportVal = rowDiv.querySelector(".r-airport").value.toUpperCase();
-                        const serviceVal = rowDiv.querySelector(".r-service").value.toUpperCase(); // Get current value from select
+                        // **Get the potentially modified service type for this specific R-line**
+                        const serviceVal = rowDiv.querySelector(".r-service").value.toUpperCase();
 
                         // Basic validation
-                        if (!flightVal || !scrDate || !dayVal || !opcodeVal || !/^\d{4}$/.test(timeVal) || !airportVal || !serviceVal) {
+                        if (!flightVal || !scrDate || !dayVal || !combinedCodeVal || !/^\d{4}$/.test(timeVal) || !airportVal || !serviceVal) {
                            throw new Error("Missing or invalid data in modified row.");
                         }
 
-                        // Construct R-line using template literals with correct spaces
+                        // Construct R-line using the modified values
                         let rLine;
                         if (direction === 'departure') {
-                             rLine = `R ${flightVal} ${scrDate}${scrDate} ${dayVal} ${opcodeVal} ${timeVal}${airportVal} ${serviceVal}`; // Space after R
+                             rLine = `R ${flightVal} ${scrDate}${scrDate} ${dayVal} ${combinedCodeVal} ${timeVal}${airportVal} ${serviceVal}`; // Space after R
                         } else { // arrival
-                             rLine = `R${flightVal} ${scrDate}${scrDate} ${dayVal} ${opcodeVal} ${airportVal}${timeVal} ${serviceVal}`; // No space after R
+                             rLine = `R${flightVal} ${scrDate}${scrDate} ${dayVal} ${combinedCodeVal} ${airportVal}${timeVal} ${serviceVal}`; // No space after R
                         }
                         updatedRLines.push(rLine);
 
@@ -1006,35 +964,31 @@
                     return;
                 }
 
-                // Retrieve stored header, c-lines
                 const storedHeader = JSON.parse(scrGroup.dataset.headerLines || "[]");
                 const storedCLines = JSON.parse(scrGroup.dataset.cLines || "[]");
 
-                // Reconstruct SI line based on group context
+                // Reconstruct SI line based on original group context (dropdown type)
                 const siAction = scrGroup.dataset.siAction;
                 const siAirport = scrGroup.dataset.siAirport;
-                let finalSiLine = `SI ${siAction} ${siAirport}`; // Use spaces
+                let finalSiLine = `SI ${siAction} ${siAirport}`;
 
-                if (groupServiceType === "D") { // Check original service type for group
-                    // Re-evaluate current checkbox/input state for SI line details *at the time of sending*
+                if (groupServiceType === "D") { // Use original dropdown type for SI comment context
                     let currentAircraftTypeLabel = document.getElementById("learjetCheckbox").checked ? "LEARJET" : "BOMBARDIER";
                     let currentRegForD = getAircraftReg(); // Re-calculate based on current state
                     finalSiLine += ` // ${currentAircraftTypeLabel} REG: ${currentRegForD}`;
                 }
-                 // Update the SI line display in the UI
-                 document.getElementById(`si-line-display-${groupIndex}`).innerHTML = `<strong>--- SI Line ---</strong>\n${finalSiLine}`;
+                document.getElementById(`si-line-display-${groupIndex}`).innerHTML = `<strong>--- SI Line ---</strong>\n${finalSiLine}`;
 
-
-                // Assemble final message with newlines
                 const updatedScrMessage = storedHeader.join("\n") + "\n"
                                           + storedCLines.join("\n") + "\n"
                                           + updatedRLines.join("\n") + "\n"
-                                          + finalSiLine; // Use the final reconstructed SI line
+                                          + finalSiLine;
 
-                scrGroup.dataset.scrOutput = updatedScrMessage; // Store the final message
+                scrGroup.dataset.scrOutput = updatedScrMessage;
 
                 showSuccess(`Modified SCR updated for ${airportCode}. Triggering email...`);
-                await sendEmail(airportCode, updatedScrMessage); // Send the final message
+                // Use the global 'currentSlotType' (set to CHANGE SCR) for the subject
+                await sendEmail(airportCode, updatedScrMessage);
 
                  addLogEntry({
                     type: "CHANGE SCR (Updated)",
@@ -1042,36 +996,36 @@
                     airport: airportCode,
                     direction: "change",
                     timestamp: new Date().toISOString().split(".")[0].replace("T", " "),
-                    scrMessage: updatedScrMessage // Log the final sent message
+                    scrMessage: updatedScrMessage
                  });
             });
 
-            // Button Container
             const buttonContainer = document.createElement("div");
             buttonContainer.classList.add("send-button-container");
             buttonContainer.appendChild(updateSendBtn);
 
-            // Assemble the group
             scrGroup.appendChild(headingDiv);
             scrGroup.appendChild(outputDiv);
             scrGroup.appendChild(buttonContainer);
             outputList.appendChild(scrGroup);
 
-            // Log initial state (message constructed with spaces)
+            // Log initial state
             const initialRLinesStrings = initialRLinesData.map(row => {
                  const scrDate = convertInputDateToSCR(row.date);
                  const timeFormatted = row.time.replace(":", "");
                  if (row.direction === 'departure') {
-                     return `R ${row.flight} ${scrDate}${scrDate} ${row.day} ${row.opcode} ${timeFormatted}${row.airport} ${row.service}`;
+                     // Use row.combinedCode here
+                     return `R ${row.flight} ${scrDate}${scrDate} ${row.day} ${row.combinedCode} ${timeFormatted}${row.airport} ${row.service}`;
                  } else {
-                     return `R${row.flight} ${scrDate}${scrDate} ${row.day} ${row.opcode} ${row.airport}${timeFormatted} ${row.service}`;
+                     // Use row.combinedCode here
+                     return `R${row.flight} ${scrDate}${scrDate} ${row.day} ${row.combinedCode} ${row.airport}${timeFormatted} ${row.service}`;
                  }
              });
              const initialScrMessage = headerLines.join("\n") + "\n"
                                     + cLines.join("\n") + "\n"
                                     + initialRLinesStrings.join("\n") + "\n"
-                                    + initialSiLine; // Use initial SI line for logging
-             scrGroup.dataset.scrOutput = initialScrMessage; // Store initial message
+                                    + initialSiLine;
+             scrGroup.dataset.scrOutput = initialScrMessage;
 
             addLogEntry({
                 type: "CHANGE SCR (Initial)",
@@ -1091,7 +1045,7 @@
          }
     }
 
-     /** Helper to create a single editable R-Line row UI */
+     /** Helper to create a single editable R-Line row UI - UPDATED for combinedCode */
      function createEditableRLineRow(rowData) {
         const rowDiv = document.createElement("div");
         rowDiv.classList.add("modified-scr-row");
@@ -1119,7 +1073,9 @@
             }
             input.disabled = disabled;
             if(disabled) input.style.backgroundColor = "#e0e0e0";
-            if(inputType === 'text' && className === 'r-airport') input.style.textTransform = 'uppercase';
+            if(inputType === 'text' && (className === 'r-airport' || className === 'r-combined-code')) { // Uppercase airport and code
+                 input.style.textTransform = 'uppercase';
+            }
             label.appendChild(input);
             return { label, input };
         };
@@ -1127,9 +1083,11 @@
         const flightField = createField("Flight", "text", "r-flight", rowData.flight);
         const dateField = createField("Date", "date", "r-date", rowData.date);
         const dayField = createField("Day", "text", "r-day", rowData.day, true);
-        const opcodeField = createField("Op Code", "text", "r-opcode", rowData.opcode);
+        // **MODIFIED: Use combinedCode**
+        const combinedCodeField = createField("Code (Prefix+Op)", "text", "r-combined-code", rowData.combinedCode);
         const timeField = createField("Time", "time", "r-time", rowData.time);
         const airportField = createField("Airport", "text", "r-airport", rowData.airport);
+        // Service type from dropdown used initially
         const serviceField = createField("Service", "select", "r-service", rowData.service, false, ["P", "J", "T", "K", "D", "X"]);
 
         dateField.input.addEventListener("change", () => {
@@ -1146,19 +1104,22 @@
                  dayField.input.value = "ERROR";
             }
         });
-
+       
+        serviceField.input.addEventListener("change", (e) => {
+            const newServiceType = e.target.value;
+            console.log("Service type changed to:", newServiceType, "Combined code might need manual update.");
+        });
+       
         rowDiv.appendChild(flightField.label);
         rowDiv.appendChild(dateField.label);
         rowDiv.appendChild(dayField.label);
-        rowDiv.appendChild(opcodeField.label);
+        rowDiv.appendChild(combinedCodeField.label); // Add combined code field
         rowDiv.appendChild(timeField.label);
         rowDiv.appendChild(airportField.label);
         rowDiv.appendChild(serviceField.label);
         return rowDiv;
     }
 
-
-    /** Helper to create the standard SCR group UI element for NEW/CANCEL */
     function createScrGroupElement(outputList, airportCode, scrOutput) {
         const scrGroup = document.createElement("div");
         scrGroup.classList.add("scr-group");
@@ -1186,70 +1147,45 @@
         scrGroup.appendChild(sendButtonContainer);
         outputList.appendChild(scrGroup);
     }
-
-
-    /**
-     * Sends an email using mailto: link.
-     * Uses encodeURIComponent() to ensure spaces become %20.
-     */
+  
     async function sendEmail(airportCode, scrOutput) {
-      // Determine subject prefix based on the slot type when formatted
       let subjectPrefix;
-      // Use the 'currentSlotType' which should be set during formatting (NEW, CANCEL, CHANGE)
        if (currentSlotType === "NEW SLOT") subjectPrefix = "NEW SLOT REQ";
        else if (currentSlotType === "CANCEL SLOT") subjectPrefix = "SLOT CANX REQ";
        else if (currentSlotType === "CHANGE SCR") subjectPrefix = "SLOT CHG REQ";
-       else subjectPrefix = "SLOT REQ"; // Fallback if somehow unset
+       else subjectPrefix = "SLOT REQ"; // Fallback
 
-      // Construct subject with space
       const subject = `${subjectPrefix} ${airportCode}`;
 
-      // Get recipient email from Firebase
-      // Use the service type selected *at the time of formatting* for email lookup
-      // Retrieve it from the group dataset if available (for CHANGE SCR), otherwise use current selection
       const scrGroupElement = document.querySelector(`.scr-group[data-airport-code="${airportCode}"]`);
-      let emailLookupServiceType = getSelectedServiceType(); // Default to current selection
-      if (currentSlotType === "CHANGE SCR" && scrGroupElement && scrGroupElement.dataset.serviceType) {
-          emailLookupServiceType = scrGroupElement.dataset.serviceType; // Use service type stored on group
+      let emailLookupServiceType = getSelectedServiceType(); // Default
+      if (scrGroupElement && scrGroupElement.dataset.serviceType) {
+          emailLookupServiceType = scrGroupElement.dataset.serviceType; // Use stored type for lookup
       }
       const recipientEmail = await getAirportEmail(airportCode, emailLookupServiceType);
       const ccEmail = "slotdesk@ryanair.com";
-
-      // --- MANUAL URL ENCODING USING encodeURIComponent ---
       let mailtoLink = `mailto:${recipientEmail}`;
       const paramsArray = [];
-
-       // Add CC only if recipient is different from CC
        if (recipientEmail.toLowerCase() !== ccEmail.toLowerCase()) {
-           // Encode the CC email address component
            paramsArray.push(`cc=${encodeURIComponent(ccEmail)}`);
        }
-
-      // Encode Subject (spaces become %20)
       paramsArray.push(`subject=${encodeURIComponent(subject)}`);
+      paramsArray.push(`body=${encodeURIComponent(scrOutput)}`); 
 
-      // Encode Body (spaces become %20, newlines become %0A)
-      paramsArray.push(`body=${encodeURIComponent(scrOutput)}`);
-
-      // Join parameters with '&'
       if (paramsArray.length > 0) {
           mailtoLink += `?${paramsArray.join('&')}`;
       }
       // --- END MANUAL ENCODING ---
 
-
-      // Limit length for mailto (browsers have limits, often around 2000 chars)
        if (mailtoLink.length > 2000) {
            showError(`Email for ${airportCode} might be too long to open automatically. Please copy the text manually.`);
-           console.warn("Mailto link potentially too long:", mailtoLink.length, mailtoLink);
-           // Still attempt to open
+           console.warn("Mailto link potentially too long:", mailtoLink.length);
        }
 
       window.open(mailtoLink, '_blank');
       console.log(`Triggered mailto link for ${airportCode}. Using encodeURIComponent (spaces as %20). Link length: ${mailtoLink.length}`);
     }
-
-    /** Sends emails for all currently displayed SCR groups */
+  
     function sendAllEmails() {
       clearFeedback();
       const outputList = document.getElementById("outputList");
@@ -1260,14 +1196,14 @@
         return;
       }
 
-       showSuccess(`Triggering ${scrGroups.length} email(s)... Check browser for popups.`);
+      showSuccess(`Triggering ${scrGroups.length} email(s)... Please allow popups in your browser.`);
 
       let emailsSentCount = 0;
       const totalEmails = scrGroups.length;
 
       scrGroups.forEach((scrGroup, index) => {
         const airportCode = scrGroup.dataset.airportCode;
-        const scrOutput = scrGroup.dataset.scrOutput; // Get the final string
+        const scrOutput = scrGroup.dataset.scrOutput;
 
         if (!airportCode || !scrOutput) {
           console.error("Skipping email: Missing airport code or SCR output on group element.", scrGroup);
@@ -1277,24 +1213,23 @@
 
         setTimeout(async () => {
           try {
-             // Ensure sendEmail uses the correct slot type context for the subject
-             // Infer slot type from the scrOutput content if needed, or rely on global state if appropriate
-             // For simplicity, assuming global 'currentSlotType' is relevant or CHANGE SCR buttons handle their own context.
-             await sendEmail(airportCode, scrOutput); // Send the final string
+             await sendEmail(airportCode, scrOutput);
              emailsSentCount++;
-             if (emailsSentCount === totalEmails) {
-                 showSuccess("Finished triggering all SCR emails.");
+             if (index === totalEmails - 1) { 
+                 setTimeout(() => {
+                    if(emailsSentCount > 0) {
+                       showSuccess(`Finished triggering ${emailsSentCount} / ${totalEmails} SCR emails.`);
+                    }
+                 }, 500);
              }
           } catch(err) {
               console.error(`Error sending email for ${airportCode} via Send All:`, err);
               showError(`Failed to trigger email for ${airportCode}.`);
           }
-        }, index * 500);
+        }, index * 1500); 
       });
     }
 
-
-    // --- Event Listeners Setup ---
     function setupEventListeners() {
         document.getElementById("formatBtn").addEventListener("click", () => {
             const slotTypeValue = document.getElementById("slotType").value;
@@ -1318,7 +1253,7 @@
             if (learjetCheckbox.checked) {
                 bombardierCheckbox.checked = false;
             } else if (!bombardierCheckbox.checked) {
-                 learjetCheckbox.checked = true; // Prevent unchecking last box
+                 learjetCheckbox.checked = true; 
             }
         });
 
@@ -1326,19 +1261,19 @@
             if (bombardierCheckbox.checked) {
                 learjetCheckbox.checked = false;
             } else if (!learjetCheckbox.checked) {
-                bombardierCheckbox.checked = true; // Prevent unchecking last box
+                bombardierCheckbox.checked = true; 
             }
         });
     }
-
-    // --- Initialize ---
+  
     document.addEventListener("DOMContentLoaded", () => {
         setupEventListeners();
         document.getElementById("aircraftSelection").style.display =
             (document.getElementById("dropdownMenu").value === "D") ? "block" : "none";
-         attachSendButtonsListeners(); // Set up initial delegation listener
+         attachSendButtonsListeners(); 
     });
 
-  </script>
+</script>
+
 </body>
 </html>
