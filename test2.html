@@ -128,7 +128,6 @@
     function getHistoricLog() { try { const d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : []; } catch (e) { return []; } }
     function setHistoricLog(l) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(l)); } catch (e) { showError("Could not save log."); } }
     function addLogEntry(e) { const l = getHistoricLog(); l.push(e); setHistoricLog(l); }
-
     function parseDateString(dStr) { dStr = dStr ? dStr.toUpperCase() : ''; const mD = dStr.match(/^(\d{2})([A-Z]{3})$/); const mDY = dStr.match(/^(\d{2})([A-Z]{3})(\d{4})$/); let dy, mAb, yr; if (mDY) { [, dy, mAb, yr] = mDY.map((v, i) => i === 1 || i === 3 ? parseInt(v, 10) : v); } else if (mD) { [, dy, mAb] = mD.map((v, i) => i === 1 ? parseInt(v, 10) : v); yr = new Date().getFullYear(); } else { return null; } const mIdx = monthMap[mAb]; if (mIdx === undefined || isNaN(dy) || isNaN(yr) || dy < 1 || dy > 31) return null; const dtO = new Date(Date.UTC(yr, mIdx, dy)); if (dtO.getUTCFullYear() === yr && dtO.getUTCMonth() === mIdx && dtO.getUTCDate() === dy) return dtO; return null; }
     function getDayOfOperation(dayOfWeek) { const fD = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1).toLowerCase(); const ds = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]; const dgs = [7, 1, 2, 3, 4, 5, 6]; const pws = [0, 6, 5, 4, 3, 2, 1]; let idx = ds.indexOf(fD); if (idx === -1) idx = 1; const dg = dgs[idx]; const pw = pws[idx]; const cN = dg * Math.pow(10, pw); return String(cN).padStart(7, '0'); }
     function convertSCRDateToInput(sD) { const p = parseDateString(sD); if (!p) return ""; const dy = String(p.getUTCDate()).padStart(2, '0'); const mn = String(p.getUTCMonth() + 1).padStart(2, '0'); const yr = p.getUTCFullYear(); return `${yr}-${mn}-${dy}`; }
@@ -188,7 +187,6 @@
         clearFeedback(); const input = document.getElementById("userInput").value; const { parsedEntries, errors } = parseInput(input);
         if (errors) { showError(`Input validation failed. Check format.`); }
         if (parsedEntries.length === 0) { if (!errors) showError("No valid flights for change."); return; }
-
         currentSlotType = "CHANGE SCR"; const scrLineServiceType = getSelectedServiceType(); const globalReg = getAircraftReg();
         const outputList = document.getElementById("outputList"); outputList.innerHTML = ""; const airportGroups = {};
         parsedEntries.forEach((d) => { const { from, to } = d; if (!airportGroups[from]) airportGroups[from] = { airportCode: from, flights: [] }; airportGroups[from].flights.push({ type: 'departure', data: d }); if (!airportGroups[to]) airportGroups[to] = { airportCode: to, flights: [] }; airportGroups[to].flights.push({ type: 'arrival', data: d }); });
@@ -296,7 +294,6 @@
         setupEventListeners();
         document.getElementById("aircraftSelection").style.display = (getSelectedServiceType() === "D") ? "block" : "none";
         attachSendButtonsListeners();
-        // Note: No need to add win11-alert classes here as using old UI
     });
   </script>
 
