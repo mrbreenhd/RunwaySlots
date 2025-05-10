@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Multi Flight Formatter</title>  
+  <title>Multi Flight Formatter</title>
   <link rel="stylesheet" href="styles/multiflight.css">
-</head>
+ </head>
 <body>
-  <!-- NAVIGATION BAR -->
   <nav>
-     <ul>
+    <ul>
       <li><a href="index.html">Home</a></li>
       <li><a href="multiflight.html">Multi Flight</a></li>
       <li><a href="airport-search.html">Airport Database</a></li>
@@ -17,59 +16,47 @@
       <li><a href="gcrformat.html">GCR Format</a></li>
       <li><a href="turnaround.html">Turnaround Format</a></li>
       <li><a href="quicklinks.html">Quick Links</a></li>
-      <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">Log Issues</a></li>
-      <li><a href="test.html">Experimental</a></li>
-      <li><a href="test2.html">Experimental 2<a></li>
+      <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6" target="_blank" rel="noopener noreferrer">Log Issues</a></li>
     </ul>
   </nav>
-  
-  <!-- MAIN CONTAINER (Styled as a Windows 95 window) -->
+
   <div class="container">
     <div class="title-bar">Multi Flight Formatter</div>
     <div class="window-content">
-      <!-- Error and Success Messages -->
+      <h1>Multi Flight Formatter</h1>
+
       <div id="errorMessage" class="error"></div>
       <div id="successMessage" class="success"></div>
 
-      <!-- User Inputs -->
       <label for="userInput">Flight Information (One per line):</label>
-      <textarea id="userInput" placeholder="Format: PASTE FLIGHT LEG INFO HERE (one per line)"></textarea>
+      <textarea id="userInput" placeholder="FR123 LHR DUB 01JAN2024 1000 1100 J 73H"></textarea>
 
-      <label for="regInput">Learjet Registration:</label>
-      <input id="regInput" placeholder="ENTER LEARJET REG HERE [E.G. MABJA]" />
+      <label for="regInput">Aircraft Registration (for non-D service types or specific overrides):</label>
+      <input type="text" id="regInput" placeholder="ENTER REGISTRATION" />
 
-      <!-- Action Buttons and Dropdowns -->
+      <div id="aircraftSelection" style="display: none;">
+        <span>Select Aircraft Type for 'D' Service:</span><br>
+        <label><input type="checkbox" id="learjetCheckbox" name="aircraftType" checked> Learjet (L45)</label>
+        <label><input type="checkbox" id="bombardierCheckbox" name="aircraftType"> Bombardier (CL5)</label>
+      </div>
+
       <div>
         <button id="formatBtn">Format SCR Messages</button>
-        <select id="dropdownMenu" title="Select Flight Type">
-          <option value="P" title="Non-revenue flight">P</option>
-          <option value="D" title="General Aviation">D</option>
-          <option value="K" title="Training flight">K</option>
-          <option value="T" title="Training flight">T</option>
-          <option value="J" title="Revenue (passenger)">J</option>
-          <option value="X" title="Technical flight">X</option>
-        </select>
-        <select id="slotType" title="Select Slot Type">
-          <option value="NEW">NEW SLOT</option>
-          <option value="CANCEL">CANCEL SLOT</option>
-        </select>
+        <select id="slotType" title="Select Slot Type"><option value="NEW">NEW SLOT</option><option value="CANCEL">CANCEL SLOT</option><option value="CHANGE">CHANGE SCR</option></select>
+        <select id="dropdownMenu" title="Select Flight Service Type"><option value="P">P</option><option value="D">D</option><option value="K">K</option><option value="T">T</option><option value="J">J</option><option value="X">X</option></select>
         <button id="sendAllBtn">Send All Emails</button>
       </div>
 
-      <!-- Output List -->
       <div id="outputList"></div>
     </div>
   </div>
 
-  <footer> Created By: ArtemisByte </footer>
-  
-  <!-- Load Firebase libraries -->
+  <footer>Created By: ArtemisByte</footer>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <!-- Load Firebase configuration (plain script) -->
-  <script src="scripts/firebase.js"></script>  
-  <!-- Load multiflight script -->
-  <script src="scripts/multiflight.js"></script>
+  <script src="scripts/firebase.js"></script>
+  <scripts src="scripts/multiflight.js"></scripts>
   
-</body>
-</html>
+ </body>
+ </html>
