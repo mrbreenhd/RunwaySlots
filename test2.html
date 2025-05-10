@@ -46,7 +46,7 @@
     .modified-scr-row select.r-service { flex-grow: 0; width: 50px; }
     @media (max-width: 850px) { .container { width: 95%; } }
     @media (max-width: 600px) { nav ul { justify-content: flex-start; } .modified-scr-row { flex-direction: column; align-items: stretch; } .modified-scr-row label { width: 100%; justify-content: space-between; margin-bottom: 4px; } .modified-scr-row input, .modified-scr-row select { width: auto; min-width: 100px; } }
-    footer { font-family: "MS Sans Serif", Tahoma, sans-serif; font-size: 12px; color: black; text-align: center; margin-top: 20px; padding-bottom: 20px; }
+    footer { font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif; font-size: 12px; color: black; text-align: center; margin-top: 20px; padding-bottom: 20px; }
     /* Modal Styles */
     .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.4); }
     .modal-content { background-color: #fefefe; margin: 10% auto; padding: 20px; border: 2px solid #7d7d7d; width: 80%; max-width: 700px; box-shadow: 2px 2px 0 #000; font-family: monospace; white-space: pre-wrap; max-height: 70vh; overflow-y: auto;}
@@ -197,7 +197,6 @@
       clearFeedback(); const input = document.getElementById("userInput").value; const { parsedEntries, errors } = parseInput(input);
       if (errors) { showError(`Input validation failed. Check format.`); }
       if (parsedEntries.length === 0) { if (!errors) showError("No valid flights."); return; }
-
       currentSlotType = getSlotType(); const scrLineServiceType = getSelectedServiceType(); const globalReg = getAircraftReg();
       const outputList = document.getElementById("outputList"); outputList.innerHTML = ""; const airportGroups = {};
       parsedEntries.forEach((d) => { const { from, to } = d; if (!airportGroups[from]) airportGroups[from] = { airportCode: from, flights: [] }; airportGroups[from].flights.push({ type: 'departure', data: d }); if (!airportGroups[to]) airportGroups[to] = { airportCode: to, flights: [] }; airportGroups[to].flights.push({ type: 'arrival', data: d }); });
@@ -241,13 +240,28 @@
     }
 
     function createScrGroupElement(outputList, airportCode, scrOutput) {
-        const scrGroup = document.createElement("div"); scrGroup.className = "scr-group"; scrGroup.dataset.airportCode = airportCode; scrGroup.dataset.scrOutput = scrOutput;
-        const hD = document.createElement("div"); hD.className = "heading"; hD.textContent = `SCR [${airportCode}]`; scrGroup.appendChild(hD);
-        const oCD = document.createElement("div"); oCD.className = "output-container"; const pre = document.createElement("pre"); pre.textContent = scrOutput; oCD.appendChild(pre); scrGroup.appendChild(oCD);
+        const scrGroup = document.createElement("div");
+        scrGroup.className = "scr-group";
+        scrGroup.dataset.airportCode = airportCode;
+        scrGroup.dataset.scrOutput = scrOutput;
+
+        const hD = document.createElement("div");
+        hD.className = "heading";
+        hD.textContent = `SCR [${airportCode}]`;
+        scrGroup.appendChild(hD);
+
+        const oCD = document.createElement("div");
+        oCD.className = "output-container";
+        const pre = document.createElement("pre");
+        pre.textContent = scrOutput;
+        oCD.appendChild(pre);
+        scrGroup.appendChild(oCD);
         
-        const buttonFlexContainer = document.createElement("div"); buttonFlexContainer.className = "send-button-container"; 
+        const buttonFlexContainer = document.createElement("div");
+        buttonFlexContainer.className = "send-button-container"; 
         
-        const sendBtn = document.createElement("button"); sendBtn.textContent = "Send Email"; 
+        const sendBtn = document.createElement("button");
+        sendBtn.textContent = "Send Email"; 
         buttonFlexContainer.appendChild(sendBtn); 
 
         const showScrBtn = document.createElement("button");
@@ -263,42 +277,140 @@
             copyScrToClipboard(scrGroup.dataset.scrOutput);
         });
         buttonFlexContainer.appendChild(copyScrBtn);
+
+        // START: New "Copy Email" button code
+        const copyEmailBtn = document.createElement("button");
+        copyEmailBtn.textContent = "Copy Email";
+        copyEmailBtn.addEventListener("click", async () => {
+            const currentAirportCode = scrGroup.dataset.airportCode;
+            const currentServiceType = getSelectedServiceType(); // Service type from global dropdown for these groups
+            if (!currentAirportCode) {
+                showError("Airport code not found for this group.");
+                return;
+            }
+            try {
+                const emailAddress = await getAirportEmail(currentAirportCode, currentServiceType);
+                if (emailAddress) { // getAirportEmail returns a default if not found, so it should always have a value
+                    await navigator.clipboard.writeText(emailAddress);
+                    showSuccess(`Email for ${currentAirportCode} (${emailAddress}) copied to clipboard!`);
+                } else {
+                    // This case should ideally not be reached if getAirportEmail has a default
+                    showError(`No email address retrieved for ${currentAirportCode}.`);
+                }
+            } catch (err) {
+                showError(`Failed to copy email for ${currentAirportCode}. See console for details.`);
+                console.error(`Failed to copy email for ${currentAirportCode}: `, err);
+            }
+        });
+        buttonFlexContainer.appendChild(copyEmailBtn);
+        // END: New "Copy Email" button code
         
         scrGroup.appendChild(buttonFlexContainer);
         outputList.appendChild(scrGroup);
     }
 
     function createChangeScrGroupElement(outputList, airportCode, headerLines, flightChangePairs, groupIndex) {
-        const scrGroup = document.createElement("div"); scrGroup.className = "scr-group"; scrGroup.dataset.airportCode = airportCode;
-        scrGroup.dataset.headerLines = JSON.stringify(headerLines); scrGroup.dataset.flightChangePairs = JSON.stringify(flightChangePairs);
-        scrGroup.dataset.siAction = "SLOT CHG REQ"; scrGroup.dataset.siAirport = airportCode;
-        const scrLineServiceType = getSelectedServiceType(); const globalReg = getAircraftReg();
-        scrGroup.dataset.globalReg = globalReg; scrGroup.dataset.serviceType = scrLineServiceType;
+        const scrGroup = document.createElement("div");
+        scrGroup.className = "scr-group";
+        scrGroup.dataset.airportCode = airportCode;
+        scrGroup.dataset.headerLines = JSON.stringify(headerLines);
+        scrGroup.dataset.flightChangePairs = JSON.stringify(flightChangePairs);
+        scrGroup.dataset.siAction = "SLOT CHG REQ"; 
+        scrGroup.dataset.siAirport = airportCode;
+        const scrLineServiceType = getSelectedServiceType(); 
+        const globalReg = getAircraftReg();
+        scrGroup.dataset.globalReg = globalReg;
+        scrGroup.dataset.serviceType = scrLineServiceType; // Store service type for this group
 
-        const headingDiv = document.createElement("div"); headingDiv.className = "heading"; headingDiv.textContent = `Change SCR [${airportCode}]`; scrGroup.appendChild(headingDiv);
-        const outputContainerDiv = document.createElement("div"); outputContainerDiv.className = "output-container"; 
+        const headingDiv = document.createElement("div");
+        headingDiv.className = "heading";
+        headingDiv.textContent = `Change SCR [${airportCode}]`;
+        scrGroup.appendChild(headingDiv);
 
-        const headerDisplayDiv = document.createElement("div"); headerDisplayDiv.style.cssText = "white-space: pre-wrap; font-family: monospace; margin-bottom: 10px;"; headerDisplayDiv.innerHTML = `<strong>--- Header ---</strong>\n${headerLines.join("\n")}`; outputContainerDiv.appendChild(headerDisplayDiv);
+        const outputContainerDiv = document.createElement("div"); 
+        outputContainerDiv.className = "output-container"; 
 
-        const cAndRLinesDiv = document.createElement("div"); cAndRLinesDiv.id = `editable-r-lines-${groupIndex}`; cAndRLinesDiv.innerHTML = `<strong style="display: block; margin-bottom: 4px;">--- Cancellation (C) / New Request (R) Lines ---</strong>`;
-        flightChangePairs.forEach((pair) => { const cLT = document.createElement('div'); cLT.style.cssText = 'font-family: monospace; white-space: pre; font-size: 11px; color: #555;'; cLT.textContent = pair.cLine; cAndRLinesDiv.appendChild(cLT); cAndRLinesDiv.appendChild(createEditableRLineRow(pair.rLineData)); });
+        const headerDisplayDiv = document.createElement("div"); 
+        headerDisplayDiv.style.cssText = "white-space: pre-wrap; font-family: monospace; margin-bottom: 10px;"; 
+        headerDisplayDiv.innerHTML = `<strong>--- Header ---</strong>\n${headerLines.join("\n")}`; 
+        outputContainerDiv.appendChild(headerDisplayDiv);
+
+        const cAndRLinesDiv = document.createElement("div"); 
+        cAndRLinesDiv.id = `editable-r-lines-${groupIndex}`; 
+        cAndRLinesDiv.innerHTML = `<strong style="display: block; margin-bottom: 4px;">--- Cancellation (C) / New Request (R) Lines ---</strong>`;
+        flightChangePairs.forEach((pair) => { 
+            const cLT = document.createElement('div'); 
+            cLT.style.cssText = 'font-family: monospace; white-space: pre; font-size: 11px; color: #555;'; 
+            cLT.textContent = pair.cLine; 
+            cAndRLinesDiv.appendChild(cLT); 
+            cAndRLinesDiv.appendChild(createEditableRLineRow(pair.rLineData)); 
+        });
         outputContainerDiv.appendChild(cAndRLinesDiv);
 
-        const siDiv = document.createElement("div"); siDiv.id = `si-line-display-${groupIndex}`; siDiv.style.cssText = "white-space: pre-wrap; font-family: monospace; margin-top: 10px;";
-        let initialSiLine = `SI SLOT CHG REQ ${airportCode}`; if (scrLineServiceType === "D") { let lbl = document.getElementById("learjetCheckbox").checked ? "LEARJET" : "BOMBARDIER"; initialSiLine += ` // ${lbl} REG: ${globalReg}`; } siDiv.innerHTML = `<strong>--- SI Line ---</strong>\n${initialSiLine}`; outputContainerDiv.appendChild(siDiv);
+        const siDiv = document.createElement("div"); 
+        siDiv.id = `si-line-display-${groupIndex}`; 
+        siDiv.style.cssText = "white-space: pre-wrap; font-family: monospace; margin-top: 10px;";
+        let initialSiLine = `SI SLOT CHG REQ ${airportCode}`; 
+        if (scrLineServiceType === "D") { 
+            let lbl = document.getElementById("learjetCheckbox").checked ? "LEARJET" : "BOMBARDIER"; 
+            initialSiLine += ` // ${lbl} REG: ${globalReg}`; 
+        } 
+        siDiv.innerHTML = `<strong>--- SI Line ---</strong>\n${initialSiLine}`; 
+        outputContainerDiv.appendChild(siDiv);
         scrGroup.appendChild(outputContainerDiv);
 
-        const buttonContainer = document.createElement("div"); buttonContainer.className = "send-button-container";
-        const updateSendBtn = document.createElement("button"); updateSendBtn.textContent = "Update & Send Email";
+        const buttonContainer = document.createElement("div");
+        buttonContainer.className = "send-button-container";
+
+        const updateSendBtn = document.createElement("button");
+        updateSendBtn.textContent = "Update & Send Email";
         updateSendBtn.addEventListener("click", async () => {
-            const editableContainer = document.getElementById(`editable-r-lines-${groupIndex}`); const modifiedRows = editableContainer.querySelectorAll(".modified-scr-row"); let reconstructionError = false;
-            const storedFlightChangePairs = JSON.parse(scrGroup.dataset.flightChangePairs || "[]"); const groupServiceType = scrGroup.dataset.serviceType;
-            const storedHeader = JSON.parse(scrGroup.dataset.headerLines || "[]"); let updatedMessageLines = [...storedHeader];
-            modifiedRows.forEach((rowDiv) => { const rowId = rowDiv.dataset.rowId; const originalPair = storedFlightChangePairs.find(p => p.rLineData.id === rowId); if (!originalPair) { reconstructionError = true; return; } const originalCLine = originalPair.cLine; const direction = originalPair.rLineData.direction; try { const fV=rowDiv.querySelector(".r-flight").value.toUpperCase(); const dV=rowDiv.querySelector(".r-date").value; const sD=convertInputDateToSCR(dV); const dayV=rowDiv.querySelector(".r-day").value; const cCV=rowDiv.querySelector(".r-combined-code").value.toUpperCase(); const tVR=rowDiv.querySelector(".r-time").value; const tV=tVR.replace(":",""); const aV=rowDiv.querySelector(".r-airport").value.toUpperCase(); const sV=rowDiv.querySelector(".r-service").value.toUpperCase(); if(!fV||!sD||!dayV||!cCV||!/^\d{4}$/.test(tV)||!aV||!sV) throw new Error("Invalid"); let uRL=(direction==='departure')?`R ${fV} ${sD}${sD} ${dayV} ${cCV} ${tV}${aV} ${sV}`:`R${fV} ${sD}${sD} ${dayV} ${cCV} ${aV}${tV} ${sV}`; updatedMessageLines.push(originalCLine); updatedMessageLines.push(uRL); } catch(err){ showError(`Error R-Line ${originalPair.rLineData.flight}.`); reconstructionError=true; } });
+            const editableContainer = document.getElementById(`editable-r-lines-${groupIndex}`); 
+            const modifiedRows = editableContainer.querySelectorAll(".modified-scr-row"); 
+            let reconstructionError = false;
+            const storedFlightChangePairs = JSON.parse(scrGroup.dataset.flightChangePairs || "[]"); 
+            const groupServiceType = scrGroup.dataset.serviceType;
+            const storedHeader = JSON.parse(scrGroup.dataset.headerLines || "[]"); 
+            let updatedMessageLines = [...storedHeader];
+            modifiedRows.forEach((rowDiv) => { 
+                const rowId = rowDiv.dataset.rowId; 
+                const originalPair = storedFlightChangePairs.find(p => p.rLineData.id === rowId); 
+                if (!originalPair) { reconstructionError = true; return; } 
+                const originalCLine = originalPair.cLine; 
+                const direction = originalPair.rLineData.direction; 
+                try { 
+                    const fV=rowDiv.querySelector(".r-flight").value.toUpperCase(); 
+                    const dV=rowDiv.querySelector(".r-date").value; 
+                    const sD=convertInputDateToSCR(dV); 
+                    const dayV=rowDiv.querySelector(".r-day").value; 
+                    const cCV=rowDiv.querySelector(".r-combined-code").value.toUpperCase(); 
+                    const tVR=rowDiv.querySelector(".r-time").value; 
+                    const tV=tVR.replace(":",""); 
+                    const aV=rowDiv.querySelector(".r-airport").value.toUpperCase(); 
+                    const sV=rowDiv.querySelector(".r-service").value.toUpperCase(); 
+                    if(!fV||!sD||!dayV||!cCV||!/^\d{4}$/.test(tV)||!aV||!sV) throw new Error("Invalid"); 
+                    let uRL=(direction==='departure')?`R ${fV} ${sD}${sD} ${dayV} ${cCV} ${tV}${aV} ${sV}`:`R${fV} ${sD}${sD} ${dayV} ${cCV} ${aV}${tV} ${sV}`; 
+                    updatedMessageLines.push(originalCLine); 
+                    updatedMessageLines.push(uRL); 
+                } catch(err){ 
+                    showError(`Error R-Line ${originalPair.rLineData.flight}.`); reconstructionError=true; 
+                } 
+            });
             if(reconstructionError){ showError(`Failed update ${airportCode}.`); return; }
-            const siAction = scrGroup.dataset.siAction; const siAirport = scrGroup.dataset.siAirport; let finalSiLine = `SI ${siAction} ${siAirport}`; if(groupServiceType === "D"){ let lbl=document.getElementById("learjetCheckbox").checked?"LEARJET":"BOMBARDIER"; let reg=getAircraftReg(); finalSiLine+=` // ${lbl} REG: ${reg}`; } document.getElementById(`si-line-display-${groupIndex}`).innerHTML = `<strong>--- SI Line ---</strong>\n${finalSiLine}`; updatedMessageLines.push(finalSiLine);
-            const updatedScrMessage = updatedMessageLines.join("\n"); scrGroup.dataset.scrOutput = updatedScrMessage;
-            showSuccess(`Updated ${airportCode}. Sending...`); await sendEmail(airportCode, updatedScrMessage);
+            const siAction = scrGroup.dataset.siAction; 
+            const siAirport = scrGroup.dataset.siAirport; 
+            let finalSiLine = `SI ${siAction} ${siAirport}`; 
+            if(groupServiceType === "D"){ 
+                let lbl=document.getElementById("learjetCheckbox").checked?"LEARJET":"BOMBARDIER"; 
+                let reg=getAircraftReg(); 
+                finalSiLine+=` // ${lbl} REG: ${reg}`; 
+            } 
+            document.getElementById(`si-line-display-${groupIndex}`).innerHTML = `<strong>--- SI Line ---</strong>\n${finalSiLine}`; 
+            updatedMessageLines.push(finalSiLine);
+            const updatedScrMessage = updatedMessageLines.join("\n"); 
+            scrGroup.dataset.scrOutput = updatedScrMessage;
+            showSuccess(`Updated ${airportCode}. Sending...`); 
+            await sendEmail(airportCode, updatedScrMessage);
             addLogEntry({ type: "CHANGE SCR (Updated)", flightNumber: storedFlightChangePairs.map(p => p.rLineData.flight).join(", "), airport: airportCode, direction: "change", timestamp: new Date().toISOString().split(".")[0].replace("T", " "), scrMessage: updatedScrMessage });
         });
         buttonContainer.appendChild(updateSendBtn);
@@ -327,7 +439,40 @@
         });
         buttonContainer.appendChild(copyScrBtn);
         
-        scrGroup.appendChild(buttonContainer); outputList.appendChild(scrGroup); return scrGroup;
+        // START: New "Copy Email" button code
+        const copyEmailBtn = document.createElement("button");
+        copyEmailBtn.textContent = "Copy Email";
+        copyEmailBtn.addEventListener("click", async () => {
+            const currentAirportCode = scrGroup.dataset.airportCode;
+            // For change SCR groups, the service type is stored in the group's dataset
+            const currentServiceType = scrGroup.dataset.serviceType; 
+            if (!currentAirportCode) {
+                showError("Airport code not found for this group.");
+                return;
+            }
+            if (!currentServiceType) {
+                showError("Service type not found for this group."); // Should not happen if dataset.serviceType is set
+                return;
+            }
+            try {
+                const emailAddress = await getAirportEmail(currentAirportCode, currentServiceType);
+                if (emailAddress) { // getAirportEmail returns a default if not found
+                    await navigator.clipboard.writeText(emailAddress);
+                    showSuccess(`Email for ${currentAirportCode} (${emailAddress}) copied to clipboard!`);
+                } else {
+                    showError(`No email address retrieved for ${currentAirportCode}.`);
+                }
+            } catch (err) {
+                showError(`Failed to copy email for ${currentAirportCode}. See console for details.`);
+                console.error(`Failed to copy email for ${currentAirportCode}: `, err);
+            }
+        });
+        buttonContainer.appendChild(copyEmailBtn);
+        // END: New "Copy Email" button code
+
+        scrGroup.appendChild(buttonContainer);
+        outputList.appendChild(scrGroup);
+        return scrGroup;
     }
 
      function createEditableRLineRow(rowData) {
@@ -341,13 +486,55 @@
 
     async function sendEmail(airportCode, scrOutput) {
         let sP; if (currentSlotType === "NEW SLOT") sP = "NEW SLOT REQ"; else if (currentSlotType === "CANCEL SLOT") sP = "SLOT CANX REQ"; else if (currentSlotType === "CHANGE SCR") sP = "SLOT CHG REQ"; else sP = "SLOT REQ"; const subj = `${sP} ${airportCode}`;
-        const cardEl = Array.from(document.querySelectorAll('.scr-group')).find(c => c.dataset.airportCode === airportCode); let eLST = getSelectedServiceType(); if (cardEl && cardEl.dataset.serviceType) eLST = cardEl.dataset.serviceType; const rE = await getAirportEmail(airportCode, eLST); const cE = "slotdesk@ryanair.com"; let mL = `mailto:${rE}`; const pA = []; if (rE.toLowerCase() !== cE.toLowerCase()) pA.push(`cc=${encodeURIComponent(cE)}`); pA.push(`subject=${encodeURIComponent(subj)}`); pA.push(`body=${encodeURIComponent(scrOutput)}`); if (pA.length > 0) mL += `?${pA.join('&')}`;
-        if (mL.length > 2000) { showError(`Email ${airportCode} too long.`); } window.open(mL, '_blank');
+        const cardEl = Array.from(document.querySelectorAll('.scr-group')).find(c => c.dataset.airportCode === airportCode && c.dataset.scrOutput === scrOutput); // Ensure we get the right card
+        let eLST = getSelectedServiceType(); 
+        // For "CHANGE SCR", the service type is per group and stored in its dataset
+        if (cardEl && cardEl.dataset.serviceType) {
+             eLST = cardEl.dataset.serviceType;
+        }
+        const rE = await getAirportEmail(airportCode, eLST); 
+        const cE = "slotdesk@ryanair.com"; 
+        let mL = `mailto:${rE}`; 
+        const pA = []; 
+        if (rE.toLowerCase() !== cE.toLowerCase()) {
+            pA.push(`cc=${encodeURIComponent(cE)}`);
+        }
+        pA.push(`subject=${encodeURIComponent(subj)}`); 
+        pA.push(`body=${encodeURIComponent(scrOutput)}`); 
+        if (pA.length > 0) {
+            mL += `?${pA.join('&')}`;
+        }
+        if (mL.length > 2000) { showError(`Email for ${airportCode} is too long for mailto link.`); } 
+        window.open(mL, '_blank');
     }
 
     function sendAllEmails() {
-        clearFeedback(); const oL = document.getElementById("outputList"); const cards = oL.querySelectorAll(".scr-group"); if (cards.length === 0) { showError("No messages."); return; } showSuccess(`Triggering ${cards.length} email(s)... Allow popups.`); let eSC = 0;
-        cards.forEach((card, idx) => { const aC = card.dataset.airportCode; const sO = card.dataset.scrOutput; if (!aC || !sO) { showError(`Error sending group ${idx + 1}.`); return; } setTimeout(async () => { try { await sendEmail(aC, sO); eSC++; } catch(err) { showError(`Failed ${aC}.`); } finally { if (idx === cards.length - 1) { setTimeout(() => { if(eSC > 0) showSuccess(`Finished ${eSC}/${cards.length} emails.`); }, 500); } } }, idx * 1500); });
+        clearFeedback(); const oL = document.getElementById("outputList"); const cards = oL.querySelectorAll(".scr-group"); if (cards.length === 0) { showError("No messages to send."); return; } 
+        showSuccess(`Attempting to trigger ${cards.length} email(s)... Please allow pop-ups if prompted.`); let eSC = 0;
+        cards.forEach((card, idx) => { 
+            const aC = card.dataset.airportCode; 
+            const sO = card.dataset.scrOutput; 
+            if (!aC || !sO) { 
+                showError(`Error preparing email for group ${idx + 1}. Missing data.`); 
+                return; 
+            } 
+            setTimeout(async () => { 
+                try { 
+                    await sendEmail(aC, sO); 
+                    eSC++; 
+                } catch(err) { 
+                    showError(`Failed to open email client for ${aC}.`); 
+                    console.error("Send email error for " + aC + ":", err);
+                } finally { 
+                    if (idx === cards.length - 1) { 
+                        setTimeout(() => { 
+                            if(eSC > 0) showSuccess(`Finished processing ${eSC} of ${cards.length} email(s). Check your email client.`);
+                            else if (cards.length > 0) showError("Could not open any email clients. Check pop-up blocker or console for errors.");
+                        }, 500); 
+                    } 
+                } 
+            }, idx * 1500); // Stagger email opening
+        });
     }
 
     function setupEventListeners() {
@@ -368,11 +555,11 @@
 
         if (closeModalBtn) {
             closeModalBtn.onclick = function() {
-                modal.style.display = "none";
+                if (modal) modal.style.display = "none";
             }
         }
         window.onclick = function(event) {
-            if (event.target == modal) {
+            if (event.target == modal && modal) {
                 modal.style.display = "none";
             }
         }
