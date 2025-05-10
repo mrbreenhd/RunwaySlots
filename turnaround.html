@@ -241,7 +241,7 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
       let originInfo = arrDepAirport + arrArrivalTime;
       let depInfo = depDepartureTime + depDepAirport;
       let formattedOutput = `${prefix}${arrivalFlightNumber} ${arrivalFlightNumber} ${flightDateDisplayA}${flightDateDisplayD} ${dayOfOperation} ${seatAndAircraft} ${originInfo} ${depInfo} ${arrivalServiceType}${departureServiceType}`;
-      let weekLine = "W23";
+      let weekLine = "S25";
       let slotRequest = state === "CANCEL" ? `SI SLOT CANX REQ ${turnaroundAirport}` : `SI NEW SLOT REQ ${turnaroundAirport}`;
       let turnaroundFormat = `SCR\n${weekLine}\n${slotDate}\n${turnaroundAirport}\n${formattedOutput}\n\n${slotRequest}\n`;
 
