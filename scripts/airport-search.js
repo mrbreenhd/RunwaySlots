@@ -14,6 +14,7 @@ const editAirportBtn = document.getElementById('editAirportBtn');
 const airportForm = document.getElementById('airportForm');
 const formTitle = document.getElementById('formTitle');
 const editAirportCode = document.getElementById('editAirportCode');
+const editAirportICAO = document.getElementById('editAirportICAO');
 const airportName = document.getElementById('airportName');
 const country = document.getElementById('country');
 const email = document.getElementById('email');
@@ -74,6 +75,7 @@ async function fetchAirportData() {
     responseOutput.innerHTML = `
       <div class="result-header">
         <div><strong>Airport Code:</strong> ${data.airportCode}</div>
+        <div><strong>Airport ICAO:</strong> ${data.airportIcao)</div>
         <div><strong>Airport Name:</strong> ${data.airportName}</div>
         <div><strong>Country:</strong> ${data.country}</div>
         <div><strong>Email:</strong> ${data.email}</div>
@@ -131,6 +133,7 @@ editAirportBtn.addEventListener('click', () => {
 
 function clearForm() {
   editAirportCode.value = '';
+  editAirportICAO.value = '';
   airportName.value = '';
   country.value = '';
   email.value = '';
@@ -145,6 +148,7 @@ function clearForm() {
 
 function populateForm(airport) {
   editAirportCode.value = airport.airportCode || '';
+  editAirportICAO.value = airport.airportIcao || '';
   airportName.value = airport.airportName || '';
   country.value = airport.country || '';
   email.value = airport.email || '';
@@ -165,6 +169,7 @@ async function saveAirportData() {
   }
   const airportData = {
     airportCode: code,
+    airportIcao:airportIcao.value.trim(),
     airportName: airportName.value.trim(),
     country: country.value.trim(),
     email: email.value.trim(),
@@ -184,6 +189,7 @@ async function saveAirportData() {
     responseOutput.innerHTML = `
       <div class="result-header">
         <div><strong>Airport Code:</strong> ${airportData.airportCode}</div>
+        <div><strong>Airport ICAO:</strong> ${airport data.airportIcao}</div>
         <div><strong>Airport Name:</strong> ${airportData.airportName}</div>
         <div><strong>Country:</strong> ${airportData.country}</div>
         <div><strong>Email:</strong> ${airportData.email}</div>
