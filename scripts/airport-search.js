@@ -75,7 +75,7 @@ async function fetchAirportData() {
     responseOutput.innerHTML = `
       <div class="result-header">
         <div><strong>Airport Code:</strong> ${data.airportCode}</div>
-        <div><strong>Airport ICAO:</strong> ${data.airportIcao)</div>
+        <div><strong>Airport ICAO:</strong> ${data.airportIcao}</div>
         <div><strong>Airport Name:</strong> ${data.airportName}</div>
         <div><strong>Country:</strong> ${data.country}</div>
         <div><strong>Email:</strong> ${data.email}</div>
@@ -169,7 +169,7 @@ async function saveAirportData() {
   }
   const airportData = {
     airportCode: code,
-    airportIcao:airportIcao.value.trim(),
+    airportIcao:editAirportICAO.value.trim(),
     airportName: airportName.value.trim(),
     country: country.value.trim(),
     email: email.value.trim(),
@@ -189,7 +189,7 @@ async function saveAirportData() {
     responseOutput.innerHTML = `
       <div class="result-header">
         <div><strong>Airport Code:</strong> ${airportData.airportCode}</div>
-        <div><strong>Airport ICAO:</strong> ${airport data.airportIcao}</div>
+        <div><strong>Airport ICAO:</strong> ${airportData.airportIcao}</div>
         <div><strong>Airport Name:</strong> ${airportData.airportName}</div>
         <div><strong>Country:</strong> ${airportData.country}</div>
         <div><strong>Email:</strong> ${airportData.email}</div>
