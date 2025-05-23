@@ -60,13 +60,13 @@ airportCodeInput.addEventListener('keyup', function(event) {
 async function fetchAirportData() {
   const code = airportCodeInput.value.trim().toUpperCase();
   if (!code) {
-    responseOutput.textContent = "Please enter a valid airport code.";
+    responseOutput.textContent = "Error 2 - PLEASE RETYPE AIRPORT CODE.";
     return;
   }
   try {
     const snapshot = await get(ref(db, "airports/" + code));
     if (!snapshot.exists()) {
-      responseOutput.textContent = `No matching airport found for code: ${code}`;
+      responseOutput.textContent = `Error 1 - AIRPORT NOT FOUND: ${code}`;
       currentAirportData = null;
       return;
     }
