@@ -1,216 +1,178 @@
-/************************************************
-     IATA TO ICAO 
-************************************************/
-const iataToIcao = {
-  STN: "EGSS", PMI: "LEPA", VIE: "LOWW", CPH: "EKCH", BGY: "LIME", BER: "EDDB",
-  SKG: "LGTS", TIA: "LATI", FRA: "EDDF", HHN: "EDDF", HAM: "EDDH", CGN: "EDDK",
-  CIA: "LIRA", AMS: "EHAM", EIN: "EHEH", AYT: "LTAI", RHO: "LGRP", KGS: "LGKO",
-  JTR: "LGSR", ESB: "LTAC", ATH: "LGAV", JSI: "LGSK", ZTH: "LGZA", CFU: "LGKR",
-  KSO: "LGKA", BRU: "EBBR"
-};
+ const monthMap = { JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11 };
+    const monthAbbr = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
 
-function getIcaoCode(iataCode) {
-  return iataToIcao[iataCode.toUpperCase()] || iataCode.toUpperCase();
-}
-
-function parseInput(input) {
-  const parts = input.trim().split(/\s+/);
-  if (parts.length !== 7) return null;
-  const [flight, from, to, fullDate, departureTime, arrivalTime, reg] = parts;
-  const iataRegex = /^[A-Z]{3}$/;
-  if (!iataRegex.test(from.toUpperCase()) || !iataRegex.test(to.toUpperCase())) return null;
-  const dateRegex = /^\d{2}[A-Z]{3}\d{4}$/;
-  if (!dateRegex.test(fullDate.toUpperCase())) return null;
-  const timeRegex = /^\d{4}$/;
-  if (!timeRegex.test(departureTime) || !timeRegex.test(arrivalTime)) return null;
-  const slotCodeInput = document.getElementById("slotCode").value.trim();
-  const slotCodeRegex = /^[A-Z0-9]{6}$/;
-  if (!slotCodeRegex.test(slotCodeInput.toUpperCase())) return null;
-  return {
-    flight: flight.toUpperCase(),
-    from: from.toUpperCase(),
-    to: to.toUpperCase(),
-    date: fullDate.slice(0, 5).toUpperCase(),
-    fullDate: fullDate.toUpperCase(),
-    departureTime,
-    arrivalTime,
-    reg: reg.toUpperCase(),
-    slotCode: slotCodeInput.toUpperCase()
-  };
-}
-
-function getSlotType() {
-  const slotTypeSelect = document.getElementById("slotType");
-  return slotTypeSelect ? slotTypeSelect.value : "NEW";
-}
-
-function buildStandardGcr(data) {
-  const slotType = getSlotType();
-  const depMsg = `GCR
-/REG
-${getIcaoCode(data.from)}
-N ${data.reg} ${data.date} ${data.slotCode} ${data.departureTime}${getIcaoCode(data.from)} D
-GI ${slotType} REQ ${getIcaoCode(data.from)} PPR / SLOT ID NUMBERS PLS`;
-  const arrMsg = `GCR
-/REG
-${getIcaoCode(data.to)}
-N${data.reg} ${data.date} ${data.slotCode} ${data.arrivalTime}${getIcaoCode(data.to)} D
-GI ${slotType} REQ ${getIcaoCode(data.to)} PPR / SLOT ID NUMBERS PLS`;
-  return { departure: depMsg, arrival: arrMsg };
-}
-
-function buildCombinedGcrForAirport(f1, f2, airport) {
-  const slotType = getSlotType();
-  let departureLine = "";
-  let arrivalLine = "";
-  if (airport === f1.from && airport === f2.to) {
-    departureLine = `N ${f1.reg} ${f1.date} ${f1.slotCode} ${f1.departureTime}${getIcaoCode(f1.from)} D`;
-    arrivalLine = `N${f2.reg} ${f2.date} ${f2.slotCode} ${getIcaoCode(f1.from)}${f1.arrivalTime} D`;
-  } else if (airport === f1.to && airport === f2.from) {
-    departureLine = `N ${f2.reg} ${f2.date} ${f2.slotCode} ${f2.departureTime}${getIcaoCode(f2.to)} D`;
-    arrivalLine = `N${f1.reg} ${f1.date} ${f1.slotCode} ${getIcaoCode(f1.from)}${f1.arrivalTime} D`;
-  }
-  const commonICAO = getIcaoCode(airport);
-  return `GCR
-/REG
-${commonICAO}
-${departureLine}
-${arrivalLine}
-GI ${slotType} REQ ${commonICAO} PPR / SLOT ID NUMBERS PLS`;
-}
-
-function formatGcr() {
-  const allInput = document.getElementById("userInput").value;
-  const lines = allInput.split('\n').filter(line => line.trim() !== '');
-  let departureOutputs = "";
-  let arrivalOutputs = "";
-  let errorMessages = "";
-  const flights = [];
-
-  lines.forEach((line, index) => {
-    const data = parseInput(line);
-    if (!data) {
-      errorMessages += "Line " + (index + 1) + " is invalid.\n";
-    } else {
-      flights.push({ data, index });
+    function parseDateString(ds) {
+      const m = /^(\d{2})([A-Z]{3})(\d{4})$/.exec(ds);
+      if (!m) return null;
+      return new Date(Date.UTC(+m[3], monthMap[m[2]], +m[1]));
     }
-  });
 
-  const processed = new Array(flights.length).fill(false);
-  const combinedMap = {};
+    function fmtDate(dt) {
+      return String(dt.getUTCDate()).padStart(2,'0') + monthAbbr[dt.getUTCMonth()];
+    }
 
-  for (let i = 0; i < flights.length; i++) {
-    if (processed[i]) continue;
-    const f1 = flights[i].data;
-    let paired = false;
-    for (let j = i + 1; j < flights.length; j++) {
-      if (processed[j]) continue;
-      const f2 = flights[j].data;
-      if (
-        f1.from === f2.to &&
-        f1.to === f2.from &&
-        f1.reg === f2.reg &&
-        f1.date === f2.date &&
-        f1.slotCode === f2.slotCode
-      ) {
-        const msgA = buildCombinedGcrForAirport(f1, f2, f1.from);
-        const msgB = buildCombinedGcrForAirport(f1, f2, f1.to);
-        combinedMap[f1.from] = combinedMap[f1.from] ? combinedMap[f1.from] + "\n\n" + msgA : msgA;
-        combinedMap[f1.to] = combinedMap[f1.to] ? combinedMap[f1.to] + "\n\n" + msgB : msgB;
-        processed[i] = true;
-        processed[j] = true;
-        paired = true;
-        break;
+    function showError(msg) {
+      const e = document.getElementById("errorMessage");
+      e.textContent = msg; e.style.display = "block";
+      setTimeout(() => e.style.display = "none", 4000);
+    }
+
+    function showSuccess(msg) {
+      const s = document.getElementById("successMessage");
+      s.textContent = msg; s.style.display = "block";
+      setTimeout(() => s.style.display = "none", 4000);
+    }
+
+    // --- Parse input ---
+    function parseInput(raw) {
+      return raw.trim().split("\n").map(ln => {
+        const p = ln.trim().split(/\s+/);
+        if (p.length < 8) return null;
+        const [flight, from, to, ds, dep, arr, ac, reg] = p;
+        const dt = parseDateString(ds);
+        if (!dt) return null;
+        return {
+          flight: flight.toUpperCase(),
+          from: from.toUpperCase(),
+          to: to.toUpperCase(),
+          date: fmtDate(dt),
+          dep, arr,
+          acType: ac.toUpperCase(),
+          reg: reg.toUpperCase(),
+          svc: "D"
+        };
+      }).filter(x => x);
+    }
+
+    async function copyToClipboard(txt) {
+      try {
+        await navigator.clipboard.writeText(txt);
+        showSuccess("Copied to clipboard!");
+      } catch {
+        const ta = document.createElement("textarea");
+        ta.value = txt; ta.style.position="fixed"; ta.style.opacity=0;
+        document.body.appendChild(ta); ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        showSuccess("Copied to clipboard!");
       }
     }
-    if (!paired) {
-      const standard = buildStandardGcr(f1);
-      departureOutputs += standard.departure + "\n\n";
-      arrivalOutputs += standard.arrival + "\n\n";
-      processed[i] = true;
+    function emailMsg(subj, body) {
+      window.open(`mailto:slotdesk@ryanair.com?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`, "_blank");
     }
-  }
 
-  const userInputError = document.getElementById("userInputError");
-  if (errorMessages) {
-    userInputError.textContent = errorMessages;
-    userInputError.style.display = "block";
-  } else {
-    userInputError.textContent = "";
-    userInputError.style.display = "none";
-  }
+    // --- Build static NEW/CANCEL block ---
+    function buildStaticBlock(apt, entries, mode) {
+      const lines = ["GCR", "/REG", apt];
+      // choose prefixes
+      const prefArr = mode === "CANCEL" ? "D"  : "N";
+      const prefDep = mode === "CANCEL" ? "D " : "N ";
 
-  const combinedParent = document.getElementById("combinedParentContainer");
-  combinedParent.innerHTML = "";
-  let hasCombined = false;
-  for (const airport in combinedMap) {
-    hasCombined = true;
-    const container = document.createElement("div");
-    container.className = "output-container";
-    const heading = document.createElement("div");
-    heading.className = "heading";
-    heading.textContent = "Combined GCR for " + airport + " (" + getIcaoCode(airport) + "):";
-    container.appendChild(heading);
+      // arrivals
+      entries.filter(e => e.to === apt).forEach(e => {
+        lines.push(
+          `${prefArr}${e.reg} ${e.date} 008${e.acType} ${e.from}${e.arr} ${e.svc}`
+        );
+      });
+      // departures
+      entries.filter(e => e.from === apt).forEach(e => {
+        lines.push(
+          `${prefDep}${e.reg} ${e.date} 008${e.acType} ${e.dep}${e.to} ${e.svc}`
+        );
+      });
 
-    const copyBtn = document.createElement("button");
-    copyBtn.className = "copy-button";
-    copyBtn.textContent = "Copy " + airport;
-    copyBtn.onclick = () => copyText(combinedMap[airport]);
-    container.appendChild(copyBtn);
+      // footer
+      let footer = "";
+      if (mode === "NEW")    footer = `GI NEW SLOT REQ ${apt} PPR / SLOT ID NUMBER PLS`;
+      if (mode === "CANCEL") footer = `GI SLOT CANX REQ ${apt} PPR / SLOT ID NUMBER PLS`;
+      lines.push(footer);
 
-    const emailBtn = document.createElement("button");
-    emailBtn.className = "email-button";
-    emailBtn.textContent = "Send GCR Email";
-    emailBtn.onclick = () => sendGcrEmail(combinedMap[airport]);
-    container.appendChild(emailBtn);
+      return lines.join("\n");
+    }
 
-    const pre = document.createElement("pre");
-    pre.textContent = combinedMap[airport];
-    container.appendChild(pre);
+    function buildChangeGCRBlock(apt, entries) {
+      const lines = ["GCR", "/REG", apt, ""];
 
-    combinedParent.appendChild(container);
-  }
-  combinedParent.style.display = hasCombined ? "block" : "none";
+      // arrival
+      const arr = entries.find(e => e.to === apt);
+      if (arr) {
+        lines.push(
+          `C${arr.reg} ${arr.date} 009${arr.acType} ${arr.from}${arr.arr} ${arr.svc}`
+        );
+      }
+      // departure
+      const dep = entries.find(e => e.from === apt);
+      if (dep) {
+        lines.push(
+          `C ${dep.reg} ${dep.date} 009${dep.acType} ${dep.dep}${dep.to} ${dep.svc}`
+        );
+      }
 
-  if (departureOutputs.trim()) {
-    document.getElementById("departureOutput").textContent = departureOutputs.trim();
-    document.getElementById("departureContainer").style.display = "block";
-  } else {
-    document.getElementById("departureContainer").style.display = "none";
-  }
-  if (arrivalOutputs.trim()) {
-    document.getElementById("arrivalOutput").textContent = arrivalOutputs.trim();
-    document.getElementById("arrivalContainer").style.display = "block";
-  } else {
-    document.getElementById("arrivalContainer").style.display = "none";
-  }
-}
+      lines.push("");  // blank
 
-function copyText(text) {
-  navigator.clipboard.writeText(text)
-    .then(() => showToast('Copied to clipboard!'))
-    .catch(() => showToast('Failed to copy.'));
-}
+      // R-lines
+      if (arr) {
+        lines.push(
+          `R${arr.reg} ${arr.date} 009${arr.acType} ${arr.from}${arr.arr} ${arr.svc}`
+        );
+      }
+      if (dep) {
+        lines.push(
+          `R ${dep.reg} ${dep.date} 009${dep.acType} ${dep.dep}${dep.to} ${dep.svc}`
+        );
+      }
 
-function copyToClipboard(elementId) {
-  const text = document.getElementById(elementId).textContent;
-  navigator.clipboard.writeText(text)
-    .then(() => showToast('Copied to clipboard!'))
-    .catch(() => showToast('Failed to copy.'));
-}
+      lines.push("", `GI SLOT CHG REQ ${apt}`);
+      return lines.join("\n");
+    }
 
-function sendGcrEmail(text) {
-  const subject = "GCR Message";
-  const body = text;
-  window.location.href = "mailto:?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
-}
+    // --- Main ---
+    document.getElementById("formatBtn").onclick = () => {
+      const entries = parseInput(document.getElementById("userInput").value);
+      if (!entries.length) { showError("No valid flights."); return; }
+      const mode = document.getElementById("slotType").value;
+      const airports = new Set(entries.flatMap(e => [e.from, e.to]));
+      const out = document.getElementById("outputList");
+      out.innerHTML = "";
 
-function showToast(message) {
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => {
-    toast.remove();
-  }, 3000);
-}
+      airports.forEach(apt => {
+        let text, heading;
+        if (mode === "CHANGE") {
+          text = buildChangeGCRBlock(apt, entries);
+          heading = `Change GCR [${apt}]`;
+        } else {
+          text = buildStaticBlock(apt, entries, mode);
+          heading = `GCR [${apt}]`;
+        }
+
+        const block = document.createElement("div");
+        block.className = "output-container";
+
+        const hd = document.createElement("div");
+        hd.className = "heading";
+        hd.textContent = heading;
+        block.appendChild(hd);
+
+        const pre = document.createElement("pre");
+        pre.textContent = text;
+        block.appendChild(pre);
+
+        const actions = document.createElement("div");
+        actions.className = "action-buttons";
+
+        const copyBtn = document.createElement("button");
+        copyBtn.textContent = mode === "CHANGE" ? "Update & Copy" : "Copy";
+        copyBtn.onclick = () => copyToClipboard(text);
+        actions.appendChild(copyBtn);
+
+        const emailBtn = document.createElement("button");
+        emailBtn.textContent = mode === "CHANGE" ? "Update & Email" : "Email";
+        emailBtn.onclick = () => emailMsg(`${mode==="CHANGE"?"GCR CHANGE":"GCR"} ${apt}`, text);
+        actions.appendChild(emailBtn);
+
+        block.appendChild(actions);
+        out.appendChild(block);
+      });
+
+      showSuccess(`Rendered ${airports.size} block(s) in ${mode} mode.`);
+    };
