@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Manual SCR System [BACK-UP]</title>
   <link rel="stylesheet" href="styles/manualscr.css">
+  <link rel="stylesheet" href="styles/navi-ui.css">
 </head>
 <body>
-  <!-- NAVIGATION BAR -->
   <nav>
     <ul>
       <li><a href="index.html">Home</a></li>
@@ -20,8 +20,6 @@
       <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6">Log Issues</a></li>
     </ul>
   </nav>
-
-  <!-- MAIN CONTAINER -->
   <div class="container">
     <div class="title-bar">SCR Management System [BACK-UP]</div>
     <div class="window-content">
@@ -45,7 +43,6 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Filled by code -->
           </tbody>
         </table>
         <button type="button" onclick="downloadCSV()">Download CSV</button>
@@ -53,8 +50,7 @@
     </div>
   </div>
 
-  <!-- TEMPLATES -->
-  <!-- 1) NEW SLOT FORM -->
+ <!-- 1) NEW SLOT FORM -->
   <template id="newSlotTemplate">
     <div class="scr-form" data-slot-action="NEW">
       <button class="remove-btn" type="button" onclick="removeForm(this)">Remove Form</button>
