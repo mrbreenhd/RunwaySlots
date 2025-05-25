@@ -79,14 +79,11 @@ async function fetchAirportData() {
         <div><strong>Airport Name:</strong> ${data.airportName}</div>
         <div><strong>Country:</strong> ${data.country}</div>
         <div><strong>Email:</strong> ${data.email}</div>
-         <span id="emailVal">${data.email}</span>
          <button class="copy-btn" data-copy-target="emailVal">📋</button>
         <div><strong>General Aviation Email:</strong> ${data.generalEmail}</div>
-         <span id="genEmailVal">${data.generalEmail}</span>
-          <button class="copy-btn" data-copy-target="genEmailVal">📋</button>
+         <button class="copy-btn" data-copy-target="genEmailVal">📋</button>
         <div><strong>Contact Number:</strong> ${data.contactNumber}</div>
-        <span id="contactVal">${data.contactNumber}</span>
-          <button class="copy-btn" data-copy-target="contactVal">📋</button>
+         <button class="copy-btn" data-copy-target="contactVal">📋</button>
       </div>
       <div class="levels">
         <div class="level-box">
