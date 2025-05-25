@@ -4,108 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Turnaround Format</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #008080;
-      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
-      color: black;
-    }
-    a { color: black; text-decoration: none; }
-    a:hover { color: #0000cd; }
-    nav {
-      background-color: #c0c0c0;
-      padding: 4px 8px;
-      border-bottom: 2px solid #7d7d7d;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    nav ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      gap: 4px;
-    }
-    nav li { margin: 0; padding: 0; }
-    nav a {
-      padding: 2px 6px;
-      font-size: 12px;
-      text-transform: uppercase;
-      border: 2px outset #fff;
-    }
-    nav a:hover { border: 2px inset #7d7d7d; }
-    .container {
-      width: 800px;
-      margin: 40px auto;
-      background-color: #fff;
-      border: 2px solid #7d7d7d;
-      box-shadow: 2px 2px 0 #fff;
-    }
-    .title-bar {
-      background: linear-gradient(to right, #000080, #0000cd);
-      color: white;
-      padding: 2px 6px;
-      font-size: 14px;
-      font-weight: bold;
-      border-bottom: 2px solid #7d7d7d;
-    }
-    .window-content { padding: 8px; }
-    .scr-form {
-      margin-top: 20px;
-      padding: 4px;
-      border: 2px dashed #7d7d7d;
-      background-color: #fff;
-      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
-      font-size: 12px;
-    }
-    .form-group { margin-bottom: 8px; }
-    .form-group label {
-      font-size: 10px;
-      font-weight: bold;
-      display: block;
-    }
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-      width: 100%;
-      padding: 2px;
-      font-size: 10px;
-      border: 2px inset #7d7d7d;
-      background-color: #fff;
-      color: black;
-      font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif;
-    }
-    button {
-      padding: 4px 8px;
-      background-color: #c0c0c0;
-      border: 2px outset #fff;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      text-transform: uppercase;
-    }
-    button:hover { border: 2px inset #7d7d7d; }
-    .scrOutput {
-      margin-top: 8px;
-      padding: 4px;
-      background-color: #fff;
-      border: 2px dashed #7d7d7d;
-      font-size: 10px;
-      color: #000080;
-      white-space: pre-wrap;
-      display: block;
-    }
-    footer {
-      font-family: "MS Sans Serif", Tahoma, sans-serif;
-      font-size: 12px;
-      color: black;
-      text-align: center;
-      margin-top: 20px;
-    }
-  </style>
+ <link rel="stylesheet" href="styles/navi-ui.css">
+<link rel="stylesheet" href="styles/turnaround.css">
 </head>
 <body>
   <nav>
@@ -153,8 +53,7 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
           </select>
         </div>
         <div class="form-group">
-          <!-- Two buttons: one for generating and one for emailing -->
-          <button type="button" onclick="generateTurnaround()">Generate</button>
+          <button type="button" onclick="generateTurnaround()">Generate Turnaround</button>
           <button type="button" onclick="emailTurnaround()">Email</button>
         </div>
         <div class="scrOutput" id="output"></div>
@@ -165,127 +64,9 @@ ADD TWO FLIGHT DATA OR MATCHING DATA"></textarea>
   <footer>Disclaimer:
 
 Use of this Service is at your own risk. The creator provides this Service "as is" without any warranties and is not liable for any damages or losses resulting from its use. You assume all responsibility.</footer>
-
-  <!-- Load Firebase libraries (Approach 1: plain script loading) -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-  <!-- Load your Firebase configuration script (placed in scripts folder) -->
   <script src="scripts/firebase.js"></script>
-  <script>
-    // Global variables to store the currently generated turnaround details.
-    let currentTurnaroundAirport = "";
-    let currentTurnaroundFormat = "";
-
-    function updateSeatMapping() {
-      // This function can be expanded as needed.
-    }
-
-    function parseFlightDate(dateStr) {
-      let day = parseInt(dateStr.substring(0, 2), 10);
-      let monthStr = dateStr.substring(2, 5).toUpperCase();
-      let year = parseInt(dateStr.substring(5), 10);
-      const monthMap = { JAN: 0, FEB: 1, MAR: 2, APR: 3, MAY: 4, JUN: 5, JUL: 6, AUG: 7, SEP: 8, OCT: 9, NOV: 10, DEC: 11 };
-      return new Date(year, monthMap[monthStr], day);
-    }
-
-    function formatDate(date) {
-      let day = ("0" + date.getDate()).slice(-2);
-      let monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-      return day + monthNames[date.getMonth()];
-    }
-
-    function getDayOfOperation(dateString) {
-      const days = { 0: "0000007", 1: "1000000", 2: "0200000", 3: "0003000", 4: "0004000", 5: "0000500", 6: "0000060" };
-      let date = parseFlightDate(dateString);
-      return days[date.getDay()] || "";
-    }
-
-    function getSeatNumberAndAircraftType(aircraftType, serviceType) {
-      aircraftType = aircraftType.toUpperCase().trim();
-      const seatAndAircraft = {
-        "7M8": { "P": "0007M8", "D": "0007M8", "J": "1977M8" },
-        "738": { "P": "00073H", "D": "00073H", "J": "18973H" }
-      };
-      return seatAndAircraft[aircraftType] ? seatAndAircraft[aircraftType][serviceType] || "" : "";
-    }
-
-    function generateTurnaround() {
-      const input = document.getElementById("flightData").value.trim();
-      const arrivalServiceType = document.getElementById("arrivalServiceType").value;
-      const departureServiceType = document.getElementById("departureServiceType").value;
-      const state = document.getElementById("state").value;
-      let prefix = state === "NEW" ? "N" : "D";
-      const lines = input.split("\n").filter(line => line.trim() !== "");
-      if (lines.length !== 2) {
-        document.getElementById("output").innerText = "Please paste exactly two flight data lines.";
-        return;
-      }
-      const arrival = lines[0].split(" ");
-      const departure = lines[1].split(" ");
-      if (arrival.length < 8 || departure.length < 8) {
-        document.getElementById("output").innerText = "Each flight data line must have at least 8 fields.";
-        return;
-      }
-      let arrivalFlightNumber = arrival[0].replace(/P$/, "");
-      let arrDepAirport = arrival[1];
-      let turnaroundAirport = arrival[2];
-      let flightDateFullA = arrival[3].toUpperCase();
-      let arrArrivalTime = arrival[5];
-      let aircraftTypeA = arrival[7];
-      let depDepAirport = departure[1];
-      let flightDateFullD = departure[3].toUpperCase();
-      let depDepartureTime = departure[4];
-      let flightDateDisplayA = flightDateFullA.substring(0, 5);
-      let flightDateDisplayD = flightDateFullD.substring(0, 5);
-      let dayOfOperation = getDayOfOperation(flightDateFullA);
-      let today = new Date();
-      let slotDate = formatDate(today);
-      let seatAndAircraft = getSeatNumberAndAircraftType(aircraftTypeA, arrivalServiceType);
-      let originInfo = arrDepAirport + arrArrivalTime;
-      let depInfo = depDepartureTime + depDepAirport;
-      let formattedOutput = `${prefix}${arrivalFlightNumber} ${arrivalFlightNumber} ${flightDateDisplayA}${flightDateDisplayD} ${dayOfOperation} ${seatAndAircraft} ${originInfo} ${depInfo} ${arrivalServiceType}${departureServiceType}`;
-      let weekLine = "S25";
-      let slotRequest = state === "CANCEL" ? `SI SLOT CANX REQ ${turnaroundAirport}` : `SI NEW SLOT REQ ${turnaroundAirport}`;
-      let turnaroundFormat = `SCR\n${weekLine}\n${slotDate}\n${turnaroundAirport}\n${formattedOutput}\n\n${slotRequest}\n`;
-
-      currentTurnaroundAirport = turnaroundAirport;
-      currentTurnaroundFormat = turnaroundFormat;
-
-      document.getElementById("output").innerText = turnaroundFormat;
-    }
-
-    // New function: Email Turnaround using Firebase
-    function emailTurnaround() {
-      if (!currentTurnaroundAirport || !currentTurnaroundFormat) {
-        alert("Please generate the turnaround format first.");
-        return;
-      }
-      // Read the current state from the "state" dropdown.
-      const state = document.getElementById("state").value;
-      let subject = state === "CANCEL" 
-                      ? "SLOT CANX REQ " + currentTurnaroundAirport 
-                      : "NEW SLOT REQ " + currentTurnaroundAirport;
-      const ccEmail = "slotdesk@ryanair.com";
-      // Fetch the email for the turnaround airport from Firebase.
-      firebase.database().ref("airports/" + currentTurnaroundAirport).once("value")
-        .then(snapshot => {
-          if (snapshot.exists()) {
-            const data = snapshot.val();
-            let emailAddress = data.email || "slotdesk@ryanair.com";
-            const mailtoLink = "mailto:" + emailAddress +
-              "?cc=" + encodeURIComponent(ccEmail) +
-              "&subject=" + encodeURIComponent(subject) +
-              "&body=" + encodeURIComponent(currentTurnaroundFormat);
-            window.location.href = mailtoLink;
-          } else {
-            alert("No email data found for airport: " + currentTurnaroundAirport);
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching email:", error);
-          alert("Error fetching email: " + error.message);
-        });
-    }
-  </script>
+  <script src="scripts/turnaround.js"></script>
 </body>
 </html>
