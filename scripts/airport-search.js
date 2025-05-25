@@ -79,8 +79,14 @@ async function fetchAirportData() {
         <div><strong>Airport Name:</strong> ${data.airportName}</div>
         <div><strong>Country:</strong> ${data.country}</div>
         <div><strong>Email:</strong> ${data.email}</div>
+         <span id="emailVal">${data.email}</span>
+         <button class="copy-btn" data-copy-target="emailVal">📋</button>
         <div><strong>General Aviation Email:</strong> ${data.generalEmail}</div>
+         <span id="genEmailVal">${data.generalEmail}</span>
+          <button class="copy-btn" data-copy-target="genEmailVal">📋</button>
         <div><strong>Contact Number:</strong> ${data.contactNumber}</div>
+        <span id="contactVal">${data.contactNumber}</span>
+          <button class="copy-btn" data-copy-target="contactVal">📋</button>
       </div>
       <div class="levels">
         <div class="level-box">
@@ -193,8 +199,14 @@ async function saveAirportData() {
         <div><strong>Airport Name:</strong> ${airportData.airportName}</div>
         <div><strong>Country:</strong> ${airportData.country}</div>
         <div><strong>Email:</strong> ${airportData.email}</div>
+        <span id="emailVal">${airportData.email}</span>
+          <button class="copy-btn" data-copy-target="emailVal">📋</button>
         <div><strong>General Aviation Email:</strong> ${airportData.generalEmail}</div>
+        <span id="genEmailVal">${airportData.generalEmail}</span>
+          <button class="copy-btn" data-copy-target="genEmailVal">📋</button>
         <div><strong>Contact Number:</strong> ${airportData.contactNumber}</div>
+        <span id="contactVal">${airportData.contactNumber}</span>
+          <button class="copy-btn" data-copy-target="contactVal">📋</button>
       </div>
       <div class="levels">
         <div class="level-box">
@@ -226,3 +238,21 @@ async function saveAirportData() {
 }
 
 document.getElementById('saveAirportBtn').addEventListener('click', saveAirportData);
+
+// COPY BUTTON FUNCTION //
+document.addEventListener('click', async e => {
+  if (!e.target.classList.contains('copy-btn')) return;
+  const targetId = e.target.getAttribute('data-copy-target');
+  const span = document.getElementById(targetId);
+  if (!span) return;
+
+  try {
+    await navigator.clipboard.writeText(span.textContent.trim());
+    e.target.textContent = '✅';
+    setTimeout(() => e.target.textContent = '📋', 1000);
+  } catch (err) {
+    console.error('Copy failed', err);
+    alert('Unable to copy to clipboard');
+  }
+});
+
