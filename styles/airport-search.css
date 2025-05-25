@@ -134,17 +134,16 @@ footer {
 }
 
 .copy-btn {
-	background: none;
-	border: none;
-	padding: 0;
-	margin-left: 5px;
-	cursor: pointer;
-	font-size: 14px;
-	vertical-align: middle;
-	text-transform: none;
-	font-weight: normal;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  vertical-align: middle;
+  text-transform: none;
+  font-weight: normal;
 }
-
 .copy-btn:focus {
-	outline: none;
+  outline: none;
 }
