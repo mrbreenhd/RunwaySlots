@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Multi Flight Formatter</title>
+  <title>Multi Flight Formatter - EXPERIMENTAL</title>
   <style>
     body { margin: 0; padding: 0; background-color: #008080; font-family: "MS Sans Serif", Tahoma, Geneva, sans-serif; color: black; }
     a { color: black; text-decoration: none; }
@@ -70,17 +70,17 @@
   </nav>
 
   <div class="container">
-    <div class="title-bar">Multi Flight Formatter</div>
+    <div class="title-bar">Multi Flight Formatter - EXPERIMENTAL</div>
     <div class="window-content">
-      <h1>Multi Flight Formatter</h1>
+      <h1>Multi Flight Formatter - EXPERIMENTAL</h1>
 
       <div id="errorMessage" class="error"></div>
       <div id="successMessage" class="success"></div>
 
       <label for="userInput">Flight Information (One per line):</label>
-      <textarea id="userInput" placeholder="FR123 LHR DUB 01JAN2024 1000 1100 J 73H"></textarea>
+      <textarea id="userInput" placeholder="FR877P LPL NCL 15FEB2025 1430 1515 EIIHG 7M8"></textarea>
 
-      <label for="regInput">Aircraft Registration (for non-D service types or specific overrides):</label>
+      <label for="regInput">Type Learjet/Challenger Aircraft Reg:</label>
       <input type="text" id="regInput" placeholder="ENTER REGISTRATION" />
 
       <div id="aircraftSelection" style="display: none;">
@@ -90,10 +90,9 @@
       </div>
 
       <div>
-        <button id="formatBtn">Format SCR Messages</button>
+        <button id="formatBtn">Click Here To Generate SCR Messages</button>
         <select id="slotType" title="Select Slot Type"><option value="NEW">NEW SLOT</option><option value="CANCEL">CANCEL SLOT</option><option value="CHANGE">CHANGE SCR</option></select>
         <select id="dropdownMenu" title="Select Flight Service Type"><option value="P">P</option><option value="D">D</option><option value="K">K</option><option value="T">T</option><option value="J">J</option><option value="X">X</option></select>
-        <button id="sendAllBtn">Send All Emails</button>
       </div>
 
       <div id="outputList"></div>
