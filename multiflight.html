@@ -30,7 +30,7 @@
       <div id="successMessage" class="success"></div>
 
       <label for="userInput">Insert Flight Leg Data:</label>
-      <textarea id="userInput" placeholder="FR123 LHR DUB 01JAN2024 1000 1100 J 73H"></textarea>
+      <textarea id="userInput" placeholder="FR877P LPL NCL 15FEB2025 1430 1515 EIIHG 7M8"></textarea>
 
       <label for="regInput">Aircraft Registration (ONLY FOR LEARJET/CHALLENGER):</label>
       <input type="text" id="regInput" placeholder="ENTER REGISTRATION" />
@@ -42,10 +42,9 @@
       </div>
 
       <div>
-        <button id="formatBtn">Generate SCR Messages</button>
+        <button id="formatBtn">Click Here To Generate SCR Messages</button>
         <select id="slotType" title="Select Slot Type"><option value="NEW">NEW SLOT</option><option value="CANCEL">CANCEL SLOT</option><option value="CHANGE">CHANGE SCR</option></select>
         <select id="dropdownMenu" title="Select Flight Service Type"><option value="P">P</option><option value="D">D</option><option value="K">K</option><option value="T">T</option><option value="J">J</option><option value="X">X</option></select>
-        <button id="sendAllBtn">Send All Emails [PLEASE AVOID-FUNCTION NOT WORKING]</button>
       </div>
 
       <div id="outputList"></div>
