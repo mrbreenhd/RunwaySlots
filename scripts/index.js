@@ -131,6 +131,7 @@
         case "P":
         case "T":
         case "K":
+        case "X":
           return "000";
         case "J":
           return "189";
