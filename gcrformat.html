@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>GCR Formatter</title>
+  <title>GCR Format Generator</title>
   <link rel="stylesheet" href="styles/gcrformat.css">
   <link rel="stylesheet" href="styles/navi-ui.css">
+  <link rel="stylesheet" href="styles/infobar.css">
 </head>
 <body>
  <nav>
@@ -22,20 +23,41 @@
     </ul>
   </nav>
   
+  <!-- UTC clock + Firebase DB status + Auto-refresh -->
+  <div class="info-bar">
+    <div class="left-tools">
+      <div id="utcTopClock" class="utc-clock" aria-live="polite">UTC: --:--:-- • --MON----</div>
+    </div>
+    <div class="right-tools">
+      <label class="auto-refresh" title="Automatically reload this page every 15 minutes">
+        <input type="checkbox" id="autoRefreshToggle" checked>
+        <span>Auto-refresh (15 min)</span>
+      </label>
+      <div id="fbStatus" class="status-indicator" title="Firebase Realtime Database status">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="text">DB Not Connected</span>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
-    <div class="title-bar">GCR Formatter</div>
+    <div class="title-bar">GCR Format Generator</div>
     <div class="window-content">
       <label for="userInput">Insert Flight Leg Data [ICAO]:</label>
-      <textarea id="userInput" placeholder="FR3Z EGSS LOWW 22MAY2025 0220 0420 CL5 MASBA"></textarea>
+      <textarea id="userInput" placeholder="FR2X LIME LEMG 21MAY2025 0745 0955 CL5 MABTE
+FR2Y LEMG LIME 21MAY2025 1015 1225 CL5 MABTE"></textarea>
 
       <label for="slotType">Mode:</label>
       <select id="slotType">
         <option value="NEW">NEW SLOT</option>
+        <option value="CHANGE">CHANGE SLOT</option>
         <option value="CANCEL">CANCEL SLOT</option>
-        <option value="CHANGE">CHANGE SCR</option>
       </select>
 
+      <!-- Buttons area -->
       <button id="formatBtn">GENERATE GCR MESSAGE</button>
+      <button id="clearBtn" type="button" title="Clear the input and output">CLEAR</button>
+
       <div id="errorMessage" class="error"></div>
       <div id="successMessage" class="success"></div>
 
@@ -44,10 +66,9 @@
   </div>
 
   <footer>Created By: ArtemisByte</footer>
-  <footer>Disclaimer:
-
-Use of this Service is at your own risk. The creator provides this Service "as is" without any warranties and is not liable for any damages or losses resulting from its use. You assume all responsibility.</footer>
-
+  <footer>Disclaimer: Use of this Service is at your own risk. The creator provides this Service "as is" without any warranties and is not liable for any damages or losses resulting from its use. You assume all responsibility.</footer>
  <script src="scripts/gcrformat.js"></script>
+ <script scr="scripts/firebase.js"></script>
+ <script scr="scripts/infobar.js"></script>
 </body>
 </html>
