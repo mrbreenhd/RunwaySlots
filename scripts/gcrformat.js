@@ -1,16 +1,16 @@
 function initFirebaseSafe() {
-      try {
-        if (!window.firebase || !firebase.initializeApp) return false;
-        const looksConfigured = firebaseConfig && firebaseConfig.apiKey && !/YOUR_/.test(firebaseConfig.apiKey);
-        if (!looksConfigured) return false;
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        return true;
-      } catch (e) {
-        console.warn("Firebase init skipped:", e);
-        return false;
-      }
-    }
-    const FIREBASE_READY = initFirebaseSafe();
+  try {
+    if (!window.firebase || !firebase.initializeApp) return false;
+    const cfg = window.firebaseConfig; 
+    if (!cfg || !cfg.apiKey) return false;
+    if (!firebase.apps.length) firebase.initializeApp(cfg);
+    return true;
+  } catch (e) {
+    console.warn("Firebase init skipped:", e);
+    return false;
+  }
+}
+const FIREBASE_READY = initFirebaseSafe();
 
  function showError(msg) {
       const e = document.getElementById("errorMessage");
