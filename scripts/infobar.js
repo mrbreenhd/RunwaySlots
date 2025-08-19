@@ -1,3 +1,5 @@
+// infobar.js — no FIREBASE_READY dependency
+
 (function () {
   const ID_CLOCK  = "utcTopClock";
   const ID_STATUS = "fbStatus";
@@ -13,7 +15,7 @@
     }
   }
 
-//CLOCK FEATURE//
+  /* ========== UTC CLOCK ========== */
   const MONTHS = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
   function updateUtcTopClock() {
     const el = document.getElementById(ID_CLOCK);
@@ -28,7 +30,7 @@
     el.textContent = `UTC: ${hh}:${mm}:${ss} • ${dd}${mon}${yyyy}`;
   }
 
-//DATABASE INDICATOR//
+  /* ========== DB STATUS ========== */
   function setDbStatus(connected) {
     const el = document.getElementById(ID_STATUS);
     if (!el) return;
@@ -39,19 +41,18 @@
   }
 
   function initDbStatus() {
-    // Prefer the shared initializer if present; otherwise detect existing app
+    // Use shared initializer if present; otherwise detect an existing app
     const fbReady =
       (typeof window.ensureFirebaseReady === "function" && window.ensureFirebaseReady()) ||
-      (!!(window.firebase && firebase.apps && firebase.apps.length));
+      !!(window.firebase && firebase.apps && firebase.apps.length);
 
     if (!fbReady || !firebase.database) {
       setDbStatus(false);
       return;
     }
-
     try {
       firebase.database().ref(".info/connected").on(
-        ( "value"),
+        "value",
         snap => setDbStatus(!!snap.val()),
         () => setDbStatus(false)
       );
@@ -60,7 +61,7 @@
     }
   }
 
-//AUTOREFRESH//
+  /* ========== AUTO-REFRESH (15 min) ========== */
   function setAutoRefresh(enabled) {
     const cb = document.getElementById(ID_TOGGLE);
     if (cb) cb.checked = !!enabled;
@@ -73,7 +74,6 @@
     if (enabled) {
       window.__autoRefreshTimer = setInterval(() => window.location.reload(), REFRESH_MS);
     }
-
     try { localStorage.setItem("autoRefreshEnabled", JSON.stringify(!!enabled)); } catch {}
   }
 
@@ -90,18 +90,11 @@
     }
   }
 
-  /* =========================
-     BOOT
-  ========================= */
+  /* ========== BOOT ========== */
   ready(() => {
-    // Clock
     updateUtcTopClock();
     setInterval(updateUtcTopClock, 1000);
-
-    // DB status
     initDbStatus();
-
-    // Auto-refresh
     initAutoRefresh();
   });
 })();
