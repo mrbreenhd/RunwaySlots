@@ -22,6 +22,23 @@
       <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6" target="_blank" rel="noopener noreferrer">Log Issues</a></li>
     </ul>
   </nav>
+  
+  <div class="info-bar">
+    <div class="left-tools">
+      <div id="utcTopClock" class="utc-clock" aria-live="polite">UTC: --:--:-- • --MON----</div>
+    </div>
+    <div class="right-tools">
+      <label class="auto-refresh" title="Automatically reload this page every 15 minutes">
+        <input type="checkbox" id="autoRefreshToggle" checked>
+        <span>Auto-refresh (15 min)</span>
+      </label>
+      <div id="fbStatus" class="status-indicator" title="Firebase Realtime Database status">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="text">Database Not Connected</span>
+      </div>
+    </div>
+  </div>
+  
   <div class="container">
     <div class="title-bar">Quick Links</div>
     <div class="window-content">
