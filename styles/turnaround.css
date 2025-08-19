@@ -1,3 +1,6 @@
+body { margin:0; padding:0; background:#008080; font-family:"MS Sans Serif",Tahoma,sans-serif; color:#000 }
+   a { color: black; text-decoration: none;}
+   a:hover { color: #0000cd;}
 /* Compact container: keep within viewport, scroll inside */
 .container {
   width: min(900px, 96%);
