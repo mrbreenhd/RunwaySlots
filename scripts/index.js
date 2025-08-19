@@ -1,343 +1,380 @@
- /******************************************
-     THEME TOGGLE LOGIC
-    ******************************************/
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    applyTheme(savedTheme);
-    
-    function applyTheme(theme) {
-      if (theme === 'dark') {
-        body.classList.add('dark-mode');
-        themeToggle.checked = true;
-      } else {
-        body.classList.remove('dark-mode');
-        themeToggle.checked = false;
-      }
+//BACK UP EMAILS, HARD-CODED//
+let airportData = {};
+window.addEventListener("DOMContentLoaded", () => {
+  fetch("assets/emails.json")
+    .then(r => r.json())
+    .then(data => { airportData = data; })
+    .catch(err => console.error("Error loading emails.json:", err));
+});
+
+function getAirportEmail(airportCode) {
+  const code = String(airportCode || "").trim().toUpperCase();
+  if (code && airportData[code] && airportData[code].email) {
+    return airportData[code].email;
+  }
+  return "slotdesk@ryanair.com";
+}
+
+function validateSeats(el) {
+  if (!el) return;
+  el.value = (el.value || "").replace(/[^\d]/g, "").slice(0, 3);
+}
+function toSeat3(n) {
+  const x = parseInt(n, 10);
+  if (Number.isNaN(x)) return null;
+  const v = Math.max(0, Math.min(999, x));
+  return String(v).padStart(3, "0");
+}
+function normalizeAc(ac) {
+  const t = String(ac || "").toUpperCase().trim();
+  if (t === "738") return "73H";
+  return t || "73H";
+}
+function normalizeFlightNo(raw) {
+  if (!raw) return "";
+  const m = /^([A-Za-z]{2})(\d+)([A-Za-z]*)$/i.exec(raw.trim());
+  if (!m) return raw.toUpperCase();
+  const [, pfx, digits, tail] = m;
+  const padded = String(parseInt(digits, 10)).padStart(3, "0");
+  return (pfx + padded + (tail || "")).toUpperCase();
+}
+function formatDateDDMON(dateStr) {
+  if (!dateStr) return "";
+  const dt = new Date(dateStr);
+  if (isNaN(dt)) return "";
+  const dd = String(dt.getUTCDate()).padStart(2, "0");
+  const months = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"];
+  const mon = months[dt.getUTCMonth()];
+  return dd + mon;
+}
+function dayOfOpFromDate(dateStr) {
+  const dt = new Date(dateStr);
+  const day = dt.toLocaleDateString("en-US", { weekday: "long" });
+  const map = {
+    "Sunday":    "0000007",
+    "Monday":    "1000000",
+    "Tuesday":   "0200000",
+    "Wednesday": "0030000",
+    "Thursday":  "0004000",
+    "Friday":    "0000500",
+    "Saturday":  "0000060"
+  };
+  return map[day] || "1000000";
+}
+
+function getCodePrefix(option) {
+  // Non-J service prefixes
+  switch (String(option || "").toUpperCase()) {
+    case "P":
+    case "T":
+    case "K":
+    case "X":
+      return "000";
+    case "D":
+      return "008";
+    default:
+      return "000";
+  }
+}
+function buildOpCode(defaultAc, aircraftType, seatsOverride, serviceOption) {
+  const ac = normalizeAc(aircraftType || defaultAc);
+  const opt = String(serviceOption || "").toUpperCase();
+
+  if (opt === "J") {
+    // Seats + AC (prefer user seats)
+    let seats = toSeat3(seatsOverride);
+    if (!seats) {
+      // fallback seats by type
+      if (ac === "7M8") seats = "197";
+      else if (ac === "73H") seats = "189";
+      else if (ac === "320") seats = "180";
+      else seats = "000";
     }
-    
-    themeToggle.addEventListener('change', () => {
-      if (themeToggle.checked) {
-        localStorage.setItem('theme', 'dark');
-        applyTheme('dark');
-      } else {
-        localStorage.setItem('theme', 'light');
-        applyTheme('light');
-      }
+    return `${seats}${ac}`;
+  }
+
+  // Non-J services
+  return `${getCodePrefix(opt)}${ac}`;
+}
+
+function showMessage(containerId, msg, ok = true) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.textContent = msg;
+  el.className = ok ? "success" : "error";
+  el.style.display = "block";
+  setTimeout(() => { el.style.display = "none"; }, 3500);
+}
+function copyToClipboard(txt) {
+  return navigator.clipboard.writeText(txt)
+    .then(() => true)
+    .catch(() => {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+        document.body.appendChild(ta); ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        return true;
+      } catch { return false; }
     });
-    
-    /******************************************
-     1) FETCH emails.json FROM GITHUB PAGES
-    ******************************************/
-    let airportData = {};
-    window.addEventListener("DOMContentLoaded", () => {
-      fetch("assets/emails.json")
-        .then(response => response.json())
-        .then(data => {
-          airportData = data;
-          console.log("Loaded airport data:", airportData);
-        })
-        .catch(error => {
-          console.error("Error loading emails.json:", error);
-        });
-    });
-    
-    function getAirportEmail(airportCode) {
-      if (airportData[airportCode]) {
-        return airportData[airportCode].email;
-      }
-      return "slotdesk@ryanair.com";
-    }
-    
-    /******************************************
-     2) EXISTING LOGIC & HELPER FUNCTIONS
-    ******************************************/
-    let currentSlotType = "";
-    let currentDepartureAirport = "";
-    let currentArrivalAirport = "";
-    
-    function getDayOfOperation(dayOfWeek) {
-      const dayMapping = {
-        "Sunday":    "0000007",
-        "Monday":    "1000000",
-        "Tuesday":   "0200000",
-        "Wednesday": "0030000",
-        "Thursday":  "0004000",
-        "Friday":    "0000500",
-        "Saturday":  "0000060"
-      };
-      return dayMapping[dayOfWeek] || "1000000";
-    }
-    
-    function parseInput(input) {
-      const parts = input.trim().split(" ");
-      if (parts.length !== 7 && parts.length !== 8) {
-        return null;
-      }
-      const flightRaw = parts[0];
-      const from = parts[1];
-      const to = parts[2];
-      const date = parts[3].slice(0, 5);
-      const fullDate = parts[3];
-      const departureTime = parts[4];
-      const arrivalTime = parts[5];
-      const code = parts[6];
-      let aircraftType = null;
-      if (parts.length === 8) {
-        aircraftType = parts[7];
-      }
-    
-      const parsedDate = new Date(fullDate);
-      const dayOfWeek = parsedDate.toLocaleDateString("en-US", { weekday: "long" });
-      const dayOfOperation = getDayOfOperation(dayOfWeek);
-    
-      const flightPrefix = flightRaw.slice(0, 2);
-      let flightNumber = flightRaw.slice(2);
-      const flightDigits = flightNumber.match(/\d+/)?.[0] || "";
-      let flightLetters = flightNumber.replace(/\d+/g, "");
-      if (flightLetters.endsWith("P")) {
-        flightLetters = flightLetters.slice(0, -1);
-      }
-      const paddedFlightDigits = flightDigits.padStart(3, "0");
-      const flight = `${flightPrefix}${paddedFlightDigits}${flightLetters}`;
-    
-      return {
-        flight,
-        from,
-        to,
-        date,
-        fullDate,
-        departureTime,
-        arrivalTime,
-        code,
-        dayOfOperation,
-        aircraftType
-      };
-    }
-    
-    function getSelectedOption() {
-      return document.getElementById("dropdownMenu").value;
-    }
-    function getSlotType() {
-      const val = document.getElementById("slotType").value;
-      return val === "NEW" ? "NEW SLOT" : "CANCEL SLOT";
-    }
-    function getAircraftReg() {
-      const regInput = document.getElementById("regInput").value.trim();
-      return regInput || "[UNKNOWN REG]";
-    }
-    function getCodePrefix(option) {
-      switch (option) {
-        case "P":
-        case "T":
-        case "K":
-        case "X":
-          return "000";
-        case "J":
-          return "189";
-        case "D":
-          return "008";
-        default:
-          return "000";
-      }
-    }
-    
-    function getOpCodeSingle(defaultOp, aircraftType) {
-      const option = getSelectedOption();
-      if (option === "J") {
-        if (aircraftType === "7M8") {
-          return "1977M8";
-        } else if (aircraftType === "738" || aircraftType === "73H") {
-          return "18973H";
-        } else if (aircraftType === "320" || aircraftType === "320") {
-          return "180320";
-        }  else {
-          return aircraftType || defaultOp;
-        }
-      } else {
-        if (aircraftType) {
-          if (aircraftType === "738") return "00073H";
-          if (aircraftType === "7M8") return "0007M8";
-          if (aircraftType === "320") return "000320";
-          return aircraftType; 
-        } else {
-          return getCodePrefix(option) + defaultOp;
-        }
-      }
-    }
-    
-    function hideAllContainers() {
-      document.getElementById("departureContainer").style.display = "none";
-      document.getElementById("arrivalContainer").style.display = "none";
-      document.getElementById("departureOutput").textContent = "";
-      document.getElementById("arrivalOutput").textContent = "";
-    }
-    
-    /******************************************
-     3) DEPARTURE FORMAT
-    ******************************************/
-    function formatDeparture() {
-      hideAllContainers();
-      const input = document.getElementById("userInput").value;
-      const data = parseInput(input);
-      if (!data) {
-        alert("Error: Invalid input format. Make sure you have 7 or 8 parts.");
-        return;
-      }
-      currentSlotType = getSlotType();
-      currentDepartureAirport = data.from;
-    
-      document.getElementById("departureHeading").textContent = `Departure [${data.from}]`;
-      document.getElementById("arrivalHeading").textContent = `Arrival [${data.to}]`;
-    
-      const { flight, from, to, date, departureTime, dayOfOperation, aircraftType } = data;
-      const option = getSelectedOption();
-      const opCode = getOpCodeSingle("73H", aircraftType);
-      const reg = getAircraftReg();
-      const flightType = currentSlotType === "CANCEL SLOT" ? "D" : "N";
-    
-      const siLine = option === "D"
-        ? `SI ${currentSlotType} REQ ${from} // LEARJET REG: ${reg}`
-        : `SI ${currentSlotType} REQ ${from}`;
-    
-      const output = `
-SCR 
-S25 
-${date} 
-${from} 
-${flightType} ${flight} ${date}${date} ${dayOfOperation} ${opCode} ${departureTime}${to} ${option} 
-${siLine}
-      `.trim();
-    
-      document.getElementById("departureOutput").textContent = output;
-      document.getElementById("departureContainer").style.display = "block";
-    }
-    
-    /******************************************
-     4) ARRIVAL FORMAT
-    ******************************************/
-    function formatArrival() {
-      hideAllContainers();
-      const input = document.getElementById("userInput").value;
-      const data = parseInput(input);
-      if (!data) {
-        alert("Error: Invalid input format. Make sure you have 7 or 8 parts.");
-        return;
-      }
-      currentSlotType = getSlotType();
-      currentArrivalAirport = data.to;
-    
-      document.getElementById("departureHeading").textContent = `Departure [${data.from}]`;
-      document.getElementById("arrivalHeading").textContent = `Arrival [${data.to}]`;
-    
-      const { flight, from, to, date, arrivalTime, dayOfOperation, aircraftType } = data;
-      const option = getSelectedOption();
-      const opCode = getOpCodeSingle("73H", aircraftType);
-      const reg = getAircraftReg();
-      const flightType = currentSlotType === "CANCEL SLOT" ? "D" : "N";
-    
-      const siLine = option === "D"
-        ? `SI ${currentSlotType} REQ ${to} // LEARJET REG: ${reg}`
-        : `SI ${currentSlotType} REQ ${to}`;
-    
-      const output = `
-SCR 
-S25 
-${date} 
-${to} 
-${flightType}${flight} ${date}${date} ${dayOfOperation} ${opCode} ${from}${arrivalTime} ${option} 
-${siLine}
-      `.trim();
-    
-      document.getElementById("arrivalOutput").textContent = output;
-      document.getElementById("arrivalContainer").style.display = "block";
-    }
-    
-    /******************************************
-     5) BOTH FORMAT
-    ******************************************/
-    function formatBoth() {
-      hideAllContainers();
-      const input = document.getElementById("userInput").value;
-      const data = parseInput(input);
-      if (!data) {
-        alert("Error: Invalid input format. Make sure you have 7 or 8 parts.");
-        return;
-      }
-      currentSlotType = getSlotType();
-      currentDepartureAirport = data.from;
-      currentArrivalAirport = data.to;
-    
-      document.getElementById("departureHeading").textContent = `Departure [${data.from}]`;
-      document.getElementById("arrivalHeading").textContent = `Arrival [${data.to}]`;
-    
-      const { flight, from, to, date, departureTime, arrivalTime, dayOfOperation, aircraftType } = data;
-      const option = getSelectedOption();
-      const opCode = getOpCodeSingle("73H", aircraftType);
-      const reg = getAircraftReg();
-      const flightType = currentSlotType === "CANCEL SLOT" ? "D" : "N";
-    
-      const departureSiLine = option === "D"
-        ? `SI ${currentSlotType} REQ ${from} // LEARJET REG: ${reg}`
-        : `SI ${currentSlotType} REQ ${from}`;
-    
-      const departureOutputStr = `
-SCR 
-S25 
-${date} 
-${from} 
-${flightType} ${flight} ${date}${date} ${dayOfOperation} ${opCode} ${departureTime}${to} ${option} 
-${departureSiLine}
-      `.trim();
-    
-      const arrivalSiLine = option === "D"
-        ? `SI ${currentSlotType} REQ ${to} // LEARJET REG: ${reg}`
-        : `SI ${currentSlotType} REQ ${to}`;
-    
-      const arrivalOutputStr = `
-SCR 
-S25 
-${date} 
-${to} 
-${flightType}${flight} ${date}${date} ${dayOfOperation} ${opCode} ${from}${arrivalTime} ${option} 
-${arrivalSiLine}
-      `.trim();
-    
-      document.getElementById("departureOutput").textContent = departureOutputStr;
-      document.getElementById("arrivalOutput").textContent = arrivalOutputStr;
-      document.getElementById("departureContainer").style.display = "block";
-      document.getElementById("arrivalContainer").style.display = "block";
-    }
-    
-    /******************************************
-     6) SEND EMAIL
-    ******************************************/
-    function sendEmail(type) {
-      let output = "";
-      let subject = "";
-      let airportCode = "";
-    
-      if (type === "departure") {
-        output = document.getElementById("departureOutput").textContent.trim();
-        if (!output) {
-          alert("No DEPARTURE SCR message found. Please format again.");
-          return;
-        }
-        airportCode = currentDepartureAirport;
-        subject = `${currentSlotType} REQ ${airportCode}`;
-      } else {
-        output = document.getElementById("arrivalOutput").textContent.trim();
-        if (!output) {
-          alert("No ARRIVAL SCR message found. Please format again.");
-          return;
-        }
-        airportCode = currentArrivalAirport;
-        subject = `${currentSlotType} REQ ${airportCode}`;
-      }
-      const recipientEmail = getAirportEmail(airportCode);
-      const ccEmail = "slotdesk@ryanair.com";
-      const emailSubject = encodeURIComponent(subject);
-      const emailBody = encodeURIComponent(output);
-      const mailtoLink = `mailto:${recipientEmail}?cc=${ccEmail}&subject=${emailSubject}&body=${emailBody}`;
-      window.location.href = mailtoLink;
-    }
+}
+
+const SEASON_CODE = "S25"; 
+
+function buildDepartureSCR({ from, to, dateStr, time, flight, svc, seats, ac, slotAction }) {
+  const date = formatDateDDMON(dateStr);
+  const day = dayOfOpFromDate(dateStr);
+  const opCode = buildOpCode("73H", ac, seats, svc);
+  const flightType = (slotAction === "CANCEL") ? "D" : "N"; 
+  const si = `SI ${slotAction} SLOT REQ ${from}`;
+
+  return [
+    "SCR",
+    SEASON_CODE,
+    date,
+    from,
+    `${flightType} ${flight} ${date}${date} ${day} ${opCode} ${time}${to} ${svc}`,
+    si
+  ].join("\n");
+}
+
+function buildArrivalSCR({ from, to, dateStr, time, flight, svc, seats, ac, slotAction }) {
+  const date = formatDateDDMON(dateStr);
+  const day = dayOfOpFromDate(dateStr);
+  const opCode = buildOpCode("73H", ac, seats, svc);
+  const flightType = (slotAction === "CANCEL") ? "D" : "N";
+  const si = `SI ${slotAction} SLOT REQ ${to}`;
+
+  return [
+    "SCR",
+    SEASON_CODE,
+    date,
+    to,
+    `${flightType}${flight} ${date}${date} ${day} ${opCode} ${from}${time} ${svc}`,
+    si
+  ].join("\n");
+}
+
+function showSCR(btn) {
+  const form = btn.closest(".scr-form");
+  if (!form) return;
+
+  const slotAction = form.dataset.slotAction || "NEW"; // NEW or CANCEL
+  const isArrival = (form.querySelector(".slotType")?.value || "").toUpperCase() === "ARRIVAL";
+
+  const fields = {
+    airport: form.querySelector(".airportCode")?.value.trim().toUpperCase(),
+    flight: normalizeFlightNo(form.querySelector(".flightNumber")?.value),
+    dateStr: form.querySelector(".dateField")?.value,
+    seats: form.querySelector(".numberOfSeats")?.value,
+    ac: form.querySelector(".aircraftType")?.value,
+    time: form.querySelector(".timeField")?.value,
+    do: form.querySelector(".destinationOrigin")?.value.trim().toUpperCase(),
+    svc: (form.querySelector(".serviceType")?.value || "").toUpperCase()
+  };
+
+  if (!fields.airport || !fields.flight || !fields.dateStr || !fields.time || !fields.do || !fields.svc) {
+    alert("Please complete all fields.");
+    return;
+  }
+
+  const args = {
+    from: isArrival ? fields.do : fields.airport,
+    to:   isArrival ? fields.airport : fields.do,
+    dateStr: fields.dateStr,
+    time: fields.time,
+    flight: fields.flight,
+    svc: fields.svc,
+    seats: fields.seats,
+    ac: fields.ac,
+    slotAction
+  };
+
+  const msg = isArrival ? buildArrivalSCR(args) : buildDepartureSCR(args);
+  const out = form.querySelector(".scrOutput");
+  if (out) out.textContent = msg;
+
+  appendLogRow(slotAction, msg);
+}
+
+function emailSCR(btn) {
+  const form = btn.closest(".scr-form");
+  if (!form) return;
+
+  const slotAction = form.dataset.slotAction || "NEW";
+  const isArrival = (form.querySelector(".slotType")?.value || "").toUpperCase() === "ARRIVAL";
+
+  // Prefer just-rendered content; if empty, render now
+  let msg = form.querySelector(".scrOutput")?.textContent.trim();
+  if (!msg) {
+    showSCR(btn);
+    msg = form.querySelector(".scrOutput")?.textContent.trim();
+    if (!msg) { alert("No SCR content to email."); return; }
+  }
+
+  const airport = (form.querySelector(".airportCode")?.value || "").trim().toUpperCase();
+  const subject = `${slotAction} SLOT REQ ${airport}`;
+  const to = getAirportEmail(isArrival ? airport : airport); // same either way here
+  const cc = "slotdesk@ryanair.com";
+
+  const href = `mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+  window.location.href = href;
+}
+
+function showChangeSCR(btn) {
+  const box = btn.closest(".change-scr-container");
+  if (!box) return;
+
+  // OLD
+  const oldSlot = (box.querySelector(".old_slotType")?.value || "Arrival").toUpperCase();
+  const old_args = {
+    from: oldSlot === "ARRIVAL" ? (box.querySelector(".old_do")?.value || "").toUpperCase()
+                                : (box.querySelector(".old_airport")?.value || "").toUpperCase(),
+    to:   oldSlot === "ARRIVAL" ? (box.querySelector(".old_airport")?.value || "").toUpperCase()
+                                : (box.querySelector(".old_do")?.value || "").toUpperCase(),
+    dateStr: box.querySelector(".old_date")?.value,
+    time: box.querySelector(".old_time")?.value,
+    flight: normalizeFlightNo(box.querySelector(".old_flightNo")?.value),
+    svc: (box.querySelector(".old_stc")?.value || "").toUpperCase(),
+    seats: box.querySelector(".old_seats")?.value,
+    ac: box.querySelector(".old_acType")?.value,
+    slotAction: "CHANGE" // for SI line wording
+  };
+
+  // NEW
+  const newSlot = (box.querySelector(".new_slotType")?.value || "Arrival").toUpperCase();
+  const new_args = {
+    from: newSlot === "ARRIVAL" ? (box.querySelector(".new_do")?.value || "").toUpperCase()
+                                : (box.querySelector(".new_airport")?.value || "").toUpperCase(),
+    to:   newSlot === "ARRIVAL" ? (box.querySelector(".new_airport")?.value || "").toUpperCase()
+                                : (box.querySelector(".new_do")?.value || "").toUpperCase(),
+    dateStr: box.querySelector(".new_date")?.value,
+    time: box.querySelector(".new_time")?.value,
+    flight: normalizeFlightNo(box.querySelector(".new_flightNo")?.value),
+    svc: (box.querySelector(".new_stc")?.value || "").toUpperCase(),
+    seats: box.querySelector(".new_seats")?.value,
+    ac: box.querySelector(".new_acType")?.value,
+    slotAction: "CHANGE"
+  };
+
+  // Validate quick essentials
+  if (!old_args.from || !old_args.to || !old_args.dateStr || !old_args.time || !old_args.flight || !old_args.svc) {
+    alert("Please complete all OLD request fields.");
+    return;
+  }
+  if (!new_args.from || !new_args.to || !new_args.dateStr || !new_args.time || !new_args.flight || !new_args.svc) {
+    alert("Please complete all NEW request fields.");
+    return;
+  }
+
+  const oldMsg = (oldSlot === "ARRIVAL") ? buildArrivalSCR(old_args) : buildDepartureSCR(old_args);
+  const newMsg = (newSlot === "ARRIVAL") ? buildArrivalSCR(new_args) : buildDepartureSCR(new_args);
+
+  const combined = oldMsg + "\n\n" + newMsg + "\n";
+  const out = box.querySelector(".change-scrOutput");
+  if (out) out.textContent = combined;
+
+  appendLogRow("CHANGE", combined);
+}
+
+function emailChangeSCR(btn) {
+  const box = btn.closest(".change-scr-container");
+  if (!box) return;
+
+  // Prefer rendered content; render if absent
+  let msg = box.querySelector(".change-scrOutput")?.textContent.trim();
+  if (!msg) {
+    showChangeSCR(btn);
+    msg = box.querySelector(".change-scrOutput")?.textContent.trim();
+    if (!msg) { alert("No SCR content to email."); return; }
+  }
+
+  // Prefer NEW airport as subject target; fallback to OLD
+  const targetApt = (box.querySelector(".new_airport")?.value || box.querySelector(".old_airport")?.value || "").toUpperCase();
+  const subject = `CHANGE SCR REQ ${targetApt}`;
+  const to = getAirportEmail(targetApt || ""); // fallback handled inside
+  const cc = "slotdesk@ryanair.com";
+
+  const href = `mailto:${encodeURIComponent(to)}?cc=${encodeURIComponent(cc)}&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(msg)}`;
+  window.location.href = href;
+}
+
+/* =========================
+   7) Add/remove forms
+   ========================= */
+function addNewSlotForm() {
+  const tpl = document.getElementById("newSlotTemplate");
+  if (!tpl) return;
+  const node = tpl.content.cloneNode(true);
+  document.getElementById("formsContainer").appendChild(node);
+}
+function addCancelSlotForm() {
+  const tpl = document.getElementById("cancelSlotTemplate");
+  if (!tpl) return;
+  const node = tpl.content.cloneNode(true);
+  document.getElementById("formsContainer").appendChild(node);
+}
+function addChangeScrForm() {
+  const tpl = document.getElementById("changeScrTemplate");
+  if (!tpl) return;
+  const node = tpl.content.cloneNode(true);
+  document.getElementById("formsContainer").appendChild(node);
+}
+function removeForm(btn) {
+  // remove the nearest .scr-form or .change-scr-container
+  const box = btn.closest(".scr-form") || btn.closest(".change-scr-container");
+  if (box && box.parentNode) box.parentNode.removeChild(box);
+}
+
+/* =========================
+   8) Log table + CSV export
+   ========================= */
+function appendLogRow(action, message) {
+  const logContainer = document.getElementById("logContainer");
+  const tbody = document.querySelector("#logTable tbody");
+  if (!tbody) return;
+
+  const tr = document.createElement("tr");
+  const tdA = document.createElement("td");
+  const tdM = document.createElement("td");
+
+  tdA.textContent = action;
+  tdM.textContent = message;
+
+  tr.appendChild(tdA);
+  tr.appendChild(tdM);
+  tbody.appendChild(tr);
+
+  if (logContainer) logContainer.style.display = "";
+}
+function downloadCSV() {
+  const rows = [["Slot Action","SCR Message"]];
+  document.querySelectorAll("#logTable tbody tr").forEach(tr => {
+    const tds = tr.querySelectorAll("td");
+    rows.push([tds[0]?.textContent || "", (tds[1]?.textContent || "").replace(/\n/g, "\\n")]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "scr_log.csv";
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function scrollToTop() { window.scrollTo({ top: 0, behavior: "smooth" }); }
+
+/* Expose functions to HTML inline handlers */
+window.validateSeats = validateSeats;
+window.addNewSlotForm = addNewSlotForm;
+window.addCancelSlotForm = addCancelSlotForm;
+window.addChangeScrForm = addChangeScrForm;
+window.removeForm = removeForm;
+window.showSCR = showSCR;
+window.emailSCR = emailSCR;
+window.showChangeSCR = showChangeSCR;
+window.emailChangeSCR = emailChangeSCR;
+window.downloadCSV = downloadCSV;
+window.scrollToTop = scrollToTop;
