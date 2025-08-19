@@ -6,6 +6,7 @@
   <title>Manual SCR System [BACK-UP]</title>
   <link rel="stylesheet" href="styles/manualscr.css">
   <link rel="stylesheet" href="styles/navi-ui.css">
+  <link rel="stylesheet" href="styles/infobar.css">
 </head>
 <body>
    <nav>
@@ -21,6 +22,19 @@
       <li><a href="https://forms.gle/nXCQzWxCcH5B1uZd6" target="_blank" rel="noopener noreferrer">Log Issues</a></li>
     </ul>
   </nav>
+
+  <div class="info-bar">
+    <div class="left-tools">
+      <div id="utcTopClock" class="utc-clock" aria-live="polite">UTC: --:--:-- • --MON----</div>
+    </div>
+    <div class="right-tools">
+      <label class="auto-refresh" title="Automatically reload this page every 15 minutes">
+        <input type="checkbox" id="autoRefreshToggle" checked>
+        <span>Auto-refresh (15 min)</span>
+      </label>
+    </div>
+  </div>
+  
   <div class="container">
     <div class="title-bar">SCR Management System [BACK-UP]</div>
     <div class="window-content">
@@ -289,5 +303,7 @@ Use of this Service is at your own risk. The creator provides this Service "as i
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
   <script src="scripts/firebase.js"></script>
   <script src="scripts/manualscr.js"></script>
-</body>
+  <script src="scripts/infobar.js"></script>
+  
+  </body>
 </html>
