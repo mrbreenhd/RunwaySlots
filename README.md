@@ -65,9 +65,6 @@ Have feedback or feature requests? We'd love to hear from you! 📨
 
 
 
-🛫 Happy Scheduling & Safe Flights! 🛬
-
-
 CREATED BY ArtemisByte 2024
 
 
