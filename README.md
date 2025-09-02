@@ -49,8 +49,6 @@ Enjoy a seamless experience designed for aviation professionals! 🛫
 
 Constantly working to improve RunwaySlots! Here’s what’s coming soon:
 
-🛠️ GCR Message creation for General Aviation
-
 🛠️ New Experimental Page
 
 📊 Advanced reporting & analytics
